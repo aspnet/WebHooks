@@ -19,7 +19,7 @@ namespace System.Web.Http
         /// For details about GitHub WebHooks, see <c>https://confluence.atlassian.com/bitbucket/manage-webhooks-735643732.html</c>.
         /// </summary>
         /// <param name="config">The current <see cref="HttpConfiguration"/>config.</param>
-        public static void InitializeReceiveGitHubWebHooks(this HttpConfiguration config)
+        public static void InitializeReceiveBitBucketWebHooks(this HttpConfiguration config)
         {
             WebHooksConfig.Initialize(config);
         }
