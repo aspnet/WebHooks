@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Config_AddedName" xml:space="preserve">
-    <value>Registered ID '{0}' for receiver: '{1}'.</value>
+    <value>Registered configuration setting '{0}' for ID '{1}''.</value>
   </data>
   <data name="Config_AddFailure" xml:space="preserve">
     <value>Could not add configuration for receiver '{0}' and id '{1}': {2}</value>
@@ -191,5 +191,8 @@
   </data>
   <data name="Manager_RegisteredNames" xml:space="preserve">
     <value>Registered '{0}' instances with the following names: {1}.</value>
+  </data>
+  <data name="GetDataOrDefault_Failure" xml:space="preserve">
+    <value>Could not deserialize instance of type '{0}' as '{1}': {2}</value>
   </data>
 </root>

@@ -6,9 +6,11 @@
     <Recognized>
       <Word>api</Word>
       <Word>apis</Word>
+      <Word>bitbucket</Word>
       <Word>dropbox</Word>
       <Word>fnv</Word>
       <Word>git</Word>
+      <Word>instagram</Word>
       <Word>mvc</Word>
       <Word>nuget</Word>
       <Word>paypal</Word>
@@ -20,6 +22,7 @@
     <Deprecated/>
     <Compound>
       <Term CompoundAlternate="CheckIns">checkins</Term>
+      <Term CompoundAlternate="GeoId">geoid</Term>
     </Compound>
     <DiscreteExceptions>
       <Term>RunTime</Term>

@@ -61,6 +61,7 @@
     <Compile Include="Controllers\WebHookReceiversControllerTests.cs" />
     <Compile Include="Extensions\DependencyScopeExtensionsTests.cs" />
     <Compile Include="Extensions\WebHookHandlerContextExtensionsTests.cs" />
+    <Compile Include="Extensions\WebHookReceiverConfigExtensionsTests.cs" />
     <Compile Include="Mocks\WebHookReceiverMock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ReceiverServicesTests.cs" />
