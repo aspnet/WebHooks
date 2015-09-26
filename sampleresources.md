@@ -1,6 +1,4 @@
 #Helpful sample resources for Microsoft ASP.NET WebHooks
-Please see the initial [documentation](http://docs.asp.net/projects/aspnetwebhooks/en/latest/) for details.
-
 Following(s) are helpful resources from our contributors: 
 
 ##Samples
