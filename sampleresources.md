@@ -1,11 +1,11 @@
-#Helpful sample resorces for Microsoft ASP.NET WebHooks
+#Helpful sample resources for Microsoft ASP.NET WebHooks
 Please see the initial [documentation](http://docs.asp.net/projects/aspnetwebhooks/en/latest/) for details.
 
 Following(s) are helpful resources from our contributors: 
 
 ##Samples
-- [GitHub](https://github.com/aspnet/WebHooks/tree/master/samples/#)
-- [Bitbucket](https://github.com/aspnet/WebHooks/tree/master/samples/BitbucketReceiver)
+- [GitHub](/samples/#)
+- [Bitbucket](/samples/BitbucketReceiver)
 
 ##Resources
 - [Announcement of Microsoft ASP.NET WebHooks Preview](http://blogs.msdn.com/b/webdev/archive/2015/09/04/introducing-microsoft-asp-net-webhooks-preview.aspx)
