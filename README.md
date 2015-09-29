@@ -7,11 +7,8 @@ for an introduction to Microsoft ASP.NET WebHooks.
 
 Please see the initial [documentation](http://docs.asp.net/projects/aspnetwebhooks/en/latest/) for details.
 
-##Helpful samples and resources
-Following(s) are helpful resources from our contributors: 
-
 ###Samples
-- [GitHub](/samples/#)
+- [All Samples](/samples/)
 - [Bitbucket](/samples/BitbucketReceiver)
 
 ###Resources
