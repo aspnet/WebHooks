@@ -6,11 +6,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CB965ED1-1E07-4374-A829-C636DB09F567}</ProjectGuid>
+    <ProjectGuid>{AEF3F2C9-38E3-4C56-BE50-DE7CD4041A14}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.AspNet.WebHooks</RootNamespace>
-    <AssemblyName>Microsoft.AspNet.WebHooks.Receivers.Test</AssemblyName>
+    <AssemblyName>Microsoft.AspNet.WebHooks.Receivers.MyGet.Test</AssemblyName>
     <OutputPath>..\..\bin\$(Configuration)\Test\</OutputPath>
     <RunCodeAnalysis>$(CodeAnalysis)</RunCodeAnalysis>
     <CodeAnalysisAdditionalOptions>/assemblyCompareMode:StrongNameIgnoringVersion</CodeAnalysisAdditionalOptions>
@@ -61,22 +61,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\WebHookReceiversControllerTests.cs" />
-    <Compile Include="Extensions\DependencyScopeExtensionsTests.cs" />
-    <Compile Include="Extensions\WebHookHandlerContextExtensionsTests.cs" />
-    <Compile Include="Extensions\WebHookReceiverConfigExtensionsTests.cs" />
-    <Compile Include="Mocks\WebHookReceiverMock.cs" />
+    <Compile Include="Properties\MyGetPayloads.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MyGetPayloads.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ReceiverServicesTests.cs" />
-    <Compile Include="WebHooks\WebHookQueueContextTests.cs" />
-    <Compile Include="WebHooks\WebHookQueueHandlerTests.cs" />
-    <Compile Include="WebHooks\WebHookReceiverConfigTests.cs" />
-    <Compile Include="WebHooks\WebHookReceiverManagerTests.cs" />
-    <Compile Include="WebHooks\WebHookHandlerSorterTests.cs" />
-    <Compile Include="WebHooks\WebHookHandlerTests.cs" />
-    <Compile Include="WebHooks\WebHookHandlerContextTests.cs" />
-    <Compile Include="WebHooks\WebHookReceiverTests.cs" />
-    <Compile Include="WebHooks\WebHookReceiverTestsBase.cs" />
+    <Compile Include="WebHooks\MyGetWebHookReceiverTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />
@@ -87,9 +78,17 @@
       <Project>{f7dd0935-6320-4efc-9464-d5a2d2b8c2f7}</Project>
       <Name>Microsoft.AspNet.WebHooks.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\Microsoft.AspNet.WebHooks.Receivers.MyGet\Microsoft.AspNet.WebHooks.Receivers.MyGet.csproj">
+      <Project>{B3F5421B-B28C-444C-AF60-E950048D206F}</Project>
+      <Name>Microsoft.AspNet.WebHooks.Receivers.MyGet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Src\Microsoft.AspNet.WebHooks.Receivers\Microsoft.AspNet.WebHooks.Receivers.csproj">
       <Project>{8ced31fb-32f2-4ffb-9997-452fb9728577}</Project>
       <Name>Microsoft.AspNet.WebHooks.Receivers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.AspNet.WebHooks.Receivers.Test\Microsoft.AspNet.WebHooks.Receivers.Test.csproj">
+      <Project>{cb965ed1-1e07-4374-a829-c636db09f567}</Project>
+      <Name>Microsoft.AspNet.WebHooks.Receivers.Test</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.TestUtilities\Microsoft.TestUtilities.csproj">
       <Project>{608b1d09-e4de-4dba-8dbf-7758003988f0}</Project>
@@ -103,6 +102,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\MyGetPayloads.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MyGetPayloads.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
