@@ -106,7 +106,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNet.WebHooks.R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureReceivers", "samples\AzureReceivers\AzureReceivers.csproj", "{5DFA6EF9-2417-47AF-B8BB-424E420D9464}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNet.WebHooks.Custom.SqlStorage", "Microsoft.AspNet.WebHooks.Custom.SqlStorage\Microsoft.AspNet.WebHooks.Custom.SqlStorage.csproj", "{9E1159FB-A99C-4CD2-B189-5C20A532A4D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNet.WebHooks.Custom.SqlStorage", "src\Microsoft.AspNet.WebHooks.Custom.SqlStorage\Microsoft.AspNet.WebHooks.Custom.SqlStorage.csproj", "{9E1159FB-A99C-4CD2-B189-5C20A532A4D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

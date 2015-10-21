@@ -116,11 +116,11 @@
     <Compile Include="WebHooks\SqlWebHookStore.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Src\Microsoft.AspNet.WebHooks.Common\Microsoft.AspNet.WebHooks.Common.csproj">
+    <ProjectReference Include="..\Microsoft.AspNet.WebHooks.Common\Microsoft.AspNet.WebHooks.Common.csproj">
       <Project>{f7dd0935-6320-4efc-9464-d5a2d2b8c2f7}</Project>
       <Name>Microsoft.AspNet.WebHooks.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Src\Microsoft.AspNet.WebHooks.Custom\Microsoft.AspNet.WebHooks.Custom.csproj">
+    <ProjectReference Include="..\Microsoft.AspNet.WebHooks.Custom\Microsoft.AspNet.WebHooks.Custom.csproj">
       <Project>{d4d210c6-3283-4d1d-806e-8717d8f51179}</Project>
       <Name>Microsoft.AspNet.WebHooks.Custom</Name>
     </ProjectReference>
