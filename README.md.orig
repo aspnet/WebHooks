@@ -9,11 +9,16 @@ Please see the initial [documentation](http://go.microsoft.com/fwlink/?LinkId=69
 
 ###Samples
 - [All Samples](/samples/)
+<<<<<<< HEAD
 - [Azure](/samples/AzureReceivers)
 - [Bitbucket](/samples/BitbucketReceiver)
 - [Instagram](/samples/InstagramReceiver)
 - [Slack](/samples/SlackReceiver)
-- [Zendesk](/samples/ZendeskReceiver)
+=======
+- [Bitbucket Receiver](/samples/BitbucketReceiver)
+- [Azure Receivers](/samples/AzureReceivers)
+- [Zendesk Receiver](/samples/ZendeskReceiver)
+>>>>>>> a564736... Intiated implementation of Zendesk WebHook for devices (ios, android) as per their documentations. This work still in progress, test needs to be implemented. Sample still required to test.
 
 ###Resources
 - [Announcement of Microsoft ASP.NET WebHooks Preview](http://blogs.msdn.com/b/webdev/archive/2015/09/04/introducing-microsoft-asp-net-webhooks-preview.aspx)
