@@ -22,7 +22,7 @@ namespace System.Web.Http
         /// For details about Microsoft Dynamics CRM WebHooks, see <c>TODO URL of blog post</c>.
         /// </summary>
         /// <param name="config">The current <see cref="HttpConfiguration"/>config.</param>
-        public static void InitializeReceiveSampleDynamicsCrmWebHooks(this HttpConfiguration config)
+        public static void InitializeReceiveDynamicsCrmWebHooks(this HttpConfiguration config)
         {
             WebHooksConfig.Initialize(config);
         }

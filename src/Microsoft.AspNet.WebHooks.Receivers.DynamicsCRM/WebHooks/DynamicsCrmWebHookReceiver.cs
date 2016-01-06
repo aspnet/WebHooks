@@ -54,9 +54,10 @@ namespace Microsoft.AspNet.WebHooks
 
             // Read the request entity body.
             JObject data = await ReadAsJsonAsync(request);
+            string messageName = data != null ? data.Value<string>("MessageName") : string.Empty;
 
             // Call registered WebHook handlers.
-            return await ExecuteWebHookAsync(id, context, request, new string[] {}, data);
+            return await ExecuteWebHookAsync(id, context, request, new string[] { messageName }, data);
         }
     }
 }
