@@ -12,6 +12,9 @@ using Microsoft.TestUtilities.Mocks;
 using Moq;
 using Moq.Protected;
 using Xunit;
+using System;
+using System.Web.Http.Controllers;
+using Microsoft.AspNet.WebHooks.Config;
 
 namespace Microsoft.AspNet.WebHooks
 {
@@ -98,6 +101,27 @@ namespace Microsoft.AspNet.WebHooks
         }
 
         [Fact]
+        public async Task ReceiveAsync_Succeeds_IfTestId_And_InTestMode()
+        {
+            // Arrange
+            Initialize(TestSecret, true);
+
+            _postRequest.Content = new StringContent("{ \"type\": \"action\", \"id\": \"" + StripeWebHookReceiver.TestId + "\" }", Encoding.UTF8, "application/json");
+            ReceiverMock.Protected()
+                .Setup<Task<HttpResponseMessage>>("ExecuteWebHookAsync", "", RequestContext, _postRequest, new string[] { "action" }, ItExpr.IsAny<object>())
+                .ReturnsAsync(new HttpResponseMessage())
+                .Verifiable();
+            // Act
+            HttpResponseMessage actual = await ReceiverMock.Object.ReceiveAsync(TestId, RequestContext, _postRequest);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, actual.StatusCode);
+            Assert.Equal(0, _handlerMock.Counter);
+            ReceiverMock.Protected()
+                .Verify<Task<HttpResponseMessage>>("ExecuteWebHookAsync", Times.Once(), TestId, RequestContext, _postRequest, ItExpr.IsAny<IEnumerable<string>>(), ItExpr.IsAny<object>());
+        }
+
+        [Fact]
         public async Task ReceiveAsync_Throws_IfPostHasUnknownId()
         {
             // Arrange
@@ -170,6 +194,22 @@ namespace Microsoft.AspNet.WebHooks
             // Act
             Receiver.Dispose();
             Receiver.Dispose();
+        }
+
+        public void Initialize(string config, bool inTestMode)
+        {
+            this.Initialize(config);
+            Settings.Add("MS_WebHookStripeInTestMode", inTestMode.ToString());
+
+            ReceiverConfig = new WebHookReceiverConfig(Settings, Logger);
+
+            HttpConfig = HttpConfigurationMock.Create(new Dictionary<Type, object>
+            {
+                { typeof(IWebHookReceiverConfig), ReceiverConfig },
+                { typeof(SettingsDictionary), Settings }
+            });
+
+            RequestContext = new HttpRequestContext { Configuration = HttpConfig };
         }
 
         public override void Initialize(string config)
