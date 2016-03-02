@@ -65,5 +65,19 @@ namespace Microsoft.AspNet.WebHooks
             string actualJson = JsonConvert.SerializeObject(actual, _serializerSettings);
             Assert.Equal(expectedJson, actualJson);
         }
+
+        [Fact]
+        public void AlertContext_ExampleInAzureDocumentationCanBeParsed()
+        {
+            // Arrange
+            JObject data = EmbeddedResource.ReadAsJObject("Microsoft.AspNet.WebHooks.Messages.AlertMessage3.json");
+
+            // Act
+            AzureAlertNotification actual = data.ToObject<AzureAlertNotification>();
+
+            // Assert
+            Assert.Equal("Activated", actual.Status);
+
+        }
     }
 }
