@@ -24,40 +24,40 @@ namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources
     public class WorkItemUpdatedFields
     {
         [JsonProperty("System.Rev")]
-        public WorkItemUpdatedFieldValue SystemRev { get; set; }
+        public WorkItemUpdatedFieldValue<string> SystemRev { get; set; }
 
         [JsonProperty("System.AuthorizedDate")]
-        public WorkItemUpdatedFieldValue SystemAuthorizedDate { get; set; }
+        public WorkItemUpdatedFieldValue<DateTime> SystemAuthorizedDate { get; set; }
 
         [JsonProperty("System.RevisedDate")]
-        public WorkItemUpdatedFieldValue SystemRevisedDate { get; set; }
+        public WorkItemUpdatedFieldValue<DateTime> SystemRevisedDate { get; set; }
 
         [JsonProperty("System.State")]
-        public WorkItemUpdatedFieldValue SystemState { get; set; }
+        public WorkItemUpdatedFieldValue<string> SystemState { get; set; }
 
         [JsonProperty("System.Reason")]
-        public WorkItemUpdatedFieldValue SystemReason { get; set; }
+        public WorkItemUpdatedFieldValue<string> SystemReason { get; set; }
 
         [JsonProperty("System.AssignedTo")]
-        public WorkItemUpdatedFieldValue SystemAssignedTo { get; set; }
+        public WorkItemUpdatedFieldValue<string> SystemAssignedTo { get; set; }
 
         [JsonProperty("System.ChangedDate")]
-        public WorkItemUpdatedFieldValue SystemChangedDate { get; set; }
+        public WorkItemUpdatedFieldValue<DateTime> SystemChangedDate { get; set; }
 
         [JsonProperty("System.Watermark")]
-        public WorkItemUpdatedFieldValue SystemWatermark { get; set; }
+        public WorkItemUpdatedFieldValue<string> SystemWatermark { get; set; }
 
         [JsonProperty("Microsoft.VSTS.Common.Severity")]
-        public WorkItemUpdatedFieldValue MicrosoftVSTSCommonSeverity { get; set; }
+        public WorkItemUpdatedFieldValue<string> MicrosoftVSTSCommonSeverity { get; set; }
     }
 
-    public class WorkItemUpdatedFieldValue
+    public class WorkItemUpdatedFieldValue<T>
     {
         [JsonProperty("oldValue")]
-        public string OldValue { get; set; }
+        public T OldValue { get; set; }
 
         [JsonProperty("newValue")]
-        public string NewValue { get; set; }
+        public T NewValue { get; set; }
     }
 
     public class WorkItemUpdatedRevision

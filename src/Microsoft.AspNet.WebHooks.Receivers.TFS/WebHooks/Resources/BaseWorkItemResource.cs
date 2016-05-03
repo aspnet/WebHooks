@@ -74,6 +74,9 @@ namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources
         [JsonProperty("self")]
         public WorkItemLink Self { get; set; }
 
+        [JsonProperty("parent")]
+        public WorkItemLink Parent { get; set; }
+
         [JsonProperty("workItemUpdates")]
         public WorkItemLink WorkItemUpdates { get; set; }
 
