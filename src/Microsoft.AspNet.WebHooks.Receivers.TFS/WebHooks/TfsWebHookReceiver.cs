@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNet.WebHooks;
+﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Web.Http.Controllers;
@@ -12,7 +12,7 @@ namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks
 {
     class TfsWebHookReceiver : WebHookReceiver
     {
-        internal const string RecName = "instagram";
+        internal const string RecName = "tfs";
 
         static readonly Dictionary<string, Type> _mapping = new Dictionary<string, Type>()
         {

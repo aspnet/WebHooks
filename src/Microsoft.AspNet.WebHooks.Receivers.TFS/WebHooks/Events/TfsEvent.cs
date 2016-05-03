@@ -1,46 +1,75 @@
-﻿using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources;
+﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources;
+using Newtonsoft.Json;
 using System;
 
 namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Events
 {
     public abstract class TfsEvent<T> where T : BaseResource
     {
-        public string subscriptionId { get; set; }
-        public int notificationId { get; set; }
-        public string id { get; set; }
-        public string eventType { get; set; }
-        public string publisherId { get; set; }
-        public Message message { get; set; }
-        public DetailedMessage detailedMessage { get; set; }
-        public T resource { get; set; }
-        public string resourceVersion { get; set; }
-        public ResourceContainer resourceContainers { get; set; }
-        public DateTime createdDate { get; set; }
+        [JsonProperty("subscriptionId")]
+        public string SubscriptionId { get; set; }
+
+        [JsonProperty("notificationId")]
+        public int NotificationId { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("eventType")]
+        public string EventType { get; set; }
+
+        [JsonProperty("publisherId")]
+        public string PublisherId { get; set; }
+
+        [JsonProperty("message")]
+        public TfsEventMessage Message { get; set; }
+
+        [JsonProperty("detailedMessage")]
+        public TfsEventMessage DetailedMessage { get; set; }
+
+        [JsonProperty("resource")]
+        public T Resource { get; set; }
+
+        [JsonProperty("resourceVersion")]
+        public string ResourceVersion { get; set; }
+
+        [JsonProperty("resourceContainers")]
+        public TfsEventResourceContainer ResourceContainers { get; set; }
+
+        [JsonProperty("createdDate")]
+        public DateTime CreatedDate { get; set; }
     }
 
-    public class DetailedMessage
+    public class TfsEventMessage
     {
-        public string text { get; set; }
-        public string html { get; set; }
-        public string markdown { get; set; }
+        [JsonProperty("text")]
+        public string Text { get; set; }
+
+        [JsonProperty("html")]
+        public string Html { get; set; }
+
+        [JsonProperty("markdown")]
+        public string Markdown { get; set; }
     }
 
-    public class Message
+    public class TfsEventResourceContainer
     {
-        public string text { get; set; }
-        public string html { get; set; }
-        public string markdown { get; set; }
+        [JsonProperty("collection")]
+        public TfsEventContainerProperty Collection { get; set; }
+
+        [JsonProperty("account")]
+        public TfsEventContainerProperty Account { get; set; }
+
+        [JsonProperty("project")]
+        public TfsEventContainerProperty Project { get; set; }
     }
 
-    public class ResourceContainer
+    public class TfsEventContainerProperty
     {
-        public ContainerProperty collection { get; set; }
-        public ContainerProperty account { get; set; }
-        public ContainerProperty project { get; set; }
-    }
-
-    public class ContainerProperty
-    {
-        public string id { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
     }
 }

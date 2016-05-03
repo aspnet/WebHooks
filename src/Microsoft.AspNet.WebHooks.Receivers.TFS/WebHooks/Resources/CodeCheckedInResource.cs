@@ -1,66 +1,140 @@
-﻿using System;
+﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+using Newtonsoft.Json;
+using System;
 
 namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources
 {
     public class CodeCheckedInResource : BaseResource
     {
-        public string uri { get; set; }
-        public int id { get; set; }
-        public string buildNumber { get; set; }
-        public string url { get; set; }
-        public DateTime startTime { get; set; }
-        public DateTime finishTime { get; set; }
-        public string reason { get; set; }
-        public string status { get; set; }
-        public string dropLocation { get; set; }
-        public Drop drop { get; set; }
-        public Log log { get; set; }
-        public string sourceGetVersion { get; set; }
-        public ResourceUser lastChangedBy { get; set; }
-        public bool retainIndefinitely { get; set; }
-        public bool hasDiagnostics { get; set; }
-        public Definition definition { get; set; }
-        public Queue queue { get; set; }
-        public Request[] requests { get; set; }
+        [JsonProperty("uri")]
+        public string Uri { get; set; }
+
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("buildNumber")]
+        public string BuildNumber { get; set; }
+
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("startTime")]
+        public DateTime StartTime { get; set; }
+
+        [JsonProperty("finishTime")]
+        public DateTime FinishTime { get; set; }
+
+        [JsonProperty("reason")]
+        public string Reason { get; set; }
+
+        [JsonProperty("status")]
+        public string Status { get; set; }
+
+        [JsonProperty("dropLocation")]
+        public string DropLocation { get; set; }
+
+        [JsonProperty("drop")]
+        public CodeCheckedInDrop Drop { get; set; }
+
+        [JsonProperty("log")]
+        public CodeCheckedInLog Log { get; set; }
+
+        [JsonProperty("sourceGetVersion")]
+        public string SourceGetVersion { get; set; }
+
+        [JsonProperty("lastChangedBy")]
+        public ResourceUser LastChangedBy { get; set; }
+
+        [JsonProperty("retainIndefinitely")]
+        public bool RetainIndefinitely { get; set; }
+
+        [JsonProperty("hasDiagnostics")]
+        public bool HasDiagnostics { get; set; }
+
+        [JsonProperty("definition")]
+        public CodeCheckedInDefinition Definition { get; set; }
+
+        [JsonProperty("queue")]
+        public CodeCheckedInQueue Queue { get; set; }
+
+        [JsonProperty("requests")]
+        public CodeCheckedInRequest[] Requests { get; set; }
     }
 
-    public class Drop
+    public class CodeCheckedInDrop
     {
-        public string location { get; set; }
-        public string type { get; set; }
-        public string url { get; set; }
-        public string downloadUrl { get; set; }
+        [JsonProperty("location")]
+        public string Location { get; set; }
+
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("downloadUrl")]
+        public string DownloadUrl { get; set; }
     }
 
-    public class Log
+    public class CodeCheckedInLog
     {
-        public string type { get; set; }
-        public string url { get; set; }
-        public string downloadUrl { get; set; }
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("downloadUrl")]
+        public string DownloadUrl { get; set; }
     }
 
-    public class Definition
+    public class CodeCheckedInDefinition
     {
-        public int batchSize { get; set; }
-        public string triggerType { get; set; }
-        public string definitionType { get; set; }
-        public int id { get; set; }
-        public string name { get; set; }
-        public string url { get; set; }
+        [JsonProperty("batchSize")]
+        public int BatchSize { get; set; }
+
+        [JsonProperty("triggerType")]
+        public string TriggerType { get; set; }
+
+        [JsonProperty("definitionType")]
+        public string DefinitionType { get; set; }
+
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("url")]
+        public string Url { get; set; }
     }
 
-    public class Queue
+    public class CodeCheckedInQueue
     {
-        public string queueType { get; set; }
-        public int id { get; set; }
-        public string name { get; set; }
-        public string url { get; set; }
+        [JsonProperty("queueType")]
+        public string QueueType { get; set; }
+
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("url")]
+        public string Url { get; set; }
     }
 
-    public class Request
+    public class CodeCheckedInRequest
     {
-        public int id { get; set; }
-        public string url { get; set; }
-        public ResourceUser requestedFor { get; set; }
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("requestedFor")]
+        public ResourceUser RequestedFor { get; set; }
     }
 }
