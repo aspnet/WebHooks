@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Events;
+using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -15,7 +16,48 @@ namespace Microsoft.AspNet.WebHooks
         {
             // Arrange
             JObject data = EmbeddedResource.ReadAsJObject("Microsoft.AspNet.WebHooks.Messages.message.posted.json");
-            var expected = new TeamRoomMessagePostedEvent();
+            var expected = new TeamRoomMessagePostedEvent
+            {
+                SubscriptionId = "00000000-0000-0000-0000-000000000000",
+                NotificationId = 3,
+                Id = "daae438c-296b-4512-b08e-571910874e9b",
+                EventType = "message.posted",
+                PublisherId = "tfs",
+                Message = new TfsEventMessage
+                {
+                    Text = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello",
+                    Html = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello",
+                    Markdown = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello"
+                },
+                DetailedMessage = new TfsEventMessage
+                {
+                    Text = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello",
+                    Html = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room<p>Hello</p>",
+                    Markdown = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello"
+                },
+                Resource = new TeamRoomMessagePostedResource
+                {
+                    Id = 0,
+                    Content = "Hello",
+                    MessageType = "normal",
+                    PostedTime = "2014-05-02T19:17:13.3309587Z".ToDateTime(),
+                    PostedRoomId = 1,
+                    PostedBy = new ResourceUser
+                    {
+                        Id = "00067FFED5C7AF52@Live.com",
+                        DisplayName = "Jamal Hartnett",
+                        UniqueName = "Windows Live ID\\fabrikamfiber4@hotmail.com"
+                    }
+                },
+                ResourceVersion = "1.0",
+                ResourceContainers = new TfsEventResourceContainer
+                {
+                    Collection = new TfsEventContainerProperty { Id = "c12d0eb8-e382-443b-9f9c-c52cba5014c2" },
+                    Account = new TfsEventContainerProperty { Id = "f844ec47-a9db-4511-8281-8b63f4eaf94e" },
+                    Project = new TfsEventContainerProperty { Id = "be9b3917-87e6-42a4-a549-2bc06a7a878f" }
+                },
+                CreatedDate = "2016-05-02T19:13:40.8417653Z".ToDateTime()
+            };
 
             // Act
             var actual = data.ToObject<TeamRoomMessagePostedEvent>();
