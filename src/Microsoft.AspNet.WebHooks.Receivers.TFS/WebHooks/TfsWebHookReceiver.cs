@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Web.Http.Controllers;
-using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Events;
+using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 using Microsoft.AspNet.WebHooks.Properties;
@@ -39,14 +39,14 @@ namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks
         public TfsWebHookReceiver()
         {
             _eventsTypes = new Dictionary<string, Type>() {
-                { "workitem.updated", typeof(WorkItemUpdatedEvent) },
-                { "workitem.restored", typeof(WorkItemRestoredEvent) },
-                { "workitem.deleted", typeof(WorkItemDeletedEvent) },
-                { "workitem.created", typeof(WorkItemCreatedEvent) },
-                { "workitem.commented", typeof(WorkItemCommentedOnEvent) },
-                { "message.posted", typeof(TeamRoomMessagePostedEvent) },
-                { "tfvc.checkin", typeof(CodeCheckedInEvent) },
-                { "build.complete", typeof(BuildCompletedEvent) } };
+                { "workitem.updated", typeof(WorkItemUpdatedPayload) },
+                { "workitem.restored", typeof(WorkItemRestoredPayload) },
+                { "workitem.deleted", typeof(WorkItemDeletedPayload) },
+                { "workitem.created", typeof(WorkItemCreatedPayload) },
+                { "workitem.commented", typeof(WorkItemCommentedOnPayload) },
+                { "message.posted", typeof(TeamRoomMessagePostedPayload) },
+                { "tfvc.checkin", typeof(CodeCheckedInPayload) },
+                { "build.complete", typeof(BuildCompletedPayload) } };
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks
             JToken rawJsonData = await ReadAsJsonTokenAsync(request);
             string action = rawJsonData.SelectToken(EventTypeTokenName)?.Value<string>();
 
-            // Map eventType to action and call registered handlers with appropriate parameter type
+            // Map eventType to payload and call registered handlers with appropriate parameter type
             if (String.IsNullOrEmpty(action))
             {
                 request.GetConfiguration().DependencyResolver.GetLogger().Error(TfsReceiverResources.Receiver_NoEventType);

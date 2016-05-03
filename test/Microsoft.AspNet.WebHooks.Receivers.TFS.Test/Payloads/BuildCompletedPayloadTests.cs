@@ -1,36 +1,35 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Events;
-using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources;
+using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace Microsoft.AspNet.WebHooks
 {
-    public class BuildCompletedEventTests
+    public class BuildCompletedPayloadTests
     {
         [Fact]
-        public void BuildCompletedEvent_Roundtrips()
+        public void BuildCompletedPayload_Roundtrips()
         {
             // Arrange
             JObject data = EmbeddedResource.ReadAsJObject("Microsoft.AspNet.WebHooks.Messages.build.complete.json");
 
-            var expected = new BuildCompletedEvent
+            var expected = new BuildCompletedPayload
             {
                 SubscriptionId = "00000000-0000-0000-0000-000000000000",
                 NotificationId = 1,
                 Id = "4a5d99d6-1c75-4e53-91b9-ee80057d4ce3",
                 EventType = "build.complete",
                 PublisherId = "tfs",
-                Message = new TfsEventMessage
+                Message = new PayloadMessage
                 {
                     Text = "Build ConsumerAddressModule_20150407.2 succeeded",
                     Html = "Build <a href=\"https://fabrikam-fiber-inc.visualstudio.com/web/build.aspx?pcguid=5023c10b-bef3-41c3-bf53-686c4e34ee9e&amp;builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3\">ConsumerAddressModule_20150407.2</a> succeeded",
                     Markdown = "Build [ConsumerAddressModule_20150407.2](https://fabrikam-fiber-inc.visualstudio.com/web/build.aspx?pcguid=5023c10b-bef3-41c3-bf53-686c4e34ee9e&builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3) succeeded"
                 },
-                DetailedMessage = new TfsEventMessage
+                DetailedMessage = new PayloadMessage
                 {
                     Text = "Build ConsumerAddressModule_20150407.2 succeeded",
                     Html = "Build <a href=\"https://fabrikam-fiber-inc.visualstudio.com/web/build.aspx?pcguid=5023c10b-bef3-41c3-bf53-686c4e34ee9e&amp;builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3\">ConsumerAddressModule_20150407.2</a> succeeded",
@@ -104,16 +103,16 @@ namespace Microsoft.AspNet.WebHooks
                     }
                 },
                 ResourceVersion = "1.0",
-                ResourceContainers = new TfsEventResourceContainer {
-                    Collection = new TfsEventContainerProperty { Id = "c12d0eb8-e382-443b-9f9c-c52cba5014c2" },
-                    Account = new TfsEventContainerProperty  { Id = "f844ec47-a9db-4511-8281-8b63f4eaf94e" },
-                    Project =new TfsEventContainerProperty  { Id = "be9b3917-87e6-42a4-a549-2bc06a7a878f" }
+                ResourceContainers = new PayloadResourceContainers {
+                    Collection = new PayloadResourceContainer { Id = "c12d0eb8-e382-443b-9f9c-c52cba5014c2" },
+                    Account = new PayloadResourceContainer  { Id = "f844ec47-a9db-4511-8281-8b63f4eaf94e" },
+                    Project =new PayloadResourceContainer  { Id = "be9b3917-87e6-42a4-a549-2bc06a7a878f" }
                 },
                 CreatedDate = "2016-05-02T19:00:39.5893296Z".ToDateTime()
             };
 
             // Act
-            var actual = data.ToObject<BuildCompletedEvent>();
+            var actual = data.ToObject<BuildCompletedPayload>();
 
             // Assert
             string expectedJson = JsonConvert.SerializeObject(expected);

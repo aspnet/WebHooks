@@ -53,26 +53,18 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="WebHooks\Events\BuildCompletedEvent.cs" />
-    <Compile Include="WebHooks\Events\CodeCheckedInEvent.cs" />
-    <Compile Include="WebHooks\Events\TeamRoomMessagePostedEvent.cs" />
-    <Compile Include="WebHooks\Events\TfsEvent.cs" />
-    <Compile Include="WebHooks\Resources\BaseResource.cs" />
-    <Compile Include="WebHooks\Resources\BaseWorkItemResource.cs" />
-    <Compile Include="WebHooks\Resources\BuildCompletedResource.cs" />
-    <Compile Include="WebHooks\Resources\CodeCheckedInResource.cs" />
-    <Compile Include="WebHooks\Resources\ResourceUser.cs" />
-    <Compile Include="WebHooks\Resources\TeamRoomMessagePostedResource.cs" />
-    <Compile Include="WebHooks\Events\WorkItemCommentedOnEvent.cs" />
-    <Compile Include="WebHooks\Events\WorkItemCreatedEvent.cs" />
-    <Compile Include="WebHooks\Events\WorkItemDeletedEvent.cs" />
-    <Compile Include="WebHooks\Events\WorkItemRestoredEvent.cs" />
-    <Compile Include="WebHooks\Events\WorkItemUpdatedEvent.cs" />
-    <Compile Include="WebHooks\Resources\WorkItemCommentedOnResource.cs" />
-    <Compile Include="WebHooks\Resources\WorkItemCreatedResource.cs" />
-    <Compile Include="WebHooks\Resources\WorkItemDeletedResource.cs" />
-    <Compile Include="WebHooks\Resources\WorkItemRestoredResource.cs" />
-    <Compile Include="WebHooks\Resources\WorkItemUpdatedResource.cs" />
+    <Compile Include="Payloads\BuildCompletedPayload.cs" />
+    <Compile Include="Payloads\CodeCheckedInPayload.cs" />
+    <Compile Include="Payloads\TeamRoomMessagePostedPayload.cs" />
+    <Compile Include="Payloads\BasePayload.cs" />
+    <Compile Include="Payloads\BaseResource.cs" />
+    <Compile Include="Payloads\BaseWorkItemResource.cs" />
+    <Compile Include="Payloads\ResourceUser.cs" />
+    <Compile Include="Payloads\WorkItemCommentedOnPayload.cs" />
+    <Compile Include="Payloads\WorkItemCreatedPayload.cs" />
+    <Compile Include="Payloads\WorkItemRestoredPayload.cs" />
+    <Compile Include="Payloads\WorkItemUpdatedPayload.cs" />
+    <Compile Include="Payloads\WorkItemDeletedPayload.cs" />
     <Compile Include="WebHooks\TfsWebHookReceiver.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -63,15 +63,15 @@
       <Link>Common\EmbeddedResource.cs</Link>
     </Compile>
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Payloads\BuildCompletedPayloadTests.cs" />
+    <Compile Include="Payloads\CodeCheckedInPayloadTests.cs" />
+    <Compile Include="Payloads\TeamRoomMessagePostedPayloadTests.cs" />
+    <Compile Include="Payloads\WorkItemCommentedOnPayloadTests.cs" />
+    <Compile Include="Payloads\WorkItemCreatedPayloadTests.cs" />
+    <Compile Include="Payloads\WorkItemDeletedPayloadTests.cs" />
+    <Compile Include="Payloads\WorkItemRestoredPayloadTests.cs" />
+    <Compile Include="Payloads\WorkItemUpdatedPayloadTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebHooks\Events\BuildCompletedEventTests.cs" />
-    <Compile Include="WebHooks\Events\CodeCheckedInEventTests.cs" />
-    <Compile Include="WebHooks\Events\TeamRoomMessagePostedEventTests.cs" />
-    <Compile Include="WebHooks\Events\WorkItemCommentedOnEventTests.cs" />
-    <Compile Include="WebHooks\Events\WorkItemCreatedEventTests.cs" />
-    <Compile Include="WebHooks\Events\WorkItemDeletedEventTests.cs" />
-    <Compile Include="WebHooks\Events\WorkItemRestoredEventTests.cs" />
-    <Compile Include="WebHooks\Events\WorkItemUpdatedEventTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />
@@ -119,7 +119,9 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="WebHooks\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

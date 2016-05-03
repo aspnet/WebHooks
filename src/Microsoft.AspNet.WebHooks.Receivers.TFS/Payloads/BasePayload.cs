@@ -1,13 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources;
 using Newtonsoft.Json;
 using System;
 
-namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Events
+namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads
 {
-    public abstract class TfsEvent<T> where T : BaseResource
+    public abstract class BasePayload<T> where T : BaseResource
     {
         [JsonProperty("subscriptionId")]
         public string SubscriptionId { get; set; }
@@ -25,10 +24,10 @@ namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Events
         public string PublisherId { get; set; }
 
         [JsonProperty("message")]
-        public TfsEventMessage Message { get; set; }
+        public PayloadMessage Message { get; set; }
 
         [JsonProperty("detailedMessage")]
-        public TfsEventMessage DetailedMessage { get; set; }
+        public PayloadMessage DetailedMessage { get; set; }
 
         [JsonProperty("resource")]
         public T Resource { get; set; }
@@ -37,13 +36,13 @@ namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Events
         public string ResourceVersion { get; set; }
 
         [JsonProperty("resourceContainers")]
-        public TfsEventResourceContainer ResourceContainers { get; set; }
+        public PayloadResourceContainers ResourceContainers { get; set; }
 
         [JsonProperty("createdDate")]
         public DateTime CreatedDate { get; set; }
     }
 
-    public class TfsEventMessage
+    public class PayloadMessage
     {
         [JsonProperty("text")]
         public string Text { get; set; }
@@ -55,19 +54,19 @@ namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Events
         public string Markdown { get; set; }
     }
 
-    public class TfsEventResourceContainer
+    public class PayloadResourceContainers
     {
         [JsonProperty("collection")]
-        public TfsEventContainerProperty Collection { get; set; }
+        public PayloadResourceContainer Collection { get; set; }
 
         [JsonProperty("account")]
-        public TfsEventContainerProperty Account { get; set; }
+        public PayloadResourceContainer Account { get; set; }
 
         [JsonProperty("project")]
-        public TfsEventContainerProperty Project { get; set; }
+        public PayloadResourceContainer Project { get; set; }
     }
 
-    public class TfsEventContainerProperty
+    public class PayloadResourceContainer
     {
         [JsonProperty("id")]
         public string Id { get; set; }

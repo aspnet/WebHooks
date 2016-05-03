@@ -4,7 +4,7 @@
 using Newtonsoft.Json;
 using System;
 
-namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources
+namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads
 {
     public abstract class BaseWorkItemResource<T> : BaseResource
     {

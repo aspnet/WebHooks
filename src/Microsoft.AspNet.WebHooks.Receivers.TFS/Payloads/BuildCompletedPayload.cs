@@ -4,8 +4,12 @@
 using Newtonsoft.Json;
 using System;
 
-namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources
+namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads
 {
+    public class BuildCompletedPayload : BasePayload<BuildCompletedResource>
+    {
+    }
+
     public class BuildCompletedResource : BaseResource
     {
         [JsonProperty("uri")]

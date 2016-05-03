@@ -4,8 +4,11 @@
 using Newtonsoft.Json;
 using System;
 
-namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources
+namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads
 {
+    public class CodeCheckedInPayload : BasePayload<CodeCheckedInResource>
+    {        
+    }
     public class CodeCheckedInResource : BaseResource
     {
         [JsonProperty("changesetId")]
