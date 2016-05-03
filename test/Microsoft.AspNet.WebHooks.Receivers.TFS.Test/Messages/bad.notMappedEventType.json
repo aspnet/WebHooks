@@ -1,0 +1,25 @@
+﻿{
+  "subscriptionId": "00000000-0000-0000-0000-000000000000",
+  "notificationId": 10,
+  "id": "4a5d99d6-1c75-4e53-91b9-ee80057d4ce3",
+  "eventType": "newTypeOfEventType",
+  "publisherId": "tfs",
+  "message": {
+    "text": "Something exiting",
+    "html": "Build <a href=\"https://fabrikam-fiber-inc.visualstudio.com/web/build.aspx?pcguid=5023c10b-bef3-41c3-bf53-686c4e34ee9e&amp;builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3\">ConsumerAddressModule_20150407.2</a> succeeded",
+    "markdown": "Build [ConsumerAddressModule_20150407.2](https://fabrikam-fiber-inc.visualstudio.com/web/build.aspx?pcguid=5023c10b-bef3-41c3-bf53-686c4e34ee9e&builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3) succeeded"
+  },
+  "detailedMessage": {
+    "text": "Something exiting",
+    "html": "Build <a href=\"https://fabrikam-fiber-inc.visualstudio.com/web/build.aspx?pcguid=5023c10b-bef3-41c3-bf53-686c4e34ee9e&amp;builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3\">ConsumerAddressModule_20150407.2</a> succeeded",
+    "markdown": "Build [ConsumerAddressModule_20150407.2](https://fabrikam-fiber-inc.visualstudio.com/web/build.aspx?pcguid=5023c10b-bef3-41c3-bf53-686c4e34ee9e&builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3) succeeded"
+  },
+  "resource": { },
+  "resourceVersion": "1.0",
+  "resourceContainers": {
+    "collection": { "id": "c12d0eb8-e382-443b-9f9c-c52cba5014c2" },
+    "account": { "id": "f844ec47-a9db-4511-8281-8b63f4eaf94e" },
+    "project": { "id": "be9b3917-87e6-42a4-a549-2bc06a7a878f" }
+  },
+  "createdDate": "2016-05-02T19:00:39.5893296Z"
+}
