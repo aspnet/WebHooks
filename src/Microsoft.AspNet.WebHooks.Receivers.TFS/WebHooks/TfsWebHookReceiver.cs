@@ -9,6 +9,7 @@ using System.Web.Http.Controllers;
 using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Events;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
+using Microsoft.AspNet.WebHooks.Properties;
 
 namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks
 {
