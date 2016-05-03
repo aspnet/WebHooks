@@ -12,7 +12,7 @@ namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Resources
         public int Id { get; set; }
 
         [JsonProperty("rev")]
-        public int Revision { get; set; }
+        public int RevisionNumber { get; set; }
 
         [JsonProperty("fields")]
         public T Fields { get; set; }
