@@ -117,10 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Handler_NonMappedEventType" xml:space="preserve">
+    <value>The property 'eventType' contains unmapped value '{0}'.</value>
+  </data>
   <data name="Receiver_NoEventType" xml:space="preserve">
     <value>No property 'eventType' was found in root of the object</value>
-  </data>
-  <data name="Receiver_NonMappedEventType" xml:space="preserve">
-    <value>The property 'eventType' contains unmapped value '{0}'.</value>
   </data>
 </root>

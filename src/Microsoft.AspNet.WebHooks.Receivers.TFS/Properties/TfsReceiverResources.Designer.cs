@@ -61,20 +61,20 @@ namespace Microsoft.AspNet.WebHooks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The property &apos;eventType&apos; contains unmapped value &apos;{0}&apos;..
+        /// </summary>
+        internal static string Handler_NonMappedEventType {
+            get {
+                return ResourceManager.GetString("Handler_NonMappedEventType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No property &apos;eventType&apos; was found in root of the object.
         /// </summary>
         internal static string Receiver_NoEventType {
             get {
                 return ResourceManager.GetString("Receiver_NoEventType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The property &apos;eventType&apos; contains unmapped value &apos;{0}&apos;..
-        /// </summary>
-        internal static string Receiver_NonMappedEventType {
-            get {
-                return ResourceManager.GetString("Receiver_NonMappedEventType", resourceCulture);
             }
         }
     }

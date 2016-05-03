@@ -10,6 +10,7 @@ using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 using Microsoft.AspNet.WebHooks.Properties;
+using System.Net;
 
 namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks
 {
@@ -27,27 +28,7 @@ namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks
     class TfsWebHookReceiver : WebHookReceiver
     {
         internal const string RecName = "tfs";
-        internal const string RequestIdHeaderName = "X-Request-Id";
-
-        internal const string EventTypeTokenName = "eventType";
-
-        internal readonly Dictionary<string, Type> _eventsTypes;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TfsWebHookReceiver"/> class.
-        /// </summary>
-        public TfsWebHookReceiver()
-        {
-            _eventsTypes = new Dictionary<string, Type>() {
-                { "workitem.updated", typeof(WorkItemUpdatedPayload) },
-                { "workitem.restored", typeof(WorkItemRestoredPayload) },
-                { "workitem.deleted", typeof(WorkItemDeletedPayload) },
-                { "workitem.created", typeof(WorkItemCreatedPayload) },
-                { "workitem.commented", typeof(WorkItemCommentedOnPayload) },
-                { "message.posted", typeof(TeamRoomMessagePostedPayload) },
-                { "tfvc.checkin", typeof(CodeCheckedInPayload) },
-                { "build.complete", typeof(BuildCompletedPayload) } };
-        }
+        internal const string EventTypeTokenName = "eventType";        
 
         /// <summary>
         /// Gets the receiver name for this receiver.
@@ -88,25 +69,22 @@ namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks
             await EnsureValidCode(request, id);
 
             // Read the request entity body
-            JToken rawJsonData = await ReadAsJsonTokenAsync(request);
-            string action = rawJsonData.SelectToken(EventTypeTokenName)?.Value<string>();
+            JObject jsonBody = await ReadAsJsonAsync(request);
 
-            // Map eventType to payload and call registered handlers with appropriate parameter type
-            if (String.IsNullOrEmpty(action))
+            // Read the action from body
+            JToken action;
+            string actionAsString;
+            if (!jsonBody.TryGetValue(EventTypeTokenName, out action))
             {
                 request.GetConfiguration().DependencyResolver.GetLogger().Error(TfsReceiverResources.Receiver_NoEventType);
-                return CreateBadMethodResponse(request);
-            }
-            else if (!_eventsTypes.ContainsKey(action))
-            {
-                string msg = string.Format(CultureInfo.CurrentCulture, TfsReceiverResources.Receiver_NonMappedEventType, action);
-                request.GetConfiguration().DependencyResolver.GetLogger().Warn(msg);
-                return await ExecuteWebHookAsync(id, context, request, new[] { action }, rawJsonData.ToObject(_eventsTypes[action]));
+                return request.CreateErrorResponse(HttpStatusCode.BadRequest, TfsReceiverResources.Receiver_NoEventType);
             }
             else
             {
-                return await ExecuteWebHookAsync(id, context, request, new[] { action }, rawJsonData);
+                actionAsString = action.Value<string>();
             }
+
+            return await ExecuteWebHookAsync(id, context, request, new[] { actionAsString }, jsonBody);
         }
     }
 }
