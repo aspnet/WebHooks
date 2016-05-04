@@ -20,7 +20,7 @@ namespace Microsoft.AspNet.WebHooks
     /// to differentiate between multiple WebHooks, for example '<c>secret0, id1=secret1, id2=secret2</c>'.
     /// The 'code' parameter must be between 32 and 128 characters long.
     /// 
-    /// For details about Visual Studio Team Services WebHooks, see <c>https://www.some.ssl.host/en-us/get-started/integrate/service-hooks/webhooks-and-vso-vs</c>.
+    /// For details about Visual Studio Team Services WebHooks, see <c>https://www.visualstudio.com/en-us/get-started/integrate/service-hooks/webhooks-and-vso-vs</c>.
     /// </summary>
     public class TfsWebHookReceiver : WebHookReceiver
     {

@@ -13,7 +13,7 @@ namespace Microsoft.AspNet.WebHooks
 {
     /// <summary>
     /// Provides a base <see cref="IWebHookHandler" /> implementation which can be used to for handling Visual Studio Team Services WebHook 
-    /// using strongly-typed payloads. For details about MyGet WebHooks, see <c>https://www.some.ssl.host/en-us/get-started/integrate/service-hooks/webhooks-and-vso-vs</c>.
+    /// using strongly-typed payloads. For details about MyGet WebHooks, see <c>https://www.visualstudio.com/en-us/get-started/integrate/service-hooks/webhooks-and-vso-vs</c>.
     /// </summary>
     public abstract class TfsWebHookHandlerBase : WebHookHandler
     {
