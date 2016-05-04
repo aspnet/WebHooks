@@ -3,6 +3,10 @@
 
 namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads
 {
+    /// <summary>
+    /// Base class for resource object which describes 
+    /// a specific event type.
+    /// </summary>
     public abstract class BaseResource
     {
     }

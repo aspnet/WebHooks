@@ -6,26 +6,51 @@ using System;
 
 namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads
 {
+    /// <summary>
+    /// Describes the entire payload of event '<c>tfvc.checkin</c>'.
+    /// </summary>
     public class CodeCheckedInPayload : BasePayload<CodeCheckedInResource>
-    {        
+    {
     }
+
+    /// <summary>
+    /// Describes the resource that associated with <see cref="CodeCheckedInPayload"/>
+    /// </summary>
     public class CodeCheckedInResource : BaseResource
     {
+        /// <summary>
+        /// Gets the changeset identifier.
+        /// </summary>
         [JsonProperty("changesetId")]
         public int ChangesetId { get; set; }
 
+        /// <summary>
+        /// Gets the changeset URL.
+        /// </summary>
         [JsonProperty("url")]
         public string Url { get; set; }
 
+        /// <summary>
+        /// Gets the changeset author.
+        /// </summary>
         [JsonProperty("author")]
         public ResourceUser Author { get; set; }
 
+        /// <summary>
+        /// Gets the user that checked in the changeset.
+        /// </summary>
         [JsonProperty("checkedInBy")]
         public ResourceUser CheckedInBy { get; set; }
 
+        /// <summary>
+        /// Gets the changeset creation date.
+        /// </summary>
         [JsonProperty("createdDate")]
         public DateTime CreatedDate { get; set; }
 
+        /// <summary>
+        /// Gets the changeset comment.
+        /// </summary>
         [JsonProperty("comment")]
         public string Comment { get; set; }
     }

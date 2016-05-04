@@ -3,10 +3,16 @@
 
 namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads
 {
+    /// <summary>
+    /// Describes the entire payload of event '<c>workitem.restored</c>'.
+    /// </summary>
     public class WorkItemRestoredPayload : BasePayload<WorkItemRestoredResource>
     {        
     }
 
+    /// <summary>
+    /// Describes the resource that associated with <see cref="WorkItemRestoredPayload"/>
+    /// </summary>
     public class WorkItemRestoredResource : BaseWorkItemResource<WorkItemFields>
     {
     }

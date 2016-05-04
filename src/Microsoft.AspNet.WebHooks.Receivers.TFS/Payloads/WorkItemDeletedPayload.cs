@@ -3,10 +3,16 @@
 
 namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads
 {
+    /// <summary>
+    /// Describes the entire payload of event '<c>workitem.deleted</c>'.
+    /// </summary>
     public class WorkItemDeletedPayload : BasePayload<WorkItemDeletedResource>
     {
     }
 
+    /// <summary>
+    /// Describes the resource that associated with <see cref="WorkItemDeletedPayload"/>
+    /// </summary>
     public class WorkItemDeletedResource : BaseWorkItemResource<WorkItemFields>
     {
     }

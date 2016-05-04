@@ -3,10 +3,16 @@
 
 namespace Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads
 {
+    /// <summary>
+    /// Describes the entire payload of event '<c>workitem.commented</c>'.
+    /// </summary>
     public class WorkItemCommentedOnPayload : BasePayload<WorkItemCommentedOnResource>
     {        
     }
 
+    /// <summary>
+    /// Describes the resource that associated with <see cref="WorkItemCommentedOnPayload"/>
+    /// </summary>
     public class WorkItemCommentedOnResource : BaseWorkItemResource<WorkItemFields>
     {
     }
