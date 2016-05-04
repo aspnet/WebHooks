@@ -1,7 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads;
+using System;
+using Microsoft.AspNet.WebHooks.Payloads;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -30,9 +31,9 @@ namespace Microsoft.AspNet.WebHooks
                 },
                 DetailedMessage = new PayloadMessage
                 {
-                    Text = "Bug #5 (Some great new idea!) deleted by Jamal Hartnett.\r\n\r\n- Area: FabrikamCloud\r\n- Iteration: FabrikamCloud\\Release 1\\Sprint 1\r\n- State: New\r\n",
-                    Html = "Bug #5 (Some great new idea!) deleted by Jamal Hartnett.<ul>\r\n<li>Area: FabrikamCloud</li>\r\n<li>Iteration: FabrikamCloud\\Release 1\\Sprint 1</li>\r\n<li>State: New</li></ul>",
-                    Markdown = "[Bug #5] (Some great new idea!) deleted by Jamal Hartnett.\r\n\r\n* Area: FabrikamCloud\r\n* Iteration: FabrikamCloud\\Release 1\\Sprint 1\r\n* State: New\r\n"
+                    Text = "Bug #5 (Some great new idea!) deleted by Jamal Hartnett.\r\n\r\n- State: New\r\n",
+                    Html = "Bug #5 (Some great new idea!) deleted by Jamal Hartnett.<ul>\r\n<li>State: New</li></ul>",
+                    Markdown = "[Bug #5] (Some great new idea!) deleted by Jamal Hartnett.\r\n\r\n* State: New\r\n"
                 },
                 Resource = new WorkItemDeletedResource
                 {
@@ -40,9 +41,9 @@ namespace Microsoft.AspNet.WebHooks
                     RevisionNumber = 1,
                     Fields = new WorkItemFields
                     {
-                        SystemAreaPath = "FabrikamCloud",
-                        SystemTeamProject = "FabrikamCloud",
-                        SystemIterationPath = "FabrikamCloud\\Release 1\\Sprint 1",
+                        SystemAreaPath = "GoodCompanyCloud",
+                        SystemTeamProject = "GoodCompanyCloud",
+                        SystemIterationPath = "GoodCompanyCloud\\Release 1\\Sprint 1",
                         SystemWorkItemType = "Bug",
                         SystemState = "New",
                         SystemReason = "New defect reported",
@@ -51,16 +52,16 @@ namespace Microsoft.AspNet.WebHooks
                         SystemChangedDate = "2014-07-15T17:42:44.663Z".ToDateTime(),
                         SystemChangedBy = "Jamal Hartnett",
                         SystemTitle = "Some great new idea!",
-                        MicrosoftVSTSCommonSeverity = "3 - Medium",
+                        MicrosoftCommonSeverity = "3 - Medium",
                         KanbanColumn = "New"
                     },
                     Links = new WorkItemLinks
                     {
-                        Self = new WorkItemLink { Href = "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/recyclebin/5" },
-                        WorkItemType = new WorkItemLink { Href = "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/ea830882-2a3c-4095-a53f-972f9a376f6e/workItemTypes/Bug" },
-                        Fields = new WorkItemLink { Href = "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/fields" }
+                        Self = new WorkItemLink { Href = "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/recyclebin/5" },
+                        WorkItemType = new WorkItemLink { Href = "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/ea830882-2a3c-4095-a53f-972f9a376f6e/workItemTypes/Bug" },
+                        Fields = new WorkItemLink { Href = "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/fields" }
                     },
-                    Url = "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/recyclebin/5"
+                    Url = new Uri("http://good-company.some.ssl.host/DefaultCollection/_apis/wit/recyclebin/5")
                 },
                 ResourceVersion = "1.0",
                 ResourceContainers = new PayloadResourceContainers

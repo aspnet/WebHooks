@@ -1,7 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads;
+using Microsoft.AspNet.WebHooks.Payloads;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -24,15 +24,15 @@ namespace Microsoft.AspNet.WebHooks
                 PublisherId = "tfs",
                 Message = new PayloadMessage
                 {
-                    Text = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello",
-                    Html = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello",
-                    Markdown = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello"
+                    Text = "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room\r\nHello",
+                    Html = "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room\r\nHello",
+                    Markdown = "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room\r\nHello"
                 },
                 DetailedMessage = new PayloadMessage
                 {
-                    Text = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello",
-                    Html = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room<p>Hello</p>",
-                    Markdown = "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello"
+                    Text = "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room\r\nHello",
+                    Html = "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room<p>Hello</p>",
+                    Markdown = "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room\r\nHello"
                 },
                 Resource = new TeamRoomMessagePostedResource
                 {

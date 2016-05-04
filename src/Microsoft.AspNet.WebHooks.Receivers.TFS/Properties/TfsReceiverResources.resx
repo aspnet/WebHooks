@@ -121,6 +121,6 @@
     <value>The property 'eventType' contains unmapped value '{0}'.</value>
   </data>
   <data name="Receiver_NoEventType" xml:space="preserve">
-    <value>No property 'eventType' was found in root of the object</value>
+    <value>No property 'eventType' was found in root of the object.</value>
   </data>
 </root>

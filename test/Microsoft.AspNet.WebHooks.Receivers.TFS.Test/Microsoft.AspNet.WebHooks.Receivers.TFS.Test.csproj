@@ -17,9 +17,6 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Moq, Version=4.2.1502.911, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Moq.4.2.1502.0911\lib\net40\Moq.dll</HintPath>
@@ -63,6 +60,7 @@
       <Link>Common\EmbeddedResource.cs</Link>
     </Compile>
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Handlers\TfsWebHookHandlerBaseTests.cs" />
     <Compile Include="Payloads\BuildCompletedPayloadTests.cs" />
     <Compile Include="Payloads\CodeCheckedInPayloadTests.cs" />
     <Compile Include="Payloads\TeamRoomMessagePostedPayloadTests.cs" />
@@ -72,6 +70,7 @@
     <Compile Include="Payloads\WorkItemRestoredPayloadTests.cs" />
     <Compile Include="Payloads\WorkItemUpdatedPayloadTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebHooks\TfsWebHookReceiverTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />
@@ -119,9 +118,7 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="WebHooks\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

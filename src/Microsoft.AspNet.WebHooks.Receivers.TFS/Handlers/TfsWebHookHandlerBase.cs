@@ -1,27 +1,26 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.AspNet.WebHooks.Properties;
-using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks;
-using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.WebHooks.Payloads;
+using Microsoft.AspNet.WebHooks.Properties;
+using Newtonsoft.Json.Linq;
 
-namespace Microsoft.AspNet.WebHooks.Handlers
+namespace Microsoft.AspNet.WebHooks
 {
     /// <summary>
     /// Provides a base <see cref="IWebHookHandler" /> implementation which can be used to for handling Visual Studio Team Services WebHook 
-    /// using strongly-typed payloads. For details about MyGet WebHooks, see <c>https://www.visualstudio.com/en-us/get-started/integrate/service-hooks/webhooks-and-vso-vs</c>.
+    /// using strongly-typed payloads. For details about MyGet WebHooks, see <c>https://www.some.ssl.host/en-us/get-started/integrate/service-hooks/webhooks-and-vso-vs</c>.
     /// </summary>
-    class TfsWebHookHandlerBase : WebHookHandler
+    public abstract class TfsWebHookHandlerBase : WebHookHandler
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TfsWebHookHandlerBase"/> class.
         /// </summary>
-        public TfsWebHookHandlerBase()
+        protected TfsWebHookHandlerBase()
         {
             this.Receiver = TfsWebHookReceiver.ReceiverName;
         }
@@ -60,7 +59,6 @@ namespace Microsoft.AspNet.WebHooks.Handlers
         /// </summary>
         /// <param name="context">Provides context for the <see cref="IWebHookHandler"/> for further processing the incoming WebHook.</param>
         /// <param name="payload">Strong-typed WebHook payload.</param>
-        /// <returns></returns>
         public virtual Task ExecuteAsync(WebHookHandlerContext context, WorkItemUpdatedPayload payload)
         {
             return Task.FromResult(true);
@@ -71,7 +69,6 @@ namespace Microsoft.AspNet.WebHooks.Handlers
         /// </summary>
         /// <param name="context">Provides context for the <see cref="IWebHookHandler"/> for further processing the incoming WebHook.</param>
         /// <param name="payload">Strong-typed WebHook payload.</param>
-        /// <returns></returns>
         public virtual Task ExecuteAsync(WebHookHandlerContext context, WorkItemRestoredPayload payload)
         {
             return Task.FromResult(true);
@@ -82,7 +79,6 @@ namespace Microsoft.AspNet.WebHooks.Handlers
         /// </summary>
         /// <param name="context">Provides context for the <see cref="IWebHookHandler"/> for further processing the incoming WebHook.</param>
         /// <param name="payload">Strong-typed WebHook payload.</param>
-        /// <returns></returns>
         public virtual Task ExecuteAsync(WebHookHandlerContext context, WorkItemDeletedPayload payload)
         {
             return Task.FromResult(true);
@@ -93,7 +89,6 @@ namespace Microsoft.AspNet.WebHooks.Handlers
         /// </summary>
         /// <param name="context">Provides context for the <see cref="IWebHookHandler"/> for further processing the incoming WebHook.</param>
         /// <param name="payload">Strong-typed WebHook payload.</param>
-        /// <returns></returns>
         public virtual Task ExecuteAsync(WebHookHandlerContext context, WorkItemCreatedPayload payload)
         {
             return Task.FromResult(true);
@@ -104,7 +99,6 @@ namespace Microsoft.AspNet.WebHooks.Handlers
         /// </summary>
         /// <param name="context">Provides context for the <see cref="IWebHookHandler"/> for further processing the incoming WebHook.</param>
         /// <param name="payload">Strong-typed WebHook payload.</param>
-        /// <returns></returns>
         public virtual Task ExecuteAsync(WebHookHandlerContext context, WorkItemCommentedOnPayload payload)
         {
             return Task.FromResult(true);
@@ -115,7 +109,6 @@ namespace Microsoft.AspNet.WebHooks.Handlers
         /// </summary>
         /// <param name="context">Provides context for the <see cref="IWebHookHandler"/> for further processing the incoming WebHook.</param>
         /// <param name="payload">Strong-typed WebHook payload.</param>
-        /// <returns></returns>
         public virtual Task ExecuteAsync(WebHookHandlerContext context, TeamRoomMessagePostedPayload payload)
         {
             return Task.FromResult(true);
@@ -126,7 +119,6 @@ namespace Microsoft.AspNet.WebHooks.Handlers
         /// </summary>
         /// <param name="context">Provides context for the <see cref="IWebHookHandler"/> for further processing the incoming WebHook.</param>
         /// <param name="payload">Strong-typed WebHook payload.</param>
-        /// <returns></returns>
         public virtual Task ExecuteAsync(WebHookHandlerContext context, CodeCheckedInPayload payload)
         {
             return Task.FromResult(true);
@@ -137,7 +129,6 @@ namespace Microsoft.AspNet.WebHooks.Handlers
         /// </summary>
         /// <param name="context">Provides context for the <see cref="IWebHookHandler"/> for further processing the incoming WebHook.</param>
         /// <param name="payload">Strong-typed WebHook payload.</param>
-        /// <returns></returns>
         public virtual Task ExecuteAsync(WebHookHandlerContext context, BuildCompletedPayload payload)
         {
             return Task.FromResult(true);
@@ -148,7 +139,6 @@ namespace Microsoft.AspNet.WebHooks.Handlers
         /// </summary>
         /// <param name="context">Provides context for the <see cref="IWebHookHandler"/> for further processing the incoming WebHook.</param>
         /// <param name="payload">JSON payload.</param>
-        /// <returns></returns>
         public virtual Task ExecuteAsync(WebHookHandlerContext context, JObject payload)
         {
             return Task.FromResult(true);

@@ -5,14 +5,14 @@
   "eventType": "workitem.updated",
   "publisherId": "tfs",
   "message": {
-    "text": "Bug #5 (Some great new idea!) updated by Jamal Hartnett.\r\n(http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&id=5)",
-    "html": "<a href=\"http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&amp;id=5\">Bug #5</a> (Some great new idea!) updated by Jamal Hartnett.",
-    "markdown": "[Bug #5](http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&id=5) (Some great new idea!) updated by Jamal Hartnett."
+    "text": "Bug #5 (Some great new idea!) updated by Jamal Hartnett.\r\n(http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&id=5)",
+    "html": "<a href=\"http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&amp;id=5\">Bug #5</a> (Some great new idea!) updated by Jamal Hartnett.",
+    "markdown": "[Bug #5](http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&id=5) (Some great new idea!) updated by Jamal Hartnett."
   },
   "detailedMessage": {
-    "text": "Bug #5 (Some great new idea!) updated by Jamal Hartnett.\r\n(http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&id=5)\r\n\r\n- New State: Approved\r\n",
-    "html": "<a href=\"http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&amp;id=5\">Bug #5</a> (Some great new idea!) updated by Jamal Hartnett.<ul>\r\n<li>New State: Approved</li></ul>",
-    "markdown": "[Bug #5](http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&id=5) (Some great new idea!) updated by Jamal Hartnett.\r\n\r\n* New State: Approved\r\n"
+    "text": "Bug #5 (Some great new idea!) updated by Jamal Hartnett.\r\n(http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&id=5)\r\n\r\n- New State: Approved\r\n",
+    "html": "<a href=\"http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&amp;id=5\">Bug #5</a> (Some great new idea!) updated by Jamal Hartnett.<ul>\r\n<li>New State: Approved</li></ul>",
+    "markdown": "[Bug #5](http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&id=5) (Some great new idea!) updated by Jamal Hartnett.\r\n\r\n* New State: Approved\r\n"
   },
   "resource": {
     "id": 2,
@@ -56,18 +56,18 @@
       }
     },
     "_links": {
-      "self": { "href": "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/workItems/5/updates/2" },
-      "parent": { "href": "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/workItems/5" },
-      "workItemUpdates": { "href": "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/workItems/5/updates" }
+      "self": { "href": "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/workItems/5/updates/2" },
+      "parent": { "href": "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/workItems/5" },
+      "workItemUpdates": { "href": "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/workItems/5/updates" }
     },
-    "url": "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/workItems/5/updates/2",
+    "url": "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/workItems/5/updates/2",
     "revision": {
       "id": 5,
       "rev": 2,
       "fields": {
-        "System.AreaPath": "FabrikamCloud",
-        "System.TeamProject": "FabrikamCloud",
-        "System.IterationPath": "FabrikamCloud\\Release 1\\Sprint 1",
+        "System.AreaPath": "GoodCompanyCloud",
+        "System.TeamProject": "GoodCompanyCloud",
+        "System.IterationPath": "GoodCompanyCloud\\Release 1\\Sprint 1",
         "System.WorkItemType": "Bug",
         "System.State": "New",
         "System.Reason": "New defect reported",
@@ -79,7 +79,7 @@
         "Microsoft.VSTS.Common.Severity": "3 - Medium",
         "WEF_EB329F44FE5F4A94ACB1DA153FDF38BA_Kanban.Column": "New"
       },
-      "url": "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/workItems/5/revisions/2"
+      "url": "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/workItems/5/revisions/2"
     }
   },
   "resourceVersion": "1.0",

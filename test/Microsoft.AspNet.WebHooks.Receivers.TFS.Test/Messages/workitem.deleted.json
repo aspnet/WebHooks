@@ -10,17 +10,17 @@
     "markdown": "[Bug #5] (Some great new idea!) deleted by Jamal Hartnett."
   },
   "detailedMessage": {
-    "text": "Bug #5 (Some great new idea!) deleted by Jamal Hartnett.\r\n\r\n- Area: FabrikamCloud\r\n- Iteration: FabrikamCloud\\Release 1\\Sprint 1\r\n- State: New\r\n",
-    "html": "Bug #5 (Some great new idea!) deleted by Jamal Hartnett.<ul>\r\n<li>Area: FabrikamCloud</li>\r\n<li>Iteration: FabrikamCloud\\Release 1\\Sprint 1</li>\r\n<li>State: New</li></ul>",
-    "markdown": "[Bug #5] (Some great new idea!) deleted by Jamal Hartnett.\r\n\r\n* Area: FabrikamCloud\r\n* Iteration: FabrikamCloud\\Release 1\\Sprint 1\r\n* State: New\r\n"
+    "text": "Bug #5 (Some great new idea!) deleted by Jamal Hartnett.\r\n\r\n- State: New\r\n",
+    "html": "Bug #5 (Some great new idea!) deleted by Jamal Hartnett.<ul>\r\n<li>State: New</li></ul>",
+    "markdown": "[Bug #5] (Some great new idea!) deleted by Jamal Hartnett.\r\n\r\n* State: New\r\n"
   },
   "resource": {
     "id": 5,
     "rev": 1,
     "fields": {
-      "System.AreaPath": "FabrikamCloud",
-      "System.TeamProject": "FabrikamCloud",
-      "System.IterationPath": "FabrikamCloud\\Release 1\\Sprint 1",
+      "System.AreaPath": "GoodCompanyCloud",
+      "System.TeamProject": "GoodCompanyCloud",
+      "System.IterationPath": "GoodCompanyCloud\\Release 1\\Sprint 1",
       "System.WorkItemType": "Bug",
       "System.State": "New",
       "System.Reason": "New defect reported",
@@ -33,11 +33,11 @@
       "WEF_EB329F44FE5F4A94ACB1DA153FDF38BA_Kanban.Column": "New"
     },
     "_links": {
-      "self": { "href": "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/recyclebin/5" },
-      "workItemType": { "href": "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/ea830882-2a3c-4095-a53f-972f9a376f6e/workItemTypes/Bug" },
-      "fields": { "href": "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/fields" }
+      "self": { "href": "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/recyclebin/5" },
+      "workItemType": { "href": "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/ea830882-2a3c-4095-a53f-972f9a376f6e/workItemTypes/Bug" },
+      "fields": { "href": "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/fields" }
     },
-    "url": "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/recyclebin/5"
+    "url": "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/recyclebin/5"
   },
   "resourceVersion": "1.0",
   "resourceContainers": {

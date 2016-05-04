@@ -23,6 +23,7 @@
   <assembly name="Microsoft.AspNet.WebHooks.Receivers.Salesforce"/>
   <assembly name="Microsoft.AspNet.WebHooks.Receivers.Slack"/>
   <assembly name="Microsoft.AspNet.WebHooks.Receivers.Stripe"/>
+  <assembly name="Microsoft.AspNet.WebHooks.Receivers.TFS"/>
   <assembly name="Microsoft.AspNet.WebHooks.Receivers.Trello"/>
   <assembly name="Microsoft.AspNet.WebHooks.Receivers.WordPress"/>
 
@@ -49,6 +50,7 @@
   <assembly name="Microsoft.AspNet.WebHooks.Receivers.Slack.Test"/>
   <assembly name="Microsoft.AspNet.WebHooks.Receivers.Stripe.Test"/>
   <assembly name="Microsoft.AspNet.WebHooks.Receivers.Test"/>
+  <assembly name="Microsoft.AspNet.WebHooks.Receivers.TFS.Test"/>
   <assembly name="Microsoft.AspNet.WebHooks.Receivers.Trello.Test"/>
   <assembly name="Microsoft.AspNet.WebHooks.Receivers.WordPress.Test"/>
   <assembly name="Microsoft.TestUtilities"/>

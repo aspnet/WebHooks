@@ -8,6 +8,7 @@
       <Word>apis</Word>
       <Word>awaitable</Word>
       <Word>bitbucket</Word>
+	  <Word>changeset</Word>
       <Word>deployer</Word>
       <Word>dequeueing</Word>
       <Word>dequeues</Word>
@@ -16,10 +17,12 @@
       <Word>git</Word>
       <Word>instagram</Word>
       <Word>kudu</Word>
+      <Word>kanban</Word>
       <Word>mvc</Word>
       <Word>nuget</Word>
       <Word>paypal</Word>
       <Word>salesforce</Word>
+	  <Word>tfs</Word>
       <Word>trello</Word>
       <Word>ver</Word>
       <Word>zapier</Word>
@@ -40,6 +43,7 @@
     <CasingExceptions>
       <Acronym>CRM</Acronym>
       <Acronym>SSO</Acronym>
+      <Acronym>TFS</Acronym>
     </CasingExceptions>
   </Acronyms>
   </Dictionary>

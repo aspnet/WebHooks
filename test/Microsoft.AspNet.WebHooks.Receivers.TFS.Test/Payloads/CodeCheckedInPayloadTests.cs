@@ -1,7 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads;
+using System;
+using Microsoft.AspNet.WebHooks.Payloads;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -24,30 +25,30 @@ namespace Microsoft.AspNet.WebHooks
                 PublisherId = "tfs",
                 Message = new PayloadMessage
                 {
-                    Text = "Normal Paulk checked in changeset 18: Dropping in new Java sample",
-                    Html = "Normal Paulk checked in changeset <a href=\"https://fabrikam-fiber-inc.visualstudio.com/web/cs.aspx?pcguid=d81542e4-cdfa-4333-b082-1ae2d6c3ad16&amp;cs=18\">18</a>: Dropping in new Java sample",
-                    Markdown = "Normal Paulk checked in changeset [18](https://fabrikam-fiber-inc.visualstudio.com/web/cs.aspx?pcguid=d81542e4-cdfa-4333-b082-1ae2d6c3ad16&cs=18): Dropping in new Java sample"
+                    Text = "John Smith checked in changeset 18: Dropping in new Java sample",
+                    Html = "John Smith checked in changeset <a href=\"https://good-company.some.ssl.host/web/cs.aspx?id=d81542e4-cdfa-4333-b082-1ae2d6c3ad16&amp;cs=18\">18</a>: Dropping in new Java sample",
+                    Markdown = "John Smith checked in changeset [18](https://good-company.some.ssl.host/web/cs.aspx?id=d81542e4-cdfa-4333-b082-1ae2d6c3ad16&cs=18): Dropping in new Java sample"
                 },
                 DetailedMessage = new PayloadMessage
                 {
-                    Text = "Normal Paulk checked in changeset 18: Dropping in new Java sample",
-                    Html = "Normal Paulk checked in changeset <a href=\"https://fabrikam-fiber-inc.visualstudio.com/web/cs.aspx?pcguid=d81542e4-cdfa-4333-b082-1ae2d6c3ad16&amp;cs=18\">18</a>: Dropping in new Java sample",
-                    Markdown = "Normal Paulk checked in changeset [18](https://fabrikam-fiber-inc.visualstudio.com/web/cs.aspx?pcguid=d81542e4-cdfa-4333-b082-1ae2d6c3ad16&cs=18): Dropping in new Java sample"
+                    Text = "John Smith checked in changeset 18: Dropping in new Java sample",
+                    Html = "John Smith checked in changeset <a href=\"https://good-company.some.ssl.host/web/cs.aspx?id=d81542e4-cdfa-4333-b082-1ae2d6c3ad16&amp;cs=18\">18</a>: Dropping in new Java sample",
+                    Markdown = "John Smith checked in changeset [18](https://good-company.some.ssl.host/web/cs.aspx?id=d81542e4-cdfa-4333-b082-1ae2d6c3ad16&cs=18): Dropping in new Java sample"
                 },
                 Resource = new CodeCheckedInResource
                 {
                     ChangesetId = 18,
-                    Url = "https://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/tfvc/changesets/18",
+                    Url = new Uri("https://good-company.some.ssl.host/DefaultCollection/_apis/tfvc/changesets/18"),
                     Author = new ResourceUser
                     {
                         Id = "d6245f20-2af8-44f4-9451-8107cb2767db",
-                        DisplayName = "Normal Paulk",
+                        DisplayName = "John Smith",
                         UniqueName = "fabrikamfiber16@hotmail.com"
                     },
                     CheckedInBy = new ResourceUser
                     {
                         Id = "d6245f20-2af8-44f4-9451-8107cb2767db",
-                        DisplayName = "Normal Paulk",
+                        DisplayName = "John Smith",
                         UniqueName = "fabrikamfiber16@hotmail.com"
                     },
                     CreatedDate = "2014-05-12T22:41:16Z".ToDateTime(),

@@ -6,19 +6,19 @@
   "publisherId": "tfs",
   "message": {
     "text": "Build ConsumerAddressModule_20150407.2 succeeded",
-    "html": "Build <a href=\"https://fabrikam-fiber-inc.visualstudio.com/web/build.aspx?pcguid=5023c10b-bef3-41c3-bf53-686c4e34ee9e&amp;builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3\">ConsumerAddressModule_20150407.2</a> succeeded",
-    "markdown": "Build [ConsumerAddressModule_20150407.2](https://fabrikam-fiber-inc.visualstudio.com/web/build.aspx?pcguid=5023c10b-bef3-41c3-bf53-686c4e34ee9e&builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3) succeeded"
+    "html": "Build <a href=\"https://good-company.some.ssl.host/web/build.aspx?id=5023c10b-bef3-41c3-bf53-686c4e34ee9e&amp;builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3\">ConsumerAddressModule_20150407.2</a> succeeded",
+    "markdown": "Build [ConsumerAddressModule_20150407.2](https://good-company.some.ssl.host/web/build.aspx?id=5023c10b-bef3-41c3-bf53-686c4e34ee9e&builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3) succeeded"
   },
   "detailedMessage": {
     "text": "Build ConsumerAddressModule_20150407.2 succeeded",
-    "html": "Build <a href=\"https://fabrikam-fiber-inc.visualstudio.com/web/build.aspx?pcguid=5023c10b-bef3-41c3-bf53-686c4e34ee9e&amp;builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3\">ConsumerAddressModule_20150407.2</a> succeeded",
-    "markdown": "Build [ConsumerAddressModule_20150407.2](https://fabrikam-fiber-inc.visualstudio.com/web/build.aspx?pcguid=5023c10b-bef3-41c3-bf53-686c4e34ee9e&builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3) succeeded"
+    "html": "Build <a href=\"https://good-company.some.ssl.host/web/build.aspx?id=5023c10b-bef3-41c3-bf53-686c4e34ee9e&amp;builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3\">ConsumerAddressModule_20150407.2</a> succeeded",
+    "markdown": "Build [ConsumerAddressModule_20150407.2](https://good-company.some.ssl.host/web/build.aspx?id=5023c10b-bef3-41c3-bf53-686c4e34ee9e&builduri=vstfs%3a%2f%2f%2fBuild%2fBuild%2f3) succeeded"
   },
   "resource": {
     "uri": "vstfs:///Build/Build/2",
     "id": 2,
     "buildNumber": "ConsumerAddressModule_20150407.1",
-    "url": "https://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/71777fbc-1cf2-4bd1-9540-128c1c71f766/_apis/build/Builds/2",
+    "url": "https://good-company.some.ssl.host/DefaultCollection/71777fbc-1cf2-4bd1-9540-128c1c71f766/_apis/build/Builds/2",
     "startTime": "2015-04-07T18:04:06.83Z",
     "finishTime": "2015-04-07T18:06:10.69Z",
     "reason": "manual",
@@ -27,21 +27,21 @@
     "drop": {
       "location": "#/3/drop",
       "type": "container",
-      "url": "https://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/resources/Containers/3/drop",
-      "downloadUrl": "https://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/resources/Containers/3/drop?api-version=1.0&$format=zip&downloadFileName=ConsumerAddressModule_20150407.1_drop"
+      "url": "https://good-company.some.ssl.host/DefaultCollection/_apis/resources/Containers/3/drop",
+      "downloadUrl": "https://good-company.some.ssl.host/DefaultCollection/_apis/resources/Containers/3/drop?api-version=1.0&$format=zip&downloadFileName=ConsumerAddressModule_20150407.1_drop"
     },
     "log": {
       "type": "container",
-      "url": "https://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/resources/Containers/3/logs",
-      "downloadUrl": "https://fabrikam-fiber-inc.visualstudio.com/_apis/resources/Containers/3/logs?api-version=1.0&$format=zip&downloadFileName=ConsumerAddressModule_20150407.1_logs"
+      "url": "https://good-company.some.ssl.host/DefaultCollection/_apis/resources/Containers/3/logs",
+      "downloadUrl": "https://good-company.some.ssl.host/_apis/resources/Containers/3/logs?api-version=1.0&$format=zip&downloadFileName=ConsumerAddressModule_20150407.1_logs"
     },
     "sourceGetVersion": "LG:refs/heads/master:600c52d2d5b655caa111abfd863e5a9bd304bb0e",
     "lastChangedBy": {
       "id": "d6245f20-2af8-44f4-9451-8107cb2767db",
-      "displayName": "Normal Paulk",
+      "displayName": "John Smith",
       "uniqueName": "fabrikamfiber16@hotmail.com",
-      "url": "https://fabrikam-fiber-inc.visualstudio.com/_apis/Identities/d6245f20-2af8-44f4-9451-8107cb2767db",
-      "imageUrl": "https://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_api/_common/identityImage?id=d6245f20-2af8-44f4-9451-8107cb2767db"
+      "url": "https://good-company.some.ssl.host/_apis/Identities/d6245f20-2af8-44f4-9451-8107cb2767db",
+      "imageUrl": "https://good-company.some.ssl.host/DefaultCollection/_api/_common/identityImage?id=d6245f20-2af8-44f4-9451-8107cb2767db"
     },
     "retainIndefinitely": false,
     "hasDiagnostics": true,
@@ -51,24 +51,24 @@
       "definitionType": "xaml",
       "id": 2,
       "name": "ConsumerAddressModule",
-      "url": "https://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/71777fbc-1cf2-4bd1-9540-128c1c71f766/_apis/build/Definitions/2"
+      "url": "https://good-company.some.ssl.host/DefaultCollection/71777fbc-1cf2-4bd1-9540-128c1c71f766/_apis/build/Definitions/2"
     },
     "queue": {
       "queueType": "buildController",
       "id": 4,
       "name": "Hosted Build Controller",
-      "url": "https://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/build/Queues/4"
+      "url": "https://good-company.some.ssl.host/DefaultCollection/_apis/build/Queues/4"
     },
     "requests": [
       {
         "id": 1,
-        "url": "https://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/71777fbc-1cf2-4bd1-9540-128c1c71f766/_apis/build/Requests/1",
+        "url": "https://good-company.some.ssl.host/DefaultCollection/71777fbc-1cf2-4bd1-9540-128c1c71f766/_apis/build/Requests/1",
         "requestedFor": {
           "id": "d6245f20-2af8-44f4-9451-8107cb2767db",
-          "displayName": "Normal Paulk",
+          "displayName": "John Smith",
           "uniqueName": "fabrikamfiber16@hotmail.com",
-          "url": "https://fabrikam-fiber-inc.visualstudio.com/_apis/Identities/d6245f20-2af8-44f4-9451-8107cb2767db",
-          "imageUrl": "https://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_api/_common/identityImage?id=d6245f20-2af8-44f4-9451-8107cb2767db"
+          "url": "https://good-company.some.ssl.host/_apis/Identities/d6245f20-2af8-44f4-9451-8107cb2767db",
+          "imageUrl": "https://good-company.some.ssl.host/DefaultCollection/_api/_common/identityImage?id=d6245f20-2af8-44f4-9451-8107cb2767db"
         }
       }
     ]

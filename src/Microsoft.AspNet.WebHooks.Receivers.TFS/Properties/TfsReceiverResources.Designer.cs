@@ -70,7 +70,7 @@ namespace Microsoft.AspNet.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No property &apos;eventType&apos; was found in root of the object.
+        ///   Looks up a localized string similar to No property &apos;eventType&apos; was found in root of the object..
         /// </summary>
         internal static string Receiver_NoEventType {
             get {

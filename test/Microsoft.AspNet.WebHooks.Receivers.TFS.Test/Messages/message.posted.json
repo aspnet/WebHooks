@@ -5,14 +5,14 @@
   "eventType": "message.posted",
   "publisherId": "tfs",
   "message": {
-    "text": "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello",
-    "html": "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello",
-    "markdown": "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello"
+    "text": "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room\r\nHello",
+    "html": "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room\r\nHello",
+    "markdown": "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room\r\nHello"
   },
   "detailedMessage": {
-    "text": "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello",
-    "html": "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room<p>Hello</p>",
-    "markdown": "Jamal Hartnett posted a message to Fabrikam-Fiber-Git Team Room\r\nHello"
+    "text": "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room\r\nHello",
+    "html": "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room<p>Hello</p>",
+    "markdown": "Jamal Hartnett posted a message to Northward-Fiber-Git Team Room\r\nHello"
   },
   "resource": {
     "id": 0,

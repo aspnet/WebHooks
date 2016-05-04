@@ -1,7 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.AspNet.WebHooks.Receivers.TFS.WebHooks.Payloads;
+using System;
+using Microsoft.AspNet.WebHooks.Payloads;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -24,15 +25,15 @@ namespace Microsoft.AspNet.WebHooks
                 PublisherId = "tfs",
                 Message = new PayloadMessage
                 {
-                    Text = "Bug #5 (Some great new idea!) commented on by Jamal Hartnett.\r\n(http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&id=5)",
-                    Html = "<a href=\"http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&amp;id=5\">Bug #5</a> (Some great new idea!) commented on by Jamal Hartnett.",
-                    Markdown = "[Bug #5](http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&id=5) (Some great new idea!) commented on by Jamal Hartnett."
+                    Text = "Bug #5 (Some great new idea!) commented on by Jamal Hartnett.\r\n(http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&id=5)",
+                    Html = "<a href=\"http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&amp;id=5\">Bug #5</a> (Some great new idea!) commented on by Jamal Hartnett.",
+                    Markdown = "[Bug #5](http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&id=5) (Some great new idea!) commented on by Jamal Hartnett."
                 },
                 DetailedMessage = new PayloadMessage
                 {
-                    Text = "Bug #5 (Some great new idea!) commented on by Jamal Hartnett.\r\n(http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&id=5)\r\nThis is a great new idea",
-                    Html = "<a href=\"http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&amp;id=5\">Bug #5</a> (Some great new idea!) commented on by Jamal Hartnett.<br/>This is a great new idea",
-                    Markdown = "[Bug #5](http://fabrikam-fiber-inc.visualstudio.com/web/wi.aspx?pcguid=74e918bf-3376-436d-bd20-8e8c1287f465&id=5) (Some great new idea!) commented on by Jamal Hartnett.\r\nThis is a great new idea"
+                    Text = "Bug #5 (Some great new idea!) commented on by Jamal Hartnett.\r\n(http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&id=5)\r\nThis is a great new idea",
+                    Html = "<a href=\"http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&amp;id=5\">Bug #5</a> (Some great new idea!) commented on by Jamal Hartnett.<br/>This is a great new idea",
+                    Markdown = "[Bug #5](http://good-company.some.ssl.host/web/wi.aspx?id=74e918bf-3376-436d-bd20-8e8c1287f465&id=5) (Some great new idea!) commented on by Jamal Hartnett.\r\nThis is a great new idea"
                 },
                 Resource = new WorkItemCommentedOnResource
                 {
@@ -40,9 +41,9 @@ namespace Microsoft.AspNet.WebHooks
                     RevisionNumber = 4,
                     Fields = new WorkItemFields
                     {
-                        SystemAreaPath = "FabrikamCloud",
-                        SystemTeamProject = "FabrikamCloud",
-                        SystemIterationPath = "FabrikamCloud\\Release 1\\Sprint 1",
+                        SystemAreaPath = "GoodCompanyCloud",
+                        SystemTeamProject = "GoodCompanyCloud",
+                        SystemIterationPath = "GoodCompanyCloud\\Release 1\\Sprint 1",
                         SystemWorkItemType = "Bug",
                         SystemState = "New",
                         SystemReason = "New defect reported",
@@ -51,19 +52,19 @@ namespace Microsoft.AspNet.WebHooks
                         SystemChangedDate = "2014-07-15T17:42:44.663Z".ToDateTime(),
                         SystemChangedBy = "Jamal Hartnett",
                         SystemTitle = "Some great new idea!",
-                        MicrosoftVSTSCommonSeverity = "3 - Medium",
+                        MicrosoftCommonSeverity = "3 - Medium",
                         KanbanColumn = "New",
                         SystemHistory = "This is a great new idea"
                     },
                     Links = new WorkItemLinks
                     {
-                        Self = new WorkItemLink { Href = "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/workItems/5" },
-                        WorkItemUpdates = new WorkItemLink { Href = "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/workItems/5/updates" },
-                        WorkItemRevisions = new WorkItemLink { Href = "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/workItems/5/revisions" },
-                        WorkItemType = new WorkItemLink { Href = "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/ea830882-2a3c-4095-a53f-972f9a376f6e/workItemTypes/Bug" },
-                        Fields = new WorkItemLink { Href = "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/fields" }
+                        Self = new WorkItemLink { Href = "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/workItems/5" },
+                        WorkItemUpdates = new WorkItemLink { Href = "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/workItems/5/updates" },
+                        WorkItemRevisions = new WorkItemLink { Href = "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/workItems/5/revisions" },
+                        WorkItemType = new WorkItemLink { Href = "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/ea830882-2a3c-4095-a53f-972f9a376f6e/workItemTypes/Bug" },
+                        Fields = new WorkItemLink { Href = "http://good-company.some.ssl.host/DefaultCollection/_apis/wit/fields" }
                     },
-                    Url = "http://fabrikam-fiber-inc.visualstudio.com/DefaultCollection/_apis/wit/workItems/5"
+                    Url = new Uri("http://good-company.some.ssl.host/DefaultCollection/_apis/wit/workItems/5")
                 },
                 ResourceVersion = "1.0",
                 ResourceContainers = new PayloadResourceContainers
