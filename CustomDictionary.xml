@@ -22,9 +22,9 @@
       <Word>nuget</Word>
       <Word>paypal</Word>
       <Word>salesforce</Word>
-	  <Word>tfs</Word>
       <Word>trello</Word>
       <Word>ver</Word>
+	    <Word>vsts</Word>
       <Word>zapier</Word>
       <Word>你好</Word>
     </Recognized>
@@ -43,7 +43,7 @@
     <CasingExceptions>
       <Acronym>CRM</Acronym>
       <Acronym>SSO</Acronym>
-      <Acronym>TFS</Acronym>
+      <Acronym>VSTS</Acronym>
     </CasingExceptions>
   </Acronyms>
   </Dictionary>

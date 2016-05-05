@@ -146,9 +146,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyGetReceiver", "samples\My
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitHubReceiver", "samples\GitHubReceiver\GitHubReceiver.csproj", "{F4FB75ED-543F-4FF0-BD41-F4B9AD120575}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNet.WebHooks.Receivers.TFS", "src\Microsoft.AspNet.WebHooks.Receivers.TFS\Microsoft.AspNet.WebHooks.Receivers.TFS.csproj", "{6B501D55-2AA3-4757-A185-1277BB881DE8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNet.WebHooks.Receivers.VSTS", "src\Microsoft.AspNet.WebHooks.Receivers.VSTS\Microsoft.AspNet.WebHooks.Receivers.VSTS.csproj", "{6B501D55-2AA3-4757-A185-1277BB881DE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNet.WebHooks.Receivers.TFS.Test", "test\Microsoft.AspNet.WebHooks.Receivers.TFS.Test\Microsoft.AspNet.WebHooks.Receivers.TFS.Test.csproj", "{B27CC8B5-BF38-434B-B5CE-42ACEC40624C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNet.WebHooks.Receivers.VSTS.Test", "test\Microsoft.AspNet.WebHooks.Receivers.VSTS.Test\Microsoft.AspNet.WebHooks.Receivers.VSTS.Test.csproj", "{B27CC8B5-BF38-434B-B5CE-42ACEC40624C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

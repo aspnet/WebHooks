@@ -15,14 +15,14 @@ namespace Microsoft.AspNet.WebHooks
     /// Provides a base <see cref="IWebHookHandler" /> implementation which can be used to for handling Visual Studio Team Services WebHook 
     /// using strongly-typed payloads. For details about MyGet WebHooks, see <c>https://www.visualstudio.com/en-us/get-started/integrate/service-hooks/webhooks-and-vso-vs</c>.
     /// </summary>
-    public abstract class TfsWebHookHandlerBase : WebHookHandler
+    public abstract class VstsWebHookHandlerBase : WebHookHandler
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TfsWebHookHandlerBase"/> class.
+        /// Initializes a new instance of the <see cref="VstsWebHookHandlerBase"/> class.
         /// </summary>
-        protected TfsWebHookHandlerBase()
+        protected VstsWebHookHandlerBase()
         {
-            this.Receiver = TfsWebHookReceiver.ReceiverName;
+            this.Receiver = VstsWebHookReceiver.ReceiverName;
         }
 
         /// <inheritdoc />
@@ -48,7 +48,7 @@ namespace Microsoft.AspNet.WebHooks
                 case "tfvc.checkin": return ExecuteAsync(context, data.ToObject<CodeCheckedInPayload>());
                 case "build.complete": return ExecuteAsync(context, data.ToObject<BuildCompletedPayload>());
                 default:
-                    string msg = string.Format(CultureInfo.CurrentCulture, TfsReceiverResources.Handler_NonMappedEventType, action);
+                    string msg = string.Format(CultureInfo.CurrentCulture, VstsReceiverResources.Handler_NonMappedEventType, action);
                     context.RequestContext.Configuration.DependencyResolver.GetLogger().Warn(msg);
                     return ExecuteAsync(context, data);
             }

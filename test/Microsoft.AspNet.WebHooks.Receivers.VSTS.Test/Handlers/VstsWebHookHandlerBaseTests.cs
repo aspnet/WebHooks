@@ -13,23 +13,23 @@ using Xunit;
 
 namespace Microsoft.AspNet.WebHooks.Handlers
 {
-    public class TfsWebHookHandlerBaseTests
+    public class VstsWebHookHandlerBaseTests
     {
-        private readonly Mock<TfsWebHookHandlerBase> _handlerMock;
-        private readonly TfsWebHookHandlerBase _handler;
+        private readonly Mock<VstsWebHookHandlerBase> _handlerMock;
+        private readonly VstsWebHookHandlerBase _handler;
 
         private WebHookHandlerContext _context;
 
-        public TfsWebHookHandlerBaseTests()
+        public VstsWebHookHandlerBaseTests()
         {
-            _handlerMock = new Mock<TfsWebHookHandlerBase> { CallBase = true };
+            _handlerMock = new Mock<VstsWebHookHandlerBase> { CallBase = true };
             _handler = _handlerMock.Object;
         }
 
         [Fact]
-        public void TfsWebHookHandlerBase_SetsReceiverName()
+        public void VstsWebHookHandlerBase_SetsReceiverName()
         {
-            Assert.Equal(TfsWebHookReceiver.ReceiverName, _handler.Receiver);
+            Assert.Equal(VstsWebHookReceiver.ReceiverName, _handler.Receiver);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace Microsoft.AspNet.WebHooks.Handlers
             _context = GetContext("Microsoft.AspNet.WebHooks.Messages.build.complete.json", "build.complete");
 
             // Act
-            await _handler.ExecuteAsync(TfsWebHookReceiver.ReceiverName, _context);
+            await _handler.ExecuteAsync(VstsWebHookReceiver.ReceiverName, _context);
 
             // Assert
             _handlerMock.Verify(h => h.ExecuteAsync(_context, It.IsAny<BuildCompletedPayload>()), Times.Once());
@@ -52,7 +52,7 @@ namespace Microsoft.AspNet.WebHooks.Handlers
             _context = GetContext("Microsoft.AspNet.WebHooks.Messages.tfvc.checkin.json", "tfvc.checkin");
 
             // Act
-            await _handler.ExecuteAsync(TfsWebHookReceiver.ReceiverName, _context);
+            await _handler.ExecuteAsync(VstsWebHookReceiver.ReceiverName, _context);
 
             // Assert
             _handlerMock.Verify(h => h.ExecuteAsync(_context, It.IsAny<CodeCheckedInPayload>()), Times.Once());
@@ -65,7 +65,7 @@ namespace Microsoft.AspNet.WebHooks.Handlers
             _context = GetContext("Microsoft.AspNet.WebHooks.Messages.message.posted.json", "message.posted");
 
             // Act
-            await _handler.ExecuteAsync(TfsWebHookReceiver.ReceiverName, _context);
+            await _handler.ExecuteAsync(VstsWebHookReceiver.ReceiverName, _context);
 
             // Assert
             _handlerMock.Verify(h => h.ExecuteAsync(_context, It.IsAny<TeamRoomMessagePostedPayload>()), Times.Once());
@@ -78,7 +78,7 @@ namespace Microsoft.AspNet.WebHooks.Handlers
             _context = GetContext("Microsoft.AspNet.WebHooks.Messages.workitem.commented.json", "workitem.commented");
 
             // Act
-            await _handler.ExecuteAsync(TfsWebHookReceiver.ReceiverName, _context);
+            await _handler.ExecuteAsync(VstsWebHookReceiver.ReceiverName, _context);
 
             // Assert
             _handlerMock.Verify(h => h.ExecuteAsync(_context, It.IsAny<WorkItemCommentedOnPayload>()), Times.Once());
@@ -91,7 +91,7 @@ namespace Microsoft.AspNet.WebHooks.Handlers
             _context = GetContext("Microsoft.AspNet.WebHooks.Messages.workitem.created.json", "workitem.created");
 
             // Act
-            await _handler.ExecuteAsync(TfsWebHookReceiver.ReceiverName, _context);
+            await _handler.ExecuteAsync(VstsWebHookReceiver.ReceiverName, _context);
 
             // Assert
             _handlerMock.Verify(h => h.ExecuteAsync(_context, It.IsAny<WorkItemCreatedPayload>()), Times.Once());
@@ -104,7 +104,7 @@ namespace Microsoft.AspNet.WebHooks.Handlers
             _context = GetContext("Microsoft.AspNet.WebHooks.Messages.workitem.deleted.json", "workitem.deleted");
 
             // Act
-            await _handler.ExecuteAsync(TfsWebHookReceiver.ReceiverName, _context);
+            await _handler.ExecuteAsync(VstsWebHookReceiver.ReceiverName, _context);
 
             // Assert
             _handlerMock.Verify(h => h.ExecuteAsync(_context, It.IsAny<WorkItemDeletedPayload>()), Times.Once());
@@ -117,7 +117,7 @@ namespace Microsoft.AspNet.WebHooks.Handlers
             _context = GetContext("Microsoft.AspNet.WebHooks.Messages.workitem.restored.json", "workitem.restored");
 
             // Act
-            await _handler.ExecuteAsync(TfsWebHookReceiver.ReceiverName, _context);
+            await _handler.ExecuteAsync(VstsWebHookReceiver.ReceiverName, _context);
 
             // Assert
             _handlerMock.Verify(h => h.ExecuteAsync(_context, It.IsAny<WorkItemRestoredPayload>()), Times.Once());
@@ -130,7 +130,7 @@ namespace Microsoft.AspNet.WebHooks.Handlers
             _context = GetContext("Microsoft.AspNet.WebHooks.Messages.workitem.updated.json", "workitem.updated");
 
             // Act
-            await _handler.ExecuteAsync(TfsWebHookReceiver.ReceiverName, _context);
+            await _handler.ExecuteAsync(VstsWebHookReceiver.ReceiverName, _context);
 
             // Assert
             _handlerMock.Verify(h => h.ExecuteAsync(_context, It.IsAny<WorkItemUpdatedPayload>()), Times.Once());
@@ -143,7 +143,7 @@ namespace Microsoft.AspNet.WebHooks.Handlers
             _context = GetContext("Microsoft.AspNet.WebHooks.Messages.bad.notMappedEventType.json", "unknown");
 
             // Act
-            await _handler.ExecuteAsync(TfsWebHookReceiver.ReceiverName, _context);
+            await _handler.ExecuteAsync(VstsWebHookReceiver.ReceiverName, _context);
 
             // Assert
             _handlerMock.Verify(h => h.ExecuteAsync(_context, It.IsAny<JObject>()), Times.Once());

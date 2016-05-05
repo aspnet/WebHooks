@@ -15,6 +15,6 @@
     </description>
     <releaseNotes></releaseNotes>
     <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
-    <tags>Microsoft AspNet WebApi AspNetWebApi WebHooks TFS Visual Studio Team Services</tags>
+    <tags>Microsoft AspNet WebApi AspNetWebApi WebHooks TFS VSTS Visual Studio Team Services</tags>
   </metadata>
 </package>

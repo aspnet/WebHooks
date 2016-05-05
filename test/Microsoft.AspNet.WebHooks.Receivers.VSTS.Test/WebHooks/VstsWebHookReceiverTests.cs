@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Microsoft.AspNet.WebHooks
 {
-    public class TfsWebHookReceiverTests : WebHookReceiverTestsBase<TfsWebHookReceiver>
+    public class VstsWebHookReceiverTests : WebHookReceiverTestsBase<VstsWebHookReceiver>
     {
         private const string TestAction = "message.posted";
         private const string TestId = "";
@@ -43,12 +43,12 @@ namespace Microsoft.AspNet.WebHooks
         public void ReceiverName_IsConsistent()
         {
             // Arrange
-            IWebHookReceiver rec = new TfsWebHookReceiver();
-            string expected = "tfs";
+            IWebHookReceiver rec = new VstsWebHookReceiver();
+            string expected = "vsts";
 
             // Act
             string actual1 = rec.Name;
-            string actual2 = TfsWebHookReceiver.ReceiverName;
+            string actual2 = VstsWebHookReceiver.ReceiverName;
 
             // Assert
             Assert.Equal(expected, actual1);
@@ -67,7 +67,7 @@ namespace Microsoft.AspNet.WebHooks
 
             // Assert
             HttpError error = await ex.Response.Content.ReadAsAsync<HttpError>();
-            Assert.Equal("The WebHook receiver 'TfsWebHookReceiverProxy' requires HTTPS in order to be secure. Please register a WebHook URI of type 'https'.", error.Message);
+            Assert.Equal("The WebHook receiver 'VstsWebHookReceiverProxy' requires HTTPS in order to be secure. Please register a WebHook URI of type 'https'.", error.Message);
             ReceiverMock.Protected()
                 .Verify<Task<HttpResponseMessage>>("ExecuteWebHookAsync", Times.Never(), TestId, RequestContext, _postRequest, ItExpr.IsAny<IEnumerable<string>>(), ItExpr.IsAny<object>());
         }
@@ -187,7 +187,7 @@ namespace Microsoft.AspNet.WebHooks
         public override void Initialize(string config)
         {
             base.Initialize(config);
-            HttpConfig.InitializeReceiveTfsWebHooks();
+            HttpConfig.InitializeReceiveVstsWebHooks();
 
             _postRequest = new HttpRequestMessage(HttpMethod.Post, TestAddress);
             _postRequest.SetRequestContext(RequestContext);

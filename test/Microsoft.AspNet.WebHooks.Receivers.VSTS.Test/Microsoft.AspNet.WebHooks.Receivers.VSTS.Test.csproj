@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.AspNet.WebHooks</RootNamespace>
-    <AssemblyName>Microsoft.AspNet.WebHooks.Receivers.TFS.Test</AssemblyName>
+    <AssemblyName>Microsoft.AspNet.WebHooks.Receivers.VSTS.Test</AssemblyName>
     <OutputPath>..\..\bin\$(Configuration)\Test\</OutputPath>
     <RunCodeAnalysis>$(CodeAnalysis)</RunCodeAnalysis>
     <CodeAnalysisAdditionalOptions>/assemblyCompareMode:StrongNameIgnoringVersion</CodeAnalysisAdditionalOptions>
@@ -60,7 +60,7 @@
       <Link>Common\EmbeddedResource.cs</Link>
     </Compile>
     <Compile Include="Common\Extensions.cs" />
-    <Compile Include="Handlers\TfsWebHookHandlerBaseTests.cs" />
+    <Compile Include="Handlers\VstsWebHookHandlerBaseTests.cs" />
     <Compile Include="Payloads\BuildCompletedPayloadTests.cs" />
     <Compile Include="Payloads\CodeCheckedInPayloadTests.cs" />
     <Compile Include="Payloads\TeamRoomMessagePostedPayloadTests.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="Payloads\WorkItemRestoredPayloadTests.cs" />
     <Compile Include="Payloads\WorkItemUpdatedPayloadTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebHooks\TfsWebHookReceiverTests.cs" />
+    <Compile Include="WebHooks\VstsWebHookReceiverTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />
@@ -93,9 +93,9 @@
       <Project>{f7dd0935-6320-4efc-9464-d5a2d2b8c2f7}</Project>
       <Name>Microsoft.AspNet.WebHooks.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\Microsoft.AspNet.WebHooks.Receivers.TFS\Microsoft.AspNet.WebHooks.Receivers.TFS.csproj">
+    <ProjectReference Include="..\..\src\Microsoft.AspNet.WebHooks.Receivers.VSTS\Microsoft.AspNet.WebHooks.Receivers.VSTS.csproj">
       <Project>{6b501d55-2aa3-4757-a185-1277bb881de8}</Project>
-      <Name>Microsoft.AspNet.WebHooks.Receivers.TFS</Name>
+      <Name>Microsoft.AspNet.WebHooks.Receivers.VSTS</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Src\Microsoft.AspNet.WebHooks.Receivers\Microsoft.AspNet.WebHooks.Receivers.csproj">
       <Project>{8ced31fb-32f2-4ffb-9997-452fb9728577}</Project>
