@@ -1,7 +1,9 @@
-﻿{
+{
   "version": "1.0.0-*",
 
   "dependencies": {
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-final",
     "NETStandard.Library": "1.5.0-rc2-24027"
   },
 
