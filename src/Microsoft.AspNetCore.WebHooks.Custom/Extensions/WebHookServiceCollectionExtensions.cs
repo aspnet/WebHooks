@@ -16,9 +16,11 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="setupAction">A <see cref="Action{WebHookOptions}"/> that can be used to configure Custom WebHook Sender</param>
         public static void AddCustomWebHookSender(this IServiceCollection services, Action<WebHookOptions> setupAction)
         {
+            services.Configure<WebHookOptions>(setupAction);
+
+
             WebHookOptions options = new WebHookOptions();
             setupAction(options);
-
             services.AddScoped(typeof(IWebHookStore), options.StoreType);
             services.AddScoped(typeof(IWebHookSender), options.SenderType);
             services.AddScoped<IWebHookManager, WebHookManager>();

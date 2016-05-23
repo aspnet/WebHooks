@@ -12,7 +12,7 @@ namespace Microsoft.AspNetCore.WebHooks
 
         public ReceiverOptions()
         {
-            this.BasePath = "api/webhooks/incoming";
+            this.BasePath = "/api/webhooks/incoming";
         }
 
     }

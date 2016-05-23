@@ -44,7 +44,7 @@ namespace Microsoft.AspNetCore.WebHooks
 
             // Find the Matching Receiver and capture the remaining path segment
             PathString remaining = new PathString();
-            IWebHookReceiver matchingReceiver = receivers.Where(r => httpContext.Request.Path.StartsWithSegments(r.Name, out remaining)).FirstOrDefault();
+            IWebHookReceiver matchingReceiver = receivers.Where(r => httpContext.Request.Path.StartsWithSegments($"/{r.Name}", out remaining)).FirstOrDefault();
 
             if (matchingReceiver != null)
             {
@@ -82,10 +82,6 @@ namespace Microsoft.AspNetCore.WebHooks
                         _logger.LogWarning("No Handlers were found to process the context from '{0}' Receiver.", matchingReceiver.Name);
                     }
                 }
-                else
-                {
-                    _logger.LogError("The Receiver '{0}' did not return a WebHookContext.", matchingReceiver.Name);
-                }
             }
             else
             {
@@ -95,15 +91,4 @@ namespace Microsoft.AspNetCore.WebHooks
         }
     }
 
-    // Extension method used to add the middleware to the HTTP request pipeline.
-    public static class ReceiverMiddlewareExtensions
-    {
-        public static IApplicationBuilder UseWebHookReceivers(this IApplicationBuilder builder, Action<ReceiverOptions> setupAction)
-        {
-            var recConfig = new ReceiverOptions();
-            setupAction(recConfig);
-
-            return builder.Map(recConfig.BasePath, config => config.UseMiddleware<ReceiverMiddleware>());
-        }
-    }
 }

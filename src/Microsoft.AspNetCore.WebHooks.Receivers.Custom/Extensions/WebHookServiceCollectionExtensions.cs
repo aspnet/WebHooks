@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void AddCustomWebHookReceivers(this IServiceCollection services, Action<CustomWebHookReceiverOptions> setupAction)
         {
             CustomWebHookReceiverOptions options = new CustomWebHookReceiverOptions();
-            setupAction(options);
+            services.Configure(setupAction);
 
             services.AddScoped<IWebHookReceiver, CustomWebHookReceiver>();
         }

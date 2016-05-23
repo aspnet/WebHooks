@@ -19,14 +19,13 @@ namespace Microsoft.AspNetCore.WebHooks
         string Name { get; }
 
         /// <summary>
-        /// Processes the incoming WebHook request. The request may be an initialization request or it may be 
-        /// an actual WebHook request. It is up to the receiver to determine what kind of incoming request it
-        /// is and process it accordingly.
+        /// Processes the incoming WebHook request. A receiver must process the message and provide a context for Handlers
+        /// If a Receiver processes the message and Handlers should not be run, the Receiver should set the response and return null.
         /// </summary>
         /// <param name="id">A (potentially empty) ID of a particular configuration for this <see cref="IWebHookReceiver"/>. This
         /// allows an <see cref="IWebHookReceiver"/> to support multiple WebHooks with individual configurations.</param>
         /// <param name="context">The <see cref="HttpRequestContext"/> for the incoming request.</param>
-        /// <returns>A <see cref="WebHookHandlerContext"/> Which contains the data and context.</returns>
+        /// <returns>A <see cref="WebHookHandlerContext"/> Which contains the data and context or null to prevent handlers from running.</returns>
         Task<WebHookHandlerContext> ReceiveAsync(PathString id, HttpContext context);
     }
 }
