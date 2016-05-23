@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Globalization;
+using Microsoft.AspNetCore.WebHooks.Receivers.Properties;
 
 namespace Microsoft.AspNetCore.WebHooks.Receivers
 {
@@ -115,8 +117,9 @@ namespace Microsoft.AspNetCore.WebHooks.Receivers
             string[] values = header.Split('=');
             if (values.Length != 2 || !string.Equals(values[0], SignatureHeaderKey, StringComparison.OrdinalIgnoreCase))
             {
+                string msg = string.Format(CultureInfo.CurrentCulture, CustomReceiverResource.Receiver_BadHeaderValue, SignatureHeaderName, SignatureHeaderKey, "<value>");
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                await context.Response.WriteAsync("Invalid Signature");
+                await context.Response.WriteAsync(msg);
                 return false;
             }
 
@@ -127,9 +130,9 @@ namespace Microsoft.AspNetCore.WebHooks.Receivers
             }
             catch (Exception)
             {
-                //string msg = string.Format(CultureInfo.CurrentCulture, CustomReceiverResources.Receiver_BadHeaderEncoding, SignatureHeaderName);
+                string msg = string.Format(CultureInfo.CurrentCulture, CustomReceiverResource.Receiver_BadHeaderEncoding, SignatureHeaderName);
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                await context.Response.WriteAsync("Bad Encoding");
+                await context.Response.WriteAsync(msg);
                 return false;
             }
 
@@ -145,6 +148,7 @@ namespace Microsoft.AspNetCore.WebHooks.Receivers
             // Now verify that the actual hash matches the expected hash.
             if (!WebHookReceiver.SecretEqual(expectedHash, actualHash))
             {
+
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await context.Response.WriteAsync("Bad Signature");
                 return false;
@@ -175,9 +179,10 @@ namespace Microsoft.AspNetCore.WebHooks.Receivers
             string echo = context.Request.Query[EchoParameter];
             if (string.IsNullOrEmpty(echo))
             {
+                string msg = string.Format(CultureInfo.CurrentCulture, CustomReceiverResource.Receiver_NoEcho, EchoParameter);
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                await context.Response.WriteAsync("No Echo Provided");
-                _logger.LogError("WebHook Verfication Failed - No Echo Provided");
+                await context.Response.WriteAsync(msg);
+                _logger.LogError(msg);
             }
             else
             {

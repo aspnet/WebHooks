@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using System.Xml.Linq;
 using System.Xml;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.WebHooks.Properties;
+using System.Globalization;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
@@ -113,9 +115,9 @@ namespace Microsoft.AspNetCore.WebHooks
             // Require HTTP unless request is local
             if (context.Request.Host.Host != "localhost" && !context.Request.IsHttps)
             {
-                //string msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_NoHttps, GetType().Name, Uri.UriSchemeHttps);
+                string msg = string.Format(CultureInfo.CurrentCulture, ReceiverResource.Receiver_NoHttps, GetType().Name, "https");
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                await context.Response.WriteAsync("HTTPS is required");
+                await context.Response.WriteAsync(msg);
                 return false;
             }
             return true;
