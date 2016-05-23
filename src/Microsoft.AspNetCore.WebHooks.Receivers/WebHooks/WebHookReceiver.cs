@@ -14,15 +14,28 @@ using System.Globalization;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
+    /// <summary>
+    /// Base class for WebHook Receivers
+    /// </summary>
     public abstract class WebHookReceiver : IWebHookReceiver
     {
-
+        /// <summary>
+        /// Query String Parameter to use when passing Id on the Query String
+        /// </summary>
         internal const string CodeQueryParameter = "code";
 
+        /// <inheritdoc />
         public abstract string Name { get; }
 
+        /// <inheritdoc />
         public abstract Task<WebHookHandlerContext> ReceiveAsync(PathString id, HttpContext context);
 
+        /// <summary>
+        /// Returns the Body as an Object from a Json Payload.
+        /// </summary>
+        /// <typeparam name="T">The Type of Object to Deserialize</typeparam>
+        /// <param name="request">The Incoming Request</param>
+        /// <returns></returns>
         protected async Task<T> ReadBodyAsJsonAsync<T>(HttpRequest request)
         {
             using (StreamReader streamReader = new StreamReader(request.Body))
@@ -32,6 +45,11 @@ namespace Microsoft.AspNetCore.WebHooks
             }
         }
 
+        /// <summary>
+        /// Returns the Body as a <see cref="XmlDocument"/>.
+        /// </summary>
+        /// <param name="request">The Request to parse</param>
+        /// <returns></returns>
         protected async Task<XmlDocument> ReadBodyAsXmlAsync(HttpRequest request)
         {
             using (StreamReader streamReader = new StreamReader(request.Body))
@@ -43,6 +61,11 @@ namespace Microsoft.AspNetCore.WebHooks
             }
         }
 
+        /// <summary>
+        /// Returns the Body as a <see cref="byte[]"/>.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         protected async Task<byte[]> ReadAsByteArrayAsync(HttpRequest request)
         {
             byte[] buffer = new byte[16*1024];
@@ -57,6 +80,12 @@ namespace Microsoft.AspNetCore.WebHooks
             }
         }
 
+        /// <summary>
+        /// Checks to see if 2 values are equal
+        /// </summary>
+        /// <param name="inputA">First Value</param>
+        /// <param name="inputB">Second Value</param>
+        /// <returns></returns>
         protected internal static bool SecretEqual(byte[] inputA, byte[] inputB)
         {
             if (ReferenceEquals(inputA, inputB))
@@ -77,6 +106,12 @@ namespace Microsoft.AspNetCore.WebHooks
             return areSame;
         }
 
+        /// <summary>
+        /// Checks to see if 2 values are equal
+        /// </summary>
+        /// <param name="inputA">First Value</param>
+        /// <param name="inputB">Second Value</param>
+        /// <returns></returns>
         protected internal static bool SecretEqual(string inputA, string inputB)
         {
             if (ReferenceEquals(inputA, inputB))
@@ -97,6 +132,11 @@ namespace Microsoft.AspNetCore.WebHooks
             return areSame;
         }
 
+        /// <summary>
+        /// Validates a <see cref="HttpContext"/> to make sure it's using a secure connection.
+        /// </summary>
+        /// <param name="context">The Context to validate</param>
+        /// <returns></returns>
         protected virtual async Task<bool> EnsureSecureConnection(HttpContext context)
         {
             if (context == null)

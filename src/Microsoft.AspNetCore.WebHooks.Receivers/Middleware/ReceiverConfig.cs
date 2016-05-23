@@ -8,8 +8,11 @@ namespace Microsoft.AspNetCore.WebHooks
 {
     public class ReceiverOptions
     {
+        public string BasePath { get; set; }
+
         public ReceiverOptions()
         {
+            this.BasePath = "api/webhooks/incoming";
         }
 
     }

@@ -9,7 +9,12 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class WebHookServiceCollectionExtensions
     {
-        public static void AddCustomWebHooks(this IServiceCollection services, Action<WebHookOptions> setupAction)
+        /// <summary>
+        /// Extension to Register Custom WebHook Senders
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection"/> to register services with</param>
+        /// <param name="setupAction">A <see cref="Action{WebHookOptions}"/> that can be used to configure Custom WebHook Sender</param>
+        public static void AddCustomWebHookSender(this IServiceCollection services, Action<WebHookOptions> setupAction)
         {
             WebHookOptions options = new WebHookOptions();
             setupAction(options);
@@ -21,9 +26,13 @@ namespace Microsoft.Extensions.DependencyInjection
 
         }
 
-        public static void AddCustomWebHooks(this IServiceCollection services)
+        /// <summary>
+        /// Extension to Register Custom WebHook Senders with Default of Memory Store, and Data Flow Sender
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection"/> to register services with</param>
+        public static void AddCustomWebHookSender(this IServiceCollection services)
         {
-            services.AddCustomWebHooks(opts => { });
+            services.AddCustomWebHookSender(opts => { });
         }
     }
 }

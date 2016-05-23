@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
+    /// <summary>
+    /// Extensions to provide custom matching logic
+    /// </summary>
     public static class WebHookExtensions
     {
         /// <summary>
