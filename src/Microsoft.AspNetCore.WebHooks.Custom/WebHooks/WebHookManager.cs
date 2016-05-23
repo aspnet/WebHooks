@@ -31,15 +31,6 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <param name="webHookSender">The current <see cref="IWebHookSender"/>.</param>
         /// <param name="logger">The current <see cref="ILogger"/>.</param>
         public WebHookManager(IWebHookStore webHookStore, IWebHookSender webHookSender, ILogger<WebHookManager> logger)
-            : this(webHookStore, webHookSender, logger, httpClient: null)
-        {
-        }
-
-        /// <summary>
-        /// Initialize a new instance of the <see cref="WebHookManager"/> with the given <paramref name="httpClient"/>. This 
-        /// constructor is intended for unit testing purposes.
-        /// </summary>
-        internal WebHookManager(IWebHookStore webHookStore, IWebHookSender webHookSender, ILogger<WebHookManager> logger, HttpClient httpClient)
         {
             if (webHookStore == null)
             {
@@ -58,7 +49,7 @@ namespace Microsoft.AspNetCore.WebHooks
             _webHookSender = webHookSender;
             _logger = logger;
 
-            _httpClient = httpClient ?? new HttpClient();
+            _httpClient = new HttpClient();
         }
 
         /// <inheritdoc />

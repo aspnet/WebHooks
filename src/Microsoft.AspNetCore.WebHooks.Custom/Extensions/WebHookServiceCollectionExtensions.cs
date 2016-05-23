@@ -21,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             WebHookOptions options = new WebHookOptions();
             setupAction(options);
-            services.AddScoped(typeof(IWebHookStore), options.StoreType);
+            services.AddSingleton(typeof(IWebHookStore), options.StoreType);
             services.AddScoped(typeof(IWebHookSender), options.SenderType);
             services.AddScoped<IWebHookManager, WebHookManager>();
 

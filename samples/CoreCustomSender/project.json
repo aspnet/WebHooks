@@ -37,7 +37,8 @@
     "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": {
       "version": "1.0.0-preview1-final",
       "type": "build"
-    }
+    },
+    "Microsoft.AspNetCore.WebHooks.Custom.Mvc":  "1.0.0-*"
   },
 
   "tools": {

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebHooks;
 using Newtonsoft.Json.Linq;
 
-namespace Micrsosoft.AspNetCore.Mvc
+namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
     /// Various extension methods for the ASP.NET CORE MVC <see cref="Controller"/> class.
@@ -23,7 +23,7 @@ namespace Micrsosoft.AspNetCore.Mvc
         /// <returns>The number of <see cref="WebHook"/> instances that were selected and subsequently notified about the actions.</returns>
         public static Task<int> NotifyAsync(this Controller controller, string action, object data)
         {
-            var notifications = new IWebHookNotification[] { ControllerExtensions.CreateNotification(action, data) };
+            var notifications = new IWebHookNotification[] { new WebHookDataNotification(action, data) };
             return NotifyAsync(controller, notifications, predicate: null);
         }
 
@@ -40,7 +40,7 @@ namespace Micrsosoft.AspNetCore.Mvc
         /// <returns>The number of <see cref="WebHook"/> instances that were selected and subsequently notified about the actions.</returns>
         public static Task<int> NotifyAsync(this Controller controller, string action, object data, Func<WebHook, string, bool> predicate)
         {
-            var notifications = new IWebHookNotification[] { ControllerExtensions.CreateNotification(action, data) };
+            var notifications = new IWebHookNotification[] { new WebHookDataNotification(action, data) };
             return NotifyAsync(controller, notifications, predicate);
         }
 
@@ -99,7 +99,7 @@ namespace Micrsosoft.AspNetCore.Mvc
         /// <returns>The number of <see cref="WebHook"/> instances that were selected and subsequently notified about the actions.</returns>
         public static Task<int> NotifyAllAsync(this Controller controller, string action, object data)
         {
-            var notifications = new IWebHookNotification[] { ControllerExtensions.CreateNotification(action, data) };
+            var notifications = new IWebHookNotification[] { new WebHookDataNotification(action, data) };
             return NotifyAllAsync(controller, notifications, predicate: null);
         }
 
@@ -116,7 +116,7 @@ namespace Micrsosoft.AspNetCore.Mvc
         /// <returns>The number of <see cref="WebHook"/> instances that were selected and subsequently notified about the actions.</returns>
         public static Task<int> NotifyAllAsync(this Controller controller, string action, object data, Func<WebHook, string, bool> predicate)
         {
-            var notifications = new IWebHookNotification[] { ControllerExtensions.CreateNotification(action, data) };
+            var notifications = new IWebHookNotification[] { new WebHookDataNotification(action, data) };
             return NotifyAllAsync(controller, notifications, predicate);
         }
 
@@ -160,13 +160,6 @@ namespace Micrsosoft.AspNetCore.Mvc
             // Send a notification to registered WebHooks across all users with matching filters
             IWebHookManager manager = (IWebHookManager)controller.HttpContext.RequestServices.GetService(typeof(IWebHookManager));
             return await manager.NotifyAllAsync(notifications, predicate);
-        }
-
-        private static IWebHookNotification CreateNotification(string action, object data)
-        {
-            dynamic notification = new System.Dynamic.ExpandoObject();
-            notification.Action = action;
-            return notification;
         }
     }
 }

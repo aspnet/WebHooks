@@ -52,6 +52,12 @@ namespace CoreCustomSender
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+            // Add WebHooks
+            services.AddCustomWebHookSender(options =>
+            {
+                options.AddFilterProvider<WebHooks.CustomFilterProvider>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

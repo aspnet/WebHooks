@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Micrsosoft.AspNetCore.WebHooks.Custom.Mvc")]
+[assembly: AssemblyProduct("Microsoft.AspNetCore.WebHooks.Custom.Mvc")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible

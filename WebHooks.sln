@@ -162,11 +162,11 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.AspNetCore.WebHoo
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.AspNetCore.WebHooks.Receivers.Custom", "src\Microsoft.AspNetCore.WebHooks.Receivers.Custom\Microsoft.AspNetCore.WebHooks.Receivers.Custom.xproj", "{B408A67F-F67D-4D50-BB7C-D19B9CD54C0F}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Micrsosoft.AspNetCore.WebHooks.Custom.Mvc", "src\Micrsosoft.AspNetCore.WebHooks.Custom.Mvc\Micrsosoft.AspNetCore.WebHooks.Custom.Mvc.xproj", "{50E71ADC-549B-4078-A7FD-AFD9C13957A1}"
-EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CoreCustomSender", "samples\CoreCustomSender\CoreCustomSender.xproj", "{6BF6413B-A6DB-4DAE-A5BF-1E0DC5DEF0DB}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CoreCustomReceiver", "samples\CoreCustomReceiver\CoreCustomReceiver.xproj", "{A4BB00C0-07F9-41F2-98DC-B488217BDB44}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.AspNetCore.WebHooks.Custom.Mvc", "src\Microsoft.AspNetCore.WebHooks.Custom.Mvc\Microsoft.AspNetCore.WebHooks.Custom.Mvc.xproj", "{50E71ADC-549B-4078-A7FD-AFD9C13957A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -583,12 +583,6 @@ Global
 		{B408A67F-F67D-4D50-BB7C-D19B9CD54C0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B408A67F-F67D-4D50-BB7C-D19B9CD54C0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B408A67F-F67D-4D50-BB7C-D19B9CD54C0F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
-		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
-		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6BF6413B-A6DB-4DAE-A5BF-1E0DC5DEF0DB}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
 		{6BF6413B-A6DB-4DAE-A5BF-1E0DC5DEF0DB}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
 		{6BF6413B-A6DB-4DAE-A5BF-1E0DC5DEF0DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -601,6 +595,12 @@ Global
 		{A4BB00C0-07F9-41F2-98DC-B488217BDB44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4BB00C0-07F9-41F2-98DC-B488217BDB44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4BB00C0-07F9-41F2-98DC-B488217BDB44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50E71ADC-549B-4078-A7FD-AFD9C13957A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -674,9 +674,9 @@ Global
 		{96C4DF0C-A6ED-438D-955A-0C4933F1842A} = {BDF4A733-5DFF-4613-B569-3F99B86EED11}
 		{C66963DA-5D4C-4D9D-B278-B1C5DAB1FAEE} = {BDF4A733-5DFF-4613-B569-3F99B86EED11}
 		{B408A67F-F67D-4D50-BB7C-D19B9CD54C0F} = {BDF4A733-5DFF-4613-B569-3F99B86EED11}
-		{50E71ADC-549B-4078-A7FD-AFD9C13957A1} = {BDF4A733-5DFF-4613-B569-3F99B86EED11}
 		{6BF6413B-A6DB-4DAE-A5BF-1E0DC5DEF0DB} = {8F62A579-28A4-4BF9-9DE3-CD965DED8A20}
 		{A4BB00C0-07F9-41F2-98DC-B488217BDB44} = {8F62A579-28A4-4BF9-9DE3-CD965DED8A20}
+		{50E71ADC-549B-4078-A7FD-AFD9C13957A1} = {BDF4A733-5DFF-4613-B569-3F99B86EED11}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45
