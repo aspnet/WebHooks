@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using CoreCustomSender.Data;
 using CoreCustomSender.Models;
 using CoreCustomSender.Services;
+using Microsoft.AspNetCore.WebHooks;
 
 namespace CoreCustomSender
 {
@@ -56,6 +57,8 @@ namespace CoreCustomSender
             // Add WebHooks
             services.AddCustomWebHookSender(options =>
             {
+                // options.UseStore<AzureWebHookStore>();
+                // options.UseStore<SqlWebHookStore>();
                 options.AddFilterProvider<WebHooks.CustomFilterProvider>();
             });
         }

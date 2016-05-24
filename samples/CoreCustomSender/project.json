@@ -39,7 +39,9 @@
       "type": "build"
     },
     "Microsoft.AspNetCore.WebHooks.Custom.Mvc": "1.0.0-*",
-    "Microsoft.AspNetCore.WebHooks.Custom.Api":  "1.0.0-*"
+    "Microsoft.AspNetCore.WebHooks.Custom.Api": "1.0.0-*",
+    "Microsoft.AspNetCore.WebHooks.Custom.AzureStorage": "1.0.0-*",
+    "Microsoft.AspNetCore.WebHooks.Custom.SqlStorage": "1.0.0-*"
   },
 
   "tools": {

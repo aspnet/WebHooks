@@ -1,13 +1,18 @@
-﻿{
+{
   "version": "1.0.0-*",
 
   "dependencies": {
-    "NETStandard.Library": "1.5.0-rc2-24027"
+    "NETStandard.Library": "1.5.0-rc2-24027",
+    "Microsoft.EntityFrameworkCore.SqlServer": "1.0.0-rc2-final",
+    "Microsoft.AspNetCore.WebHooks.Custom": "1.0.0-*",
+    "Newtonsoft.Json": "8.0.3",
+    "Microsoft.AspNetCore.DataProtection.Abstractions": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-final"
   },
 
   "frameworks": {
     "netstandard1.5": {
-      "imports": "dnxcore50"
+      "imports": [ "dnxcore50", "portable-net451+win8" ]
     }
   }
 }
