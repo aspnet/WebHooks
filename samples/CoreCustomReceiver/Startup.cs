@@ -18,7 +18,7 @@ namespace CoreCustomReceiver
             // A Test WebHook Sender
             services.AddCustomWebHookReceivers(options =>
             {
-                options.AddSecret("test", "0123456789");
+                options.AddSecret("test", "12345678901234567890123456789012");
             });
         }
 

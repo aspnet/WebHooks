@@ -71,55 +71,66 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-3">
-        <form class="form-inline" onsubmit="return subscribe()">
-            Subscribe to all events <input type="submit" class="form-control btn btn-default" value="submit">
-        </form>
-        <form class="form-inline" onsubmit="return unsubscribe()">
-            Unsubscribe from all events <input type="submit" class="form-control btn btn-default" value="submit">
-        </form>
-        <form class="form-inline" onsubmit="return notifymvc()">
-            Trigger notification through controller <input type="submit" class="form-control btn btn-default" value="submit">
-        </form>
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-inline" onsubmit="return subscribe()">
+                Subscribe to all events <input type="submit" class="form-control btn btn-default" value="submit">
+            </form>
+            <form class="form-inline" onsubmit="return unsubscribe()">
+                Unsubscribe from all events <input type="submit" class="form-control btn btn-default" value="submit">
+            </form>
+            <form class="form-inline" onsubmit="return notifymvc()">
+                Trigger notification through controller <input type="submit" class="form-control btn btn-default" value="submit">
+            </form>
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info">You must login to test the WebHooks!</div>
+        </div>
+    </div>
+}
 
 
 
 
 <script>
-function subscribe() {
-    $.ajax({
-        type: "POST",
-        url: "/api/webhooks/registrations",
-        data: JSON.stringify({
-            WebHookUri: "http://localhost:57428/api/webhooks/incoming/custom/test",
-            Secret: "12345678901234567890123456789012",
-            Description: "My first WebHook!"
-        }),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function(data, status) { alert(data.Message ? data.Message : status); },
-        error: function (errMsg) { alert(errMsg.responseJSON.Message); }
-    });
-    return false;
-}
+    function subscribe() {
+        $.ajax({
+            type: "POST",
+            url: "/api/webhooks/registrations",
+            data: JSON.stringify({
+                WebHookUri: "http://localhost:57428/api/webhooks/incoming/custom/test",
+                Secret: "12345678901234567890123456789012",
+                Description: "My first WebHook!"
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data, status) { alert(data.Message ? data.Message : status); },
+            error: function (errMsg) { alert(errMsg.responseJSON.Message); }
+        });
+        return false;
+    }
 
-function unsubscribe() {
-    $.ajax({
-        url: "/api/webhooks/registrations",
-        type: 'DELETE',
-        success: function (data, status) { alert(data.Message ? data.Message : status); },
-        error: function (errMsg) { alert(errMsg.responseJSON.Message); }
-    });
-    return false;
-}
+    function unsubscribe() {
+        $.ajax({
+            url: "/api/webhooks/registrations",
+            type: 'DELETE',
+            success: function (data, status) { alert(data.Message ? data.Message : status); },
+            error: function (errMsg) { alert(errMsg.responseJSON.Message); }
+        });
+        return false;
+    }
 
-function notifymvc() {
-    $.post("/api/notify/submit",
-    { },
-    function (data, status) { alert("Data: " + data + "\nStatus: " + status); });
-    return false;
-}
+    function notifymvc() {
+        $.post("/api/notify/submit",
+        {},
+        function (data, status) { alert("Data: " + data + "\nStatus: " + status); });
+        return false;
+    }
 </script>

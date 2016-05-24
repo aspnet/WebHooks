@@ -22,21 +22,14 @@ namespace CoreCustomSender.Controllers
             {
                 // Create an event with action 'event1' and additional data
                 await this.NotifyAsync("event1", new { P1 = "p1" });
+                return new EmptyResult();
 
             }
-             catch (Exception ex)
+            catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
+                throw ex;
             }
-            return new EmptyResult();
-        }
-
-        [HttpPost("Post")]
-        public async Task<ActionResult> Post()
-        {
-            // Create an event with 'event2' and additional data
-            await this.NotifyAsync("event2", new { P1 = "p1" });
-            return Ok();
         }
     }
 }
