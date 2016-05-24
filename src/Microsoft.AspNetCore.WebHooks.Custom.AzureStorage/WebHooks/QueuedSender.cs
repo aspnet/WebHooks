@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.WebHooks.Properties;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Queue;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -65,7 +62,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 }
                 catch (Exception ex)
                 {
-                    string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.DequeueManager_SendFailure, request.RequestUri, ex.Message);
+                    string msg = string.Format(AzureStorageResource.DequeueManager_SendFailure, request.RequestUri, ex.Message);
                     Logger.LogInformation(msg);
 
                     CloudQueueMessage message = GetMessage(workItem);
@@ -81,7 +78,7 @@ namespace Microsoft.AspNetCore.WebHooks
             foreach (HttpResponseMessage response in responses)
             {
                 WebHookWorkItem workItem = response.RequestMessage.Properties[AzureWebHookDequeueManager.WorkItemKey] as WebHookWorkItem;
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.DequeueManager_WebHookStatus, workItem.WebHook.Id, response.StatusCode, workItem.Offset);
+                string msg = string.Format(AzureStorageResource.DequeueManager_WebHookStatus, workItem.WebHook.Id, response.StatusCode, workItem.Offset);
                 Logger.LogInformation(msg);
 
                 // If success or 'gone' HTTP status code then we remove the message from the Azure queue.
@@ -103,7 +100,7 @@ namespace Microsoft.AspNetCore.WebHooks
             CloudQueueMessage message = workItem != null ? workItem.Properties[AzureWebHookDequeueManager.QueueMessageKey] as CloudQueueMessage : null;
             if (message == null)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.DequeueManager_NoProperty, AzureWebHookDequeueManager.QueueMessageKey, workItem.Id);
+                string msg = string.Format(AzureStorageResource.DequeueManager_NoProperty, AzureWebHookDequeueManager.QueueMessageKey, workItem.Id);
                 Logger.LogError(msg);
                 throw new InvalidOperationException(msg);
             }
@@ -114,7 +111,7 @@ namespace Microsoft.AspNetCore.WebHooks
         {
             if (message.DequeueCount >= _parent._options.MaxDeQueueCount)
             {
-                string error = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.DequeueManager_GivingUp, workItem.WebHook.Id, message.DequeueCount);
+                string error = string.Format(AzureStorageResource.DequeueManager_GivingUp, workItem.WebHook.Id, message.DequeueCount);
                 Logger.LogError(error);
                 return true;
             }

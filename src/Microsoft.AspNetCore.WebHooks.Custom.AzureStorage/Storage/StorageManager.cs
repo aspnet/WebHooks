@@ -1,15 +1,14 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Queue;
+using Microsoft.WindowsAzure.Storage.Table;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
-using Microsoft.WindowsAzure.Storage.Queue;
 using System.Globalization;
-using Microsoft.AspNetCore.WebHooks.Properties;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
@@ -54,7 +53,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 storageAccount = CloudStorageAccount.Parse(connectionString);
                 if (storageAccount == null)
                 {
-                    string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_NoCloudStorageAccount, typeof(CloudStorageAccount).Name);
+                    string msg = string.Format(AzureStorageResource.StorageManager_NoCloudStorageAccount, typeof(CloudStorageAccount).Name);
                     throw new ArgumentException(msg);
                 }
             }
@@ -97,7 +96,7 @@ namespace Microsoft.AspNetCore.WebHooks
                     catch (Exception ex)
                     {
                         string error = GetStorageErrorMessage(ex);
-                        string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_InitializationFailure, error);
+                        string msg = string.Format(AzureStorageResource.StorageManager_InitializationFailure, error);
                         _logger.LogError(msg, ex);
                         throw new InvalidOperationException(msg, ex);
                     }
@@ -138,7 +137,7 @@ namespace Microsoft.AspNetCore.WebHooks
                     catch (Exception ex)
                     {
                         string error = GetStorageErrorMessage(ex);
-                        string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_InitializationFailure, error);
+                        string msg = string.Format(AzureStorageResource.StorageManager_InitializationFailure, error);
                         _logger.LogError(msg, ex);
                         throw new InvalidOperationException(msg, ex);
                     }
@@ -189,7 +188,7 @@ namespace Microsoft.AspNetCore.WebHooks
             }
             catch (Exception ex)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_ErrorRetrieving, ex.Message);
+                string msg = string.Format(AzureStorageResource.StorageManager_ErrorRetrieving, ex.Message);
                 _logger.LogError(msg, ex);
             }
             return null;
@@ -228,7 +227,7 @@ namespace Microsoft.AspNetCore.WebHooks
             catch (Exception ex)
             {
                 string errorMessage = GetStorageErrorMessage(ex);
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_QueryFailed, errorMessage);
+                string msg = string.Format(AzureStorageResource.StorageManager_QueryFailed, errorMessage);
                 _logger.LogError(msg, ex);
                 throw new InvalidOperationException(msg, ex);
             }
@@ -255,7 +254,7 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 string errorMessage = GetStorageErrorMessage(ex);
                 int statusCode = GetStorageStatusCode(ex);
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
+                string msg = string.Format(AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
                 _logger.LogError(msg, ex);
 
                 return new TableResult { HttpStatusCode = statusCode };
@@ -283,7 +282,7 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 string errorMessage = GetStorageErrorMessage(ex);
                 int statusCode = GetStorageStatusCode(ex);
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
+                string msg = string.Format(AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
                 _logger.LogError(msg, ex);
                 return new List<TableResult>();
             }
@@ -349,7 +348,7 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 string errorMessage = GetStorageErrorMessage(ex);
                 int statusCode = GetStorageStatusCode(ex);
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
+                string msg = string.Format(AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
                 _logger.LogError(msg, ex);
                 throw new InvalidOperationException(msg, ex);
             }
@@ -378,7 +377,7 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 string errorMessage = GetStorageErrorMessage(ex);
                 int statusCode = GetStorageStatusCode(ex);
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
+                string msg = string.Format(AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
                 _logger.LogError(msg, ex);
             }
         }
@@ -400,7 +399,7 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 string errorMessage = GetStorageErrorMessage(ex);
                 int statusCode = GetStorageStatusCode(ex);
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
+                string msg = string.Format(AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
                 _logger.LogError(msg, ex);
                 return Enumerable.Empty<CloudQueueMessage>();
             }
@@ -429,7 +428,7 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 string errorMessage = GetStorageErrorMessage(ex);
                 int statusCode = GetStorageStatusCode(ex);
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
+                string msg = string.Format(AzureStorageResource.StorageManager_OperationFailed, statusCode, errorMessage);
                 _logger.LogError(msg, ex);
             }
         }

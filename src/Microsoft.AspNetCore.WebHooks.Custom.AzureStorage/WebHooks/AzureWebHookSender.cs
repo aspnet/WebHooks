@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.WebHooks.Properties;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -68,7 +66,7 @@ namespace Microsoft.AspNetCore.WebHooks
             }
             catch (Exception ex)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.AzureSender_SerializeFailure, ex.Message);
+                string msg = string.Format(AzureStorageResource.AzureSender_SerializeFailure, ex.Message);
                 _logger.LogError(msg, ex);
                 throw new InvalidOperationException(msg);
             }

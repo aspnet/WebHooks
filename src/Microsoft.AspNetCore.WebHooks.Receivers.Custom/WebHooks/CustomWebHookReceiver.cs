@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using System.Globalization;
-using Microsoft.AspNetCore.WebHooks.Receivers.Properties;
+using System.Threading.Tasks;
 
 namespace Microsoft.AspNetCore.WebHooks.Receivers
 {
@@ -118,7 +115,7 @@ namespace Microsoft.AspNetCore.WebHooks.Receivers
             string[] values = header.Split('=');
             if (values.Length != 2 || !string.Equals(values[0], SignatureHeaderKey, StringComparison.OrdinalIgnoreCase))
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomReceiverResource.Receiver_BadHeaderValue, SignatureHeaderName, SignatureHeaderKey, "<value>");
+                string msg = string.Format(CustomReceiverResource.Receiver_BadHeaderValue, SignatureHeaderName, SignatureHeaderKey, "<value>");
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await context.Response.WriteAsync(msg);
                 return false;
@@ -131,7 +128,7 @@ namespace Microsoft.AspNetCore.WebHooks.Receivers
             }
             catch (Exception)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomReceiverResource.Receiver_BadHeaderEncoding, SignatureHeaderName);
+                string msg = string.Format(CustomReceiverResource.Receiver_BadHeaderEncoding, SignatureHeaderName);
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await context.Response.WriteAsync(msg);
                 return false;
@@ -180,7 +177,7 @@ namespace Microsoft.AspNetCore.WebHooks.Receivers
             string echo = context.Request.Query[EchoParameter];
             if (string.IsNullOrEmpty(echo))
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomReceiverResource.Receiver_NoEcho, EchoParameter);
+                string msg = string.Format(CustomReceiverResource.Receiver_NoEcho, EchoParameter);
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await context.Response.WriteAsync(msg);
                 _logger.LogError(msg);

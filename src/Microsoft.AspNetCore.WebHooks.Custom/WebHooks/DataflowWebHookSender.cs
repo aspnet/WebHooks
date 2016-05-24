@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.WebHooks.Properties;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -86,7 +84,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 _launchers[offset++] = new ActionBlock<WebHookWorkItem>(async item => await DelayedLaunchWebHook(item, delay));
             }
 
-            string msg = string.Format(CultureInfo.CurrentCulture, CustomResource.Manager_Started, typeof(DataflowWebHookSender).Name, _launchers.Length);
+            string msg = string.Format(CustomResource.Manager_Started, typeof(DataflowWebHookSender).Name, _launchers.Length);
             Logger.LogInformation(msg);
         }
 
@@ -143,7 +141,7 @@ namespace Microsoft.AspNetCore.WebHooks
                         catch (Exception ex)
                         {
                             ex = ex.GetBaseException();
-                            string msg = string.Format(CultureInfo.CurrentCulture, CustomResource.Manager_CompletionFailure, ex.Message);
+                            string msg = string.Format(CustomResource.Manager_CompletionFailure, ex.Message);
                             Logger.LogError(msg, ex);
                         }
                     }
@@ -213,7 +211,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 HttpRequestMessage request = CreateWebHookRequest(workItem);
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
 
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomResource.Manager_Result, workItem.WebHook.Id, response.StatusCode, workItem.Offset);
+                string msg = string.Format(CustomResource.Manager_Result, workItem.WebHook.Id, response.StatusCode, workItem.Offset);
                 Logger.LogInformation(msg);
 
                 if (response.IsSuccessStatusCode)
@@ -231,7 +229,7 @@ namespace Microsoft.AspNetCore.WebHooks
             }
             catch (Exception ex)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomResource.Manager_WebHookFailure, workItem.Offset, workItem.WebHook.Id, ex.Message);
+                string msg = string.Format(CustomResource.Manager_WebHookFailure, workItem.Offset, workItem.WebHook.Id, ex.Message);
                 Logger.LogError(msg, ex);
             }
 
@@ -247,14 +245,14 @@ namespace Microsoft.AspNetCore.WebHooks
                 }
                 else
                 {
-                    string msg = string.Format(CultureInfo.CurrentCulture, CustomResource.Manager_GivingUp, workItem.WebHook.Id, workItem.Offset);
+                    string msg = string.Format(CustomResource.Manager_GivingUp, workItem.WebHook.Id, workItem.Offset);
                     Logger.LogError(msg);
                     await OnWebHookFailure(workItem);
                 }
             }
             catch (Exception ex)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomResource.Manager_WebHookFailure, workItem.Offset, workItem.WebHook.Id, ex.Message);
+                string msg = string.Format(CustomResource.Manager_WebHookFailure, workItem.Offset, workItem.WebHook.Id, ex.Message);
                 Logger.LogError(msg, ex);
             }
         }

@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using System.Net.Http;
-using Microsoft.AspNetCore.WebHooks.Properties;
-using System.Globalization;
+using System.Threading.Tasks;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
@@ -69,7 +67,7 @@ namespace Microsoft.AspNetCore.WebHooks
             // Check that WebHook URI is either 'http' or 'https'
             if (!(webHook.WebHookUri.Scheme.Equals("http", StringComparison.CurrentCultureIgnoreCase) || webHook.WebHookUri.Scheme.Equals("https", StringComparison.CurrentCultureIgnoreCase)))
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomResource.Manager_NoHttpUri, webHook.WebHookUri);
+                string msg = string.Format(CustomResource.Manager_NoHttpUri, webHook.WebHookUri);
                 _logger.LogError(msg);
                 throw new InvalidOperationException(msg);
             }
@@ -95,14 +93,14 @@ namespace Microsoft.AspNetCore.WebHooks
             }
             catch (Exception ex)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomResource.Manager_VerifyFailure, ex.Message);
+                string msg = string.Format(CustomResource.Manager_VerifyFailure, ex.Message);
                 _logger.LogError(msg, ex);
                 throw new InvalidOperationException(msg);
             }
 
             if (!response.IsSuccessStatusCode)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomResource.Manager_VerifyFailure, response.StatusCode);
+                string msg = string.Format(CustomResource.Manager_VerifyFailure, response.StatusCode);
                 _logger.LogInformation(msg);
                 throw new InvalidOperationException(msg);
             }

@@ -38,7 +38,7 @@
       "version": "1.0.0-preview1-final",
       "type": "build"
     },
-    "Microsoft.AspNetCore.WebHooks.Custom.Mvc":  "1.0.0-*"
+    "Microsoft.AspNetCore.WebHooks.Custom.Mvc": "1.0.0-*"
   },
 
   "tools": {
@@ -82,7 +82,10 @@
 
   "buildOptions": {
     "emitEntryPoint": true,
-    "preserveCompilationContext": true
+    "preserveCompilationContext": true,
+    "embed": {
+      "include": [ "**/*.resx" ]
+    }
   },
 
   "runtimeOptions": {

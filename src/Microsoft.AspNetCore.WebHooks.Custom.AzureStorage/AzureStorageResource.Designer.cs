@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AspNetCore.WebHooks.Properties {
+namespace Microsoft.AspNetCore.WebHooks {
     using System;
     using System.Reflection;
     

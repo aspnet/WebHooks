@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json.Linq;
-using System.IO;
-using Newtonsoft.Json;
-using System.Xml.Linq;
-using System.Xml;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.WebHooks.Properties;
-using System.Globalization;
+using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Xml;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
@@ -155,7 +149,7 @@ namespace Microsoft.AspNetCore.WebHooks
             // Require HTTP unless request is local
             if (context.Request.Host.Host != "localhost" && !context.Request.IsHttps)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, ReceiverResource.Receiver_NoHttps, GetType().Name, "https");
+                string msg = string.Format(ReceiverResource.Receiver_NoHttps, GetType().Name, "https");
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await context.Response.WriteAsync(msg);
                 return false;

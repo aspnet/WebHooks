@@ -1,14 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using System.Globalization;
-using Microsoft.AspNetCore.WebHooks.Properties;
-using System.Text;
-using System.Security.Cryptography;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
@@ -105,7 +103,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 {
                     if (!request.Content.Headers.TryAddWithoutValidation(kvp.Key, kvp.Value))
                     {
-                        string msg = string.Format(CultureInfo.CurrentCulture, CustomResource.Manager_InvalidHeader, kvp.Key, hook.Id);
+                        string msg = string.Format(CustomResource.Manager_InvalidHeader, kvp.Key, hook.Id);
                         _logger.LogError(msg);
                     }
                 }
@@ -160,7 +158,7 @@ namespace Microsoft.AspNetCore.WebHooks
             }
             if (workItem.WebHook == null)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomResource.Sender_BadWorkItem, this.GetType().Name, "WebHook");
+                string msg = string.Format(CustomResource.Sender_BadWorkItem, this.GetType().Name, "WebHook");
                 throw new ArgumentException(msg, "workItem");
             }
             if (request == null)

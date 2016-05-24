@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.WebHooks.Properties;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
@@ -69,7 +64,7 @@ namespace Microsoft.AspNetCore.WebHooks
 
             if (data == null)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CommonResources.EncodingUtils_InvalidHexValue, content);
+                string msg = string.Format(CommonResources.EncodingUtils_InvalidHexValue, content);
                 throw new InvalidOperationException(msg);
             }
 

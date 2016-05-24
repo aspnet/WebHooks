@@ -1,15 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.WebHooks.Properties;
-using System.Globalization;
-using Microsoft.WindowsAzure.Storage.Table;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Http;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
@@ -125,7 +123,7 @@ namespace Microsoft.AspNetCore.WebHooks
             TableResult result = await _manager.ExecuteRetrievalAsync(table, user, id);
             if (!result.IsSuccess())
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.AzureStore_NotFound, user, id);
+                string msg = string.Format(AzureStorageResource.AzureStore_NotFound, user, id);
                 _logger.LogInformation(msg);
                 return null;
             }
@@ -157,7 +155,7 @@ namespace Microsoft.AspNetCore.WebHooks
             StoreResult result = GetStoreResult(tableResult);
             if (result != StoreResult.Success)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_CreateFailed, table.Name, tableResult.HttpStatusCode);
+                string msg = string.Format(AzureStorageResource.StorageManager_CreateFailed, table.Name, tableResult.HttpStatusCode);
                 _logger.LogError(msg);
             }
             return result;
@@ -186,7 +184,7 @@ namespace Microsoft.AspNetCore.WebHooks
             StoreResult result = GetStoreResult(tableResult);
             if (result != StoreResult.Success)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_OperationFailed, table.Name, tableResult.HttpStatusCode);
+                string msg = string.Format(AzureStorageResource.StorageManager_OperationFailed, table.Name, tableResult.HttpStatusCode);
                 _logger.LogError(msg);
             }
             return result;
@@ -217,7 +215,7 @@ namespace Microsoft.AspNetCore.WebHooks
             StoreResult result = GetStoreResult(tableResult);
             if (result != StoreResult.Success)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.StorageManager_OperationFailed, table.Name, tableResult.HttpStatusCode);
+                string msg = string.Format(AzureStorageResource.StorageManager_OperationFailed, table.Name, tableResult.HttpStatusCode);
                 _logger.LogError(msg);
             }
             return result;
@@ -309,7 +307,7 @@ namespace Microsoft.AspNetCore.WebHooks
             }
             catch (Exception ex)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.AzureStore_BadWebHook, typeof(WebHook).Name, ex.Message);
+                string msg = string.Format(AzureStorageResource.AzureStore_BadWebHook, typeof(WebHook).Name, ex.Message);
                 _logger.LogError(msg, ex);
             }
             return null;

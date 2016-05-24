@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebHooks.Properties;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -112,7 +109,7 @@ namespace Microsoft.AspNetCore.WebHooks
         {
             if (_tokenSource != null)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.DequeueManager_Started, this.GetType().Name);
+                string msg = string.Format(AzureStorageResource.DequeueManager_Started, this.GetType().Name);
                 _logger.LogError(msg);
                 throw new InvalidOperationException(msg);
             }
@@ -174,7 +171,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 catch (Exception ex)
                 {
                     CloudQueue _queue = await _storageManager.GetCloudQueueAsync(_options.ConnectionString, AzureWebHookSender.WebHookQueue);
-                    string msg = string.Format(CultureInfo.CurrentCulture, AzureStorageResource.DequeueManager_ErrorDequeueing, _queue.Name, ex.Message);
+                    string msg = string.Format(AzureStorageResource.DequeueManager_ErrorDequeueing, _queue.Name, ex.Message);
                     _logger.LogError(msg, ex);
                 }
 
