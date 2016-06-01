@@ -12,6 +12,8 @@ namespace Microsoft.AspNetCore.WebHooks
     public class WebHookDataNotification : Dictionary<string, object>, IWebHookNotification
     {
 
+        const string ActionProperty = "Action";
+
         /// <summary>
         /// Creates a Generic <see cref="IWebHookNotification"/> with an Action and Data
         /// </summary>
@@ -19,6 +21,8 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <param name="data">Any data to pass along with the webhook notification</param>
         public WebHookDataNotification(string action, object data)
         {
+            this[ActionProperty] = action;
+
             IDictionary<string, object> dataAsDictionary = data as IDictionary<string, object>;
             if (dataAsDictionary == null && data != null)
             {
@@ -38,10 +42,15 @@ namespace Microsoft.AspNetCore.WebHooks
                     this[item.Key] = item.Value;
                 }
             }
-            Action = action;
         }
 
         /// <inheritdoc />
-        public string Action { get; set; }
+        public string Action
+        {
+            get
+            {
+                return (string)this[ActionProperty];
+            }
+        }
     }
 }

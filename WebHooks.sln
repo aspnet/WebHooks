@@ -170,6 +170,12 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.AspNetCore.WebHoo
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.AspNetCore.WebHooks.Custom.Api", "src\Microsoft.AspNetCore.WebHooks.Custom.Api\Microsoft.AspNetCore.WebHooks.Custom.Api.xproj", "{9013D0CA-1AB8-4142-ADD2-97663EBF3332}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.AspNetCore.WebHooks.Common.Test", "test\Microsoft.AspNetCore.WebHooks.Common.Test\Microsoft.AspNetCore.WebHooks.Common.Test.xproj", "{ACDC5EDB-CF8E-45F3-B1E9-5C878CA222F4}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.AspNetCore.WebHooks.Custom.Test", "test\Microsoft.AspNetCore.WebHooks.Custom.Test\Microsoft.AspNetCore.WebHooks.Custom.Test.xproj", "{25C3D351-6C4C-4AE3-913D-0259C3F614AE}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.NetCore.TestUtilities", "test\Microsoft.NetCore.TestUtilities\Microsoft.NetCore.TestUtilities.xproj", "{19B646E9-8586-485A-B83A-7308A56095C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CodeAnalysis|Any CPU = CodeAnalysis|Any CPU
@@ -609,6 +615,24 @@ Global
 		{9013D0CA-1AB8-4142-ADD2-97663EBF3332}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9013D0CA-1AB8-4142-ADD2-97663EBF3332}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9013D0CA-1AB8-4142-ADD2-97663EBF3332}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACDC5EDB-CF8E-45F3-B1E9-5C878CA222F4}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACDC5EDB-CF8E-45F3-B1E9-5C878CA222F4}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{ACDC5EDB-CF8E-45F3-B1E9-5C878CA222F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACDC5EDB-CF8E-45F3-B1E9-5C878CA222F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACDC5EDB-CF8E-45F3-B1E9-5C878CA222F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACDC5EDB-CF8E-45F3-B1E9-5C878CA222F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25C3D351-6C4C-4AE3-913D-0259C3F614AE}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{25C3D351-6C4C-4AE3-913D-0259C3F614AE}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{25C3D351-6C4C-4AE3-913D-0259C3F614AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25C3D351-6C4C-4AE3-913D-0259C3F614AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25C3D351-6C4C-4AE3-913D-0259C3F614AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25C3D351-6C4C-4AE3-913D-0259C3F614AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19B646E9-8586-485A-B83A-7308A56095C8}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{19B646E9-8586-485A-B83A-7308A56095C8}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{19B646E9-8586-485A-B83A-7308A56095C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19B646E9-8586-485A-B83A-7308A56095C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19B646E9-8586-485A-B83A-7308A56095C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19B646E9-8586-485A-B83A-7308A56095C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -686,6 +710,9 @@ Global
 		{A4BB00C0-07F9-41F2-98DC-B488217BDB44} = {8F62A579-28A4-4BF9-9DE3-CD965DED8A20}
 		{50E71ADC-549B-4078-A7FD-AFD9C13957A1} = {BDF4A733-5DFF-4613-B569-3F99B86EED11}
 		{9013D0CA-1AB8-4142-ADD2-97663EBF3332} = {BDF4A733-5DFF-4613-B569-3F99B86EED11}
+		{ACDC5EDB-CF8E-45F3-B1E9-5C878CA222F4} = {B9DA2E6C-B5A8-4996-A4A4-14EF2F664AD1}
+		{25C3D351-6C4C-4AE3-913D-0259C3F614AE} = {B9DA2E6C-B5A8-4996-A4A4-14EF2F664AD1}
+		{19B646E9-8586-485A-B83A-7308A56095C8} = {B9DA2E6C-B5A8-4996-A4A4-14EF2F664AD1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45

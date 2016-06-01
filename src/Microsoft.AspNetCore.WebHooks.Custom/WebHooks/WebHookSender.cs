@@ -140,6 +140,7 @@ namespace Microsoft.AspNetCore.WebHooks
             // Set notifications
             body[BodyNotificationsKey] = workItem.Notifications;
 
+
             return JObject.FromObject(body);
         }
 

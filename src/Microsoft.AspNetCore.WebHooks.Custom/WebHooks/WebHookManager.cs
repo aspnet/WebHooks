@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <param name="webHookStore">The current <see cref="IWebHookStore"/>.</param>
         /// <param name="webHookSender">The current <see cref="IWebHookSender"/>.</param>
         /// <param name="logger">The current <see cref="ILogger"/>.</param>
-        public WebHookManager(IWebHookStore webHookStore, IWebHookSender webHookSender, ILogger<WebHookManager> logger)
+        public WebHookManager(IWebHookStore webHookStore, IWebHookSender webHookSender, ILogger logger)
         {
             if (webHookStore == null)
             {
@@ -50,6 +50,34 @@ namespace Microsoft.AspNetCore.WebHooks
             _httpClient = new HttpClient();
         }
 
+        /// <summary>
+        /// Initialize a new instance of the <see cref="WebHookManager"/> with a default retry policy.
+        /// </summary>
+        /// <param name="webHookStore">The current <see cref="IWebHookStore"/>.</param>
+        /// <param name="webHookSender">The current <see cref="IWebHookSender"/>.</param>
+        /// <param name="logger">The current <see cref="ILogger"/>.</param>
+        public WebHookManager(IWebHookStore webHookStore, IWebHookSender webHookSender, ILogger logger, HttpClient httpClient)
+        {
+            if (webHookStore == null)
+            {
+                throw new ArgumentNullException("webHookStore");
+            }
+            if (webHookSender == null)
+            {
+                throw new ArgumentNullException("webHookSender");
+            }
+            if (logger == null)
+            {
+                throw new ArgumentNullException("logger");
+            }
+
+            _webHookStore = webHookStore;
+            _webHookSender = webHookSender;
+            _logger = logger;
+
+            _httpClient = httpClient ?? new HttpClient();
+        }
+
         /// <inheritdoc />
         public async Task VerifyWebHookAsync(WebHook webHook)
         {
@@ -65,7 +93,8 @@ namespace Microsoft.AspNetCore.WebHooks
             }
 
             // Check that WebHook URI is either 'http' or 'https'
-            if (!(webHook.WebHookUri.Scheme.Equals("http", StringComparison.CurrentCultureIgnoreCase) || webHook.WebHookUri.Scheme.Equals("https", StringComparison.CurrentCultureIgnoreCase)))
+            if ((webHook.WebHookUri == null || !webHook.WebHookUri.IsAbsoluteUri) ||
+                !(webHook.WebHookUri.Scheme.Equals("http", StringComparison.CurrentCultureIgnoreCase) || webHook.WebHookUri.Scheme.Equals("https", StringComparison.CurrentCultureIgnoreCase)))
             {
                 string msg = string.Format(CustomResource.Manager_NoHttpUri, webHook.WebHookUri);
                 _logger.LogError(msg);
@@ -179,7 +208,7 @@ namespace Microsoft.AspNetCore.WebHooks
             GC.SuppressFinalize(this);
         }
 
-        internal static IEnumerable<WebHookWorkItem> GetWorkItems(ICollection<WebHook> webHooks, ICollection<IWebHookNotification> notifications)
+        public static IEnumerable<WebHookWorkItem> GetWorkItems(ICollection<WebHook> webHooks, ICollection<IWebHookNotification> notifications)
         {
             List<WebHookWorkItem> workItems = new List<WebHookWorkItem>();
             foreach (WebHook webHook in webHooks)
