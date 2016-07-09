@@ -65,79 +65,97 @@ namespace Microsoft.AspNet.WebHooks
         }
 
         /// <inheritdoc />
-        public async Task VerifyWebHookAsync(WebHook webHook)
+        public virtual async Task VerifyWebHookAsync(WebHook webHook)
         {
             if (webHook == null)
             {
                 throw new ArgumentNullException("webHook");
             }
 
-            // Check that we have a valid secret
-            if (string.IsNullOrEmpty(webHook.Secret) || webHook.Secret.Length < 32 || webHook.Secret.Length > 64)
-            {
-                throw new InvalidOperationException(CustomResources.WebHook_InvalidSecret);
-            }
+			VerifySecret(webHook.Secret);
 
-            // Check that WebHook URI is either 'http' or 'https'
-            if (!(webHook.WebHookUri.IsHttp() || webHook.WebHookUri.IsHttps()))
-            {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomResources.Manager_NoHttpUri, webHook.WebHookUri);
-                _logger.Error(msg);
-                throw new InvalidOperationException(msg);
-            }
+			VerifyUri(webHook.WebHookUri);
 
-            // Create the echo query parameter that we want returned in response body as plain text.
-            string echo = Guid.NewGuid().ToString("N");
-
-            HttpResponseMessage response;
-            try
-            {
-                // Get request URI with echo query parameter
-                UriBuilder webHookUri = new UriBuilder(webHook.WebHookUri);
-                webHookUri.Query = EchoParameter + "=" + echo;
-
-                // Create request adding any additional request headers (not entity headers) from Web Hook
-                HttpRequestMessage hookRequest = new HttpRequestMessage(HttpMethod.Get, webHookUri.Uri);
-                foreach (var kvp in webHook.Headers)
-                {
-                    hookRequest.Headers.TryAddWithoutValidation(kvp.Key, kvp.Value);
-                }
-
-                response = await _httpClient.SendAsync(hookRequest);
-            }
-            catch (Exception ex)
-            {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomResources.Manager_VerifyFailure, ex.Message);
-                _logger.Error(msg, ex);
-                throw new InvalidOperationException(msg);
-            }
-
-            if (!response.IsSuccessStatusCode)
-            {
-                string msg = string.Format(CultureInfo.CurrentCulture, CustomResources.Manager_VerifyFailure, response.StatusCode);
-                _logger.Info(msg);
-                throw new InvalidOperationException(msg);
-            }
-
-            // Verify response body
-            if (response.Content == null)
-            {
-                string msg = CustomResources.Manager_VerifyNoBody;
-                _logger.Error(msg);
-                throw new InvalidOperationException(msg);
-            }
-
-            string actualEcho = await response.Content.ReadAsStringAsync();
-            if (!string.Equals(actualEcho, echo, StringComparison.Ordinal))
-            {
-                string msg = CustomResources.Manager_VerifyBadEcho;
-                _logger.Error(msg);
-                throw new InvalidOperationException(msg);
-            }
+			await VerifyEcho(webHook);            
         }
 
-        /// <inheritdoc />
-        public async Task<int> NotifyAsync(string user, IEnumerable<NotificationDictionary> notifications, Func<WebHook, string, bool> predicate)
+		/// <inheritdoc />
+		protected virtual async Task VerifyEcho(WebHook webHook)
+		{
+			// Create the echo query parameter that we want returned in response body as plain text.
+			string echo = Guid.NewGuid().ToString("N");
+
+			HttpResponseMessage response;
+			try
+			{
+				// Get request URI with echo query parameter
+				UriBuilder webHookUri = new UriBuilder(webHook.WebHookUri);
+				webHookUri.Query = EchoParameter + "=" + echo;
+
+				// Create request adding any additional request headers (not entity headers) from Web Hook
+				HttpRequestMessage hookRequest = new HttpRequestMessage(HttpMethod.Get, webHookUri.Uri);
+				foreach (var kvp in webHook.Headers)
+				{
+					hookRequest.Headers.TryAddWithoutValidation(kvp.Key, kvp.Value);
+				}
+
+				response = await _httpClient.SendAsync(hookRequest);
+			}
+			catch (Exception ex)
+			{
+				string msg = string.Format(CultureInfo.CurrentCulture, CustomResources.Manager_VerifyFailure, ex.Message);
+				_logger.Error(msg, ex);
+				throw new InvalidOperationException(msg);
+			}
+
+			if (!response.IsSuccessStatusCode)
+			{
+				string msg = string.Format(CultureInfo.CurrentCulture, CustomResources.Manager_VerifyFailure, response.StatusCode);
+				_logger.Info(msg);
+				throw new InvalidOperationException(msg);
+			}
+
+			// Verify response body
+			if (response.Content == null)
+			{
+				string msg = CustomResources.Manager_VerifyNoBody;
+				_logger.Error(msg);
+				throw new InvalidOperationException(msg);
+			}
+
+			string actualEcho = await response.Content.ReadAsStringAsync();
+			if (!string.Equals(actualEcho, echo, StringComparison.Ordinal))
+			{
+				string msg = CustomResources.Manager_VerifyBadEcho;
+				_logger.Error(msg);
+				throw new InvalidOperationException(msg);
+			}
+		}
+
+		/// <inheritdoc />
+		protected virtual void VerifyUri(Uri webHookUri)
+		{
+			// Check that WebHook URI is either 'http' or 'https'
+			if (!(webHookUri.IsHttp() || webHookUri.IsHttps()))
+			{
+				string msg = string.Format(CultureInfo.CurrentCulture, CustomResources.Manager_NoHttpUri, webHookUri);
+				_logger.Error(msg);
+				throw new InvalidOperationException(msg);
+			}
+		}
+
+		/// <inheritdoc />
+		protected virtual void VerifySecret(string secret)
+		{
+			// Check that we have a valid secret
+			if (string.IsNullOrEmpty(secret) || secret.Length < 32 || secret.Length > 64)
+			{
+				throw new InvalidOperationException(CustomResources.WebHook_InvalidSecret);
+			}
+		}
+
+		/// <inheritdoc />
+		public async Task<int> NotifyAsync(string user, IEnumerable<NotificationDictionary> notifications, Func<WebHook, string, bool> predicate)
         {
             if (user == null)
             {
