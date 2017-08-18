@@ -23,17 +23,16 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
         /// </summary>
         /// <param name="content">The content to hash.</param>
         /// <returns>The computed hash.</returns>
-        [CLSCompliant(false)]
         public static uint GetFnvHash32(string content)
         {
             if (content == null)
             {
                 throw new ArgumentNullException(nameof(content));
             }
-            byte[] data = Encoding.UTF8.GetBytes(content);
+            var data = Encoding.UTF8.GetBytes(content);
 
-            uint hash = FnvOffset32;
-            for (int cnt = 0; cnt < data.Length; cnt++)
+            var hash = FnvOffset32;
+            for (var cnt = 0; cnt < data.Length; cnt++)
             {
                 hash ^= data[cnt];
                 hash = hash * FnvPrime32;

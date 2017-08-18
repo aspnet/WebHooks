@@ -12,8 +12,8 @@ namespace System.Collections.Generic
     public static class DictionaryExtensions
     {
         /// <summary>
-        /// Gets the value of <typeparamref name="TValue"/> with the given key, or the <c>default</c> value 
-        /// if the key is not present or the value is not of type <typeparamref name="TValue"/>. 
+        /// Gets the value of <typeparamref name="TValue"/> with the given key, or the <c>default</c> value
+        /// if the key is not present or the value is not of type <typeparamref name="TValue"/>.
         /// </summary>
         /// <typeparam name="TValue">The type of the value.</typeparam>
         /// <param name="dictionary">The <see cref="IDictionary{TKey,TValue}"/> instance <c>TKey</c> is of type <see cref="string"/> and <c>TValue</c> of type <see cref="object"/>.</param>
@@ -40,8 +40,8 @@ namespace System.Collections.Generic
         }
 
         /// <summary>
-        /// Gets the value of <typeparamref name="TValue"/> with the given key, or the <c>default</c> value 
-        /// if the key is not present or the value is not of type <typeparamref name="TValue"/>. 
+        /// Gets the value of <typeparamref name="TValue"/> with the given key, or the <c>default</c> value
+        /// if the key is not present or the value is not of type <typeparamref name="TValue"/>.
         /// </summary>
         /// <typeparam name="TValue">The type of the value.</typeparam>
         /// <param name="dictionary">The <see cref="IDictionary{TKey,TValue}"/> instance <c>TKey</c> is of type <see cref="string"/> and <c>TValue</c> of type <see cref="object"/>.</param>

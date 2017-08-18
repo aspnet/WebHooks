@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
@@ -14,7 +13,7 @@ namespace System
     public static class StringExtensions
     {
         /// <summary>
-        /// Splits a string into segments based on a given <paramref name="separator"/>. The segments are 
+        /// Splits a string into segments based on a given <paramref name="separator"/>. The segments are
         /// trimmed and empty segments containing only white space are removed.
         /// </summary>
         /// <param name="input">The string to split.</param>
@@ -24,7 +23,7 @@ namespace System
         {
             if (input == null)
             {
-                return new string[0];
+                return Array.Empty<string>();
             }
 
             return input.Split(separator).Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();

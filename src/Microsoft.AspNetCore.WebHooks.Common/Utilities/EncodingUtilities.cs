@@ -44,7 +44,7 @@ namespace Microsoft.AspNetCore.WebHooks
         {
             if (string.IsNullOrEmpty(content))
             {
-                return new byte[0];
+                return Array.Empty<byte>();
             }
 
             byte[] data = null;
@@ -100,7 +100,7 @@ namespace Microsoft.AspNetCore.WebHooks
         {
             if (string.IsNullOrEmpty(content))
             {
-                return new byte[0];
+                return Array.Empty<byte>();
             }
 
             string base64 = content.Replace('_', '/').Replace('-', '+');
