@@ -162,7 +162,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericReceivers.Dependency
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesforceReceiver", "samples\SalesforceReceiver\SalesforceReceiver.csproj", "{3B7DEFC0-1032-448B-98B6-4B875A8E4285}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Common", "src\Microsoft.AspNetCore.WebHooks.Common\Microsoft.AspNetCore.WebHooks.Common.csproj", "{98CC4DB2-79D2-4179-A4BC-8A5A44308034}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Common", "src\Microsoft.AspNetCore.WebHooks.Common\Microsoft.AspNetCore.WebHooks.Common.csproj", "{98CC4DB2-79D2-4179-A4BC-8A5A44308034}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
