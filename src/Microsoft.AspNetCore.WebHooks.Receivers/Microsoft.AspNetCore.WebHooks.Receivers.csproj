@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);ASPNETWEBHOOKS;BUILD_GENERATED_VERSION;NOT_CLS_COMPLIANT</DefineConstants>
-    <RootNamespace>Microsoft.AspNet.WebHooks</RootNamespace>
+    <RootNamespace>Microsoft.AspNetCore.WebHooks</RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
