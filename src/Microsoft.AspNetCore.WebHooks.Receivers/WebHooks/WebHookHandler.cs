@@ -8,7 +8,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <summary>
     /// Provides an abstract <see cref="IWebHookHandler" /> implementation which can be used to base other implementations on.
     /// </summary>
-    public abstract class WebHookHandler : IWebHookHandler
+    public abstract class WebHookHandler : WebHookSharedResultBase, IWebHookHandler
     {
         internal const int DefaultOrder = 50;
 

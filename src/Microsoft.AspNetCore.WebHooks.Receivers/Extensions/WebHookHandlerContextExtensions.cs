@@ -3,8 +3,6 @@
 
 using System;
 using System.ComponentModel;
-using Microsoft.AspNet.WebHooks.Extensions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -72,27 +70,6 @@ namespace Microsoft.AspNetCore.WebHooks
         {
             value = GetDataOrDefault<T>(context);
             return value != default(T);
-        }
-
-        public static void CreateErrorResult(this WebHookHandlerContext context, int statusCode, string message)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            if (message == null)
-            {
-                throw new ArgumentNullException(nameof(message));
-            }
-
-            var error = new SerializableError
-            {
-                { SerializableErrorKeys.MessageKey, message },
-            };
-            context.Result = new BadRequestObjectResult(error)
-            {
-                StatusCode = statusCode,
-            };
         }
     }
 }

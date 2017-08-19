@@ -3,13 +3,13 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace Microsoft.AspNet.WebHooks.Extensions
+namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
     /// Provides keys to look up error information stored in the <see cref="SerializableError"/> dictionary.
     /// </summary>
     /// <remarks>Copied from Microsoft.AspNetCore.Mvc.WebApiCompatShim and earlier Web API's <c>HttpError</c> class.</remarks>
-    public static class SerializableErrorKeys
+    public static class WebHookErrorKeys
     {
         /// <summary>
         /// Provides a key for the Message.

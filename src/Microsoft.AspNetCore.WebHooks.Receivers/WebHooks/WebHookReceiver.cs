@@ -24,7 +24,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <summary>
     /// Provides an abstract <see cref="IWebHookReceiver"/> implementation which can be used to base other implementations on.
     /// </summary>
-    public abstract class WebHookReceiver : IWebHookReceiver
+    public abstract class WebHookReceiver : WebHookSharedResultBase, IWebHookReceiver
     {
         // Application setting for disabling HTTPS check
         internal const string DisableHttpsCheckKey = "MS_WebHookDisableHttpsCheck";
