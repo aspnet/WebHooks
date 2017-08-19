@@ -24,8 +24,7 @@ namespace System.Collections.Generic
         {
             if (dictionary != null)
             {
-                object valueAsObj;
-                if (dictionary.TryGetValue(key, out valueAsObj))
+                if (dictionary.TryGetValue(key, out var valueAsObj))
                 {
                     if (valueAsObj is TValue)
                     {
@@ -49,8 +48,7 @@ namespace System.Collections.Generic
         /// <returns>The value with the specified key if found; otherwise the default value.</returns>
         public static TValue GetValueOrDefault<TValue>(this IDictionary<string, object> dictionary, string key)
         {
-            TValue value;
-            TryGetValue(dictionary, key, out value);
+            TryGetValue(dictionary, key, out TValue value);
             return value;
         }
 

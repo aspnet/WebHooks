@@ -44,8 +44,9 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
             {
                 throw new ArgumentNullException(nameof(writer));
             }
-            DateTime utc = ((DateTime)value).ToUniversalTime();
-            long time = (long)(utc - _Epoch).TotalSeconds;
+
+            var utc = ((DateTime)value).ToUniversalTime();
+            var time = (long)(utc - _Epoch).TotalSeconds;
             if (_stringConverter)
             {
                 writer.WriteValue(time.ToString(CultureInfo.InvariantCulture));
@@ -65,7 +66,7 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
             }
             if (reader.Value == null)
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CommonResources.DateTime_NullError, typeof(DateTime).Name);
+                var msg = string.Format(CultureInfo.CurrentCulture, CommonResources.DateTime_NullError, typeof(DateTime).Name);
                 throw new InvalidOperationException(msg);
             }
 
@@ -74,7 +75,7 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
             {
                 if (!long.TryParse(reader.Value as string, out time))
                 {
-                    string msg = string.Format(CultureInfo.CurrentCulture, CommonResources.DateTime_BadFormat, reader.Value, typeof(DateTime).Name);
+                    var msg = string.Format(CultureInfo.CurrentCulture, CommonResources.DateTime_BadFormat, reader.Value, typeof(DateTime).Name);
                     throw new InvalidOperationException(msg);
                 }
             }
@@ -84,11 +85,11 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
             }
             else
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, CommonResources.DateTime_BadFormat, reader.Value, typeof(DateTime).Name);
+                var msg = string.Format(CultureInfo.CurrentCulture, CommonResources.DateTime_BadFormat, reader.Value, typeof(DateTime).Name);
                 throw new InvalidOperationException(msg);
             }
 
-            DateTime utc = _Epoch.AddSeconds(time);
+            var utc = _Epoch.AddSeconds(time);
             return utc;
         }
     }
