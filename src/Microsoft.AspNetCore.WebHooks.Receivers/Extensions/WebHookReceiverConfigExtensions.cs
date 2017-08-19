@@ -34,13 +34,14 @@ namespace Microsoft.AspNetCore.WebHooks
             }
 
             // Look up configuration for this receiver and instance
-            string secret = await config.GetReceiverConfigAsync(name, id);
+            var secret = await config.GetReceiverConfigAsync(name, id);
 
             // Verify that configuration value matches length requirements
             if (secret == null || secret.Length < minLength || secret.Length > maxLength)
             {
                 return null;
             }
+
             return secret;
         }
     }

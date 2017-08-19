@@ -34,6 +34,15 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <inheritdoc />
         public override async Task ExecuteAsync(string receiver, WebHookHandlerContext context)
         {
+            if (receiver == null)
+            {
+                throw new ArgumentNullException(nameof(receiver));
+            }
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             try
             {
                 var queueContext = new WebHookQueueContext(receiver, context);

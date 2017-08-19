@@ -37,7 +37,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.AspNet.WebHooks.Properties.ReceiverResources", typeof(ReceiverResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.AspNetCore.WebHooks.Properties.ReceiverResources", typeof(ReceiverResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -49,22 +49,30 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 _logger.LogInformation(
                     1,
-                    "{ReceiverName}.",
+                    "No WebHook receiver has been registered with the name '{ReceiverName}'. Please use one of the registered receivers.",
                     receiverName);
 
-                var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Manager_UnknownReceiver, receiverName);
                 return null;
             }
             else if (matches.Count > 1)
             {
+                // ??? Formatting is definitely optimized for the ConsoleLogger. What makes sense for the general case?
+                var receiverTypes = string.Join(Environment.NewLine, matches.Select(p => p.GetType()));
                 _logger.LogError(
                     2,
-                    "Registered '{Type}' instances with the following names: {ReceiverNames}.",
-                    typeof(IWebHookReceiver).Name,
-                    receiverName);
+                    "Multiple types were found that match the WebHook receiver named '{ReceiverName}'. This can " +
+                    "happen if multiple receivers are defined with the same name but different casing which is not " +
+                    "supported. The request for '{ReceiverName}' has found the following matching receivers: {NewLine}{ReceiverTypes}.",
+                    receiverName,
+                    Environment.NewLine,
+                    receiverTypes);
 
-                var providerList = string.Join(Environment.NewLine, matches.Select(p => p.GetType()));
-                var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Manager_MultipleAmbiguousReceiversFound, receiverName, Environment.NewLine, providerList);
+                var msg = string.Format(
+                    CultureInfo.CurrentCulture,
+                    ReceiverResources.Manager_MultipleAmbiguousReceiversFound,
+                    receiverName,
+                    Environment.NewLine,
+                    receiverTypes);
                 throw new InvalidOperationException(msg);
             }
 

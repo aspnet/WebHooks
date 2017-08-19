@@ -17,6 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class WebHookServiceCollectionExtensions
     {
         // ??? Do we need variants of these methods which call AddMvc() and optionally accept an Action<IMvcBuilder>?
+        // ??? Or, should we instead provide just IMvc[Core]Builder extensions and have the user call AddMvc[Core]()?
         /// <summary>
         /// Adds WebHooks services to the specified <paramref name="services"/>.
         /// </summary>
