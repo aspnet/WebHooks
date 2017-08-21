@@ -33,7 +33,7 @@ namespace Microsoft.AspNetCore.WebHooks
             _logger.LogInformation(
                 0,
                 "Registered '{Type}' instances with the following names: {ReceiverNames}.",
-                typeof(IWebHookReceiver).Name,
+                nameof(IWebHookReceiver),
                 receiverNames);
         }
 

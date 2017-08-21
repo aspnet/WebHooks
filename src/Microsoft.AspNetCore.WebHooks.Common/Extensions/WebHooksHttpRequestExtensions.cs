@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Net;
 using Microsoft.Net.Http.Headers;
 
 namespace Microsoft.AspNetCore.Http
@@ -80,6 +81,12 @@ namespace Microsoft.AspNetCore.Http
             }
 
             return false;
+        }
+
+        // ??? Should ASP.NET Core expose a similar HttpRequest, HttpContext or ConnectionInfo (extension) method?
+        public static bool IsLocal(this HttpRequest request)
+        {
+            return IPAddress.IsLoopback(request.HttpContext.Connection.RemoteIpAddress);
         }
     }
 }

@@ -22,7 +22,8 @@ using Newtonsoft.Json.Linq;
 namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
-    /// Provides an abstract <see cref="IWebHookReceiver"/> implementation which can be used to base other implementations on.
+    /// Provides an abstract <see cref="IWebHookReceiver"/> implementation which can be used to base other
+    /// implementations on.
     /// </summary>
     public abstract class WebHookReceiver : WebHookSharedResultBase, IWebHookReceiver
     {
@@ -42,6 +43,35 @@ namespace Microsoft.AspNetCore.WebHooks
             ILoggerFactory loggerFactory,
             IOptions<MvcOptions> optionsAccessor)
         {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+            if (handlerManager == null)
+            {
+                throw new ArgumentNullException(nameof(handlerManager));
+            }
+            if (loggerFactory == null)
+            {
+                throw new ArgumentNullException(nameof(loggerFactory));
+            }
+            if (metadataProvider == null)
+            {
+                throw new ArgumentNullException(nameof(metadataProvider));
+            }
+            if (optionsAccessor == null)
+            {
+                throw new ArgumentNullException(nameof(optionsAccessor));
+            }
+            if (readerFactory == null)
+            {
+                throw new ArgumentNullException(nameof(readerFactory));
+            }
+            if (receiverConfig == null)
+            {
+                throw new ArgumentNullException(nameof(receiverConfig));
+            }
+
             HandlerManager = handlerManager;
             InputFormatters = optionsAccessor.Value.InputFormatters;
             Logger = loggerFactory.CreateLogger(GetType());
@@ -283,6 +313,10 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 throw new ArgumentNullException(nameof(request));
             }
+            if (requestHeaderName == null)
+            {
+                throw new ArgumentNullException(nameof(requestHeaderName));
+            }
 
             if (!request.Headers.TryGetValues(requestHeaderName, out var headers) || headers.Count() != 1)
             {
@@ -303,6 +337,15 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <returns>A <see cref="JObject"/> containing the HTTP request entity body.</returns>
         protected virtual Task<JObject> ReadAsJsonAsync(HttpRequest request, ModelStateDictionary modelState)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            if (modelState == null)
+            {
+                throw new ArgumentNullException(nameof(modelState));
+            }
+
             return ReadAsJsonAsync<JObject>(request);
         }
 
@@ -313,6 +356,15 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <returns>A <see cref="JObject"/> containing the HTTP request entity body.</returns>
         protected virtual Task<JArray> ReadAsJsonArrayAsync(HttpRequest request, ModelStateDictionary modelState)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            if (modelState == null)
+            {
+                throw new ArgumentNullException(nameof(modelState));
+            }
+
             return ReadAsJsonAsync<JArray>(request);
         }
 
@@ -323,6 +375,15 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <returns>A <see cref="JObject"/> containing the HTTP request entity body.</returns>
         protected virtual Task<JToken> ReadAsJsonTokenAsync(HttpRequest request, ModelStateDictionary modelState)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            if (modelState == null)
+            {
+                throw new ArgumentNullException(nameof(modelState));
+            }
+
             return ReadAsJsonAsync<JToken>(request);
         }
 
@@ -333,6 +394,14 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <returns>A <see cref="JObject"/> containing the HTTP request entity body.</returns>
         protected virtual async Task<XElement> ReadAsXmlAsync(HttpRequest request, ModelStateDictionary modelState)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            if (modelState == null)
+            {
+                throw new ArgumentNullException(nameof(modelState));
+            }
             HttpConfiguration config = request.GetConfiguration();
 
             // Check that there is a request body
@@ -375,6 +444,15 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <returns>A <see cref="NameValueCollection"/> containing the HTTP request entity body.</returns>
         protected virtual async Task<NameValueCollection> ReadAsFormDataAsync(HttpRequest request, ModelStateDictionary modelState)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            if (modelState == null)
+            {
+                throw new ArgumentNullException(nameof(modelState));
+            }
+
             // Check that there is a request body
             if (request.Content == null)
             {

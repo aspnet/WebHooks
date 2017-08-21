@@ -53,7 +53,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 Logger.LogError(500, ex, "Could not enqueue WebHook.");
 
                 var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.QueueHandler_EnqueueError, ex.Message);
-                context.CreateErrorResult(StatusCodes.Status500InternalServerError, msg);
+                context.Result = CreateErrorResult(StatusCodes.Status500InternalServerError, msg);
             }
         }
 
