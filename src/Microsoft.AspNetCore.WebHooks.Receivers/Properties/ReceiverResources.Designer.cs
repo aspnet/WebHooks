@@ -8,8 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AspNetCore.WebHooks.Properties
-{
+namespace Microsoft.AspNetCore.WebHooks.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -17,7 +19,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ReceiverResources {
@@ -59,15 +61,6 @@ namespace Microsoft.AspNetCore.WebHooks.Properties
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registered configuration setting &apos;{0}&apos; for ID &apos;{1}&apos;&apos;..
-        /// </summary>
-        internal static string Config_AddedName {
-            get {
-                return ResourceManager.GetString("Config_AddedName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Could not add configuration for receiver &apos;{0}&apos; and id &apos;{1}&apos;: {2}.
         /// </summary>
         internal static string Config_AddFailure {
@@ -86,47 +79,11 @@ namespace Microsoft.AspNetCore.WebHooks.Properties
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Did not find any applications settings of the form &apos;{0}&apos;. To receive WebHooks, please add corresponding applications settings..
-        /// </summary>
-        internal static string Config_NoConfig {
-            get {
-                return ResourceManager.GetString("Config_NoConfig", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Could not deserialize instance of type &apos;{0}&apos; as &apos;{1}&apos;: {2}.
-        /// </summary>
-        internal static string GetDataOrDefault_Failure {
-            get {
-                return ResourceManager.GetString("GetDataOrDefault_Failure", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Multiple types were found that match the WebHook receiver named &apos;{0}&apos;. This can happen if multiple receivers are defined with the same name but different casing which is not supported. The request for &apos;{0}&apos; has found the following matching receivers: {1}{2}..
         /// </summary>
         internal static string Manager_MultipleAmbiguousReceiversFound {
             get {
                 return ResourceManager.GetString("Manager_MultipleAmbiguousReceiversFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Registered &apos;{0}&apos; instances with the following names: {1}..
-        /// </summary>
-        internal static string Manager_RegisteredNames {
-            get {
-                return ResourceManager.GetString("Manager_RegisteredNames", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No WebHook receiver has been registered with the name &apos;{0}&apos;. Please use one of the registered receivers..
-        /// </summary>
-        internal static string Manager_UnknownReceiver {
-            get {
-                return ResourceManager.GetString("Manager_UnknownReceiver", resourceCulture);
             }
         }
         
@@ -212,6 +169,15 @@ namespace Microsoft.AspNetCore.WebHooks.Properties
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No {0} available for &apos;{1}&apos;..
+        /// </summary>
+        internal static string Receiver_MissingFormatter {
+            get {
+                return ResourceManager.GetString("Receiver_MissingFormatter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The WebHook request entity body cannot be empty..
         /// </summary>
         internal static string Receiver_NoBody {
@@ -262,33 +228,6 @@ namespace Microsoft.AspNetCore.WebHooks.Properties
         internal static string Receiver_NoXml {
             get {
                 return ResourceManager.GetString("Receiver_NoXml", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to WebHook receiver &apos;{0}&apos; could not process WebHook due to error: {1}.
-        /// </summary>
-        internal static string ReceiverController_Failure {
-            get {
-                return ResourceManager.GetString("ReceiverController_Failure", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Processing incoming WebHook request with receiver &apos;{0}&apos; and id &apos;{1}&apos;..
-        /// </summary>
-        internal static string ReceiverController_Processing {
-            get {
-                return ResourceManager.GetString("ReceiverController_Processing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No WebHook receiver is registered with the name &apos;{0}&apos;..
-        /// </summary>
-        internal static string ReceiverController_Unknown {
-            get {
-                return ResourceManager.GetString("ReceiverController_Unknown", resourceCulture);
             }
         }
     }

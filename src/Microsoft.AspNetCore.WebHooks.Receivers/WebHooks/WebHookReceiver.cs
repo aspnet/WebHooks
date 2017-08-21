@@ -6,17 +6,21 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebHooks.Properties;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.WebHooks
@@ -35,13 +39,36 @@ namespace Microsoft.AspNetCore.WebHooks
         internal const int CodeMaxLength = 128;
         internal const string CodeQueryParameter = "code";
 
+        // Errors in ModelState will serialize similar to CreateErrorResult(..., message, ...) message.
+        private static readonly string ModelStateRootKey = WebHookErrorKeys.MessageKey;
+
+        private readonly IConfiguration _configuration;
+        private readonly IReadOnlyList<IWebHookHandler> _handlers;
+        private readonly IReadOnlyList<IInputFormatter> _inputFormatters;
+        private readonly IModelMetadataProvider _metadataProvider;
+        private readonly Func<Stream, Encoding, TextReader> _readerFactory;
+        private readonly IWebHookReceiverConfig _receiverConfig;
+
+        // ??? Why is IHttpRequestStreamReaderFactory in an Internal namespace?
         /// <summary>
         /// Initializes a new instance of the <see cref="WebHookReceiver"/> class.
         /// </summary>
+        /// <param name="configuration">The <see cref="IConfiguration"/> aka application settings.</param>
+        /// <param name="handlerManager">The <see cref="IWebHookHandlerManager"/>.</param>
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
+        /// <param name="metadataProvider">The <see cref="IModelMetadataProvider"/>.</param>
+        /// <param name="optionsAccessor">
+        /// The <see cref="IOptions{MvcOptions}"/> accessor for <see cref="MvcOptions"/>.
+        /// </param>
+        /// <param name="readerFactory">The <see cref="IHttpRequestStreamReaderFactory"/>.</param>
         protected WebHookReceiver(
+            IConfiguration configuration,
             IWebHookHandlerManager handlerManager,
             ILoggerFactory loggerFactory,
-            IOptions<MvcOptions> optionsAccessor)
+            IModelMetadataProvider metadataProvider,
+            IOptions<MvcOptions> optionsAccessor,
+            IHttpRequestStreamReaderFactory readerFactory,
+            IWebHookReceiverConfig receiverConfig)
         {
             if (configuration == null)
             {
@@ -72,19 +99,17 @@ namespace Microsoft.AspNetCore.WebHooks
                 throw new ArgumentNullException(nameof(receiverConfig));
             }
 
-            HandlerManager = handlerManager;
-            InputFormatters = optionsAccessor.Value.InputFormatters;
+            _configuration = configuration;
+            _handlers = handlerManager.Handlers;
             Logger = loggerFactory.CreateLogger(GetType());
+            _metadataProvider = metadataProvider;
+            _inputFormatters = optionsAccessor.Value.InputFormatters;
+            _readerFactory = readerFactory.CreateReader;
+            _receiverConfig = receiverConfig;
         }
 
         /// <inheritdoc />
         public abstract string Name { get; }
-
-        protected IWebHookHandlerManager HandlerManager { get; }
-
-        protected IReadOnlyList<IWebHookHandler> Handlers => HandlerManager.Handlers;
-
-        protected IReadOnlyList<IInputFormatter> InputFormatters { get; }
 
         protected ILogger Logger { get; }
 
@@ -95,43 +120,82 @@ namespace Microsoft.AspNetCore.WebHooks
         /// Reads the JSON HTTP request entity body.
         /// </summary>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
+        /// <param name="modelState">The <see cref="ModelStateDictionary"/>.</param>
         /// <returns>A <see cref="JObject"/> containing the HTTP request entity body.</returns>
-        internal static async Task<T> ReadAsJsonAsync<T>(HttpRequest request, ModelStateDictionary modelState)
+        internal async Task<T> ReadAsJsonAsync<T>(HttpRequest request, ModelStateDictionary modelState)
             where T : JToken
         {
-            HttpConfiguration config = request.GetConfiguration();
-
             // Check that there is a request body
-            if (request.Content == null)
+            if (request.Body == null || request.ContentLength == 0)
             {
-                var msg = ReceiverResources.Receiver_NoBody;
-                config.DependencyResolver.GetLogger().Info(msg);
-                HttpResponse noBody = request.CreateErrorResponse(HttpStatusCode.BadRequest, msg);
-                throw new HttpResponseException(noBody);
+                Logger.LogInformation(500, "The WebHook request entity body cannot be empty.");
+                modelState.TryAddModelError(ModelStateRootKey, ReceiverResources.Receiver_NoBody);
+
+                return null;
             }
 
             // Check that the request body is JSON
             if (!request.IsJson())
             {
-                var msg = ReceiverResources.Receiver_NoJson;
-                config.DependencyResolver.GetLogger().Info(msg);
-                HttpResponse noJson = request.CreateErrorResponse(HttpStatusCode.UnsupportedMediaType, msg);
-                throw new HttpResponseException(noJson);
+                Logger.LogInformation(501, "The WebHook request must contain an entity body formatted as JSON.");
+                modelState.TryAddModelError(ModelStateRootKey, ReceiverResources.Receiver_NoJson);
+
+                return null;
+            }
+
+            var formatterContext = new InputFormatterContext(
+                request.HttpContext,
+                ModelStateRootKey,
+                modelState,
+                _metadataProvider.GetMetadataForType(typeof(T)),
+                _readerFactory,
+                treatEmptyInputAsDefaultValue: false);
+
+            var formatter = (IInputFormatter)null;
+            for (var i = 0; i < _inputFormatters.Count; i++)
+            {
+                if (_inputFormatters[i].CanRead(formatterContext))
+                {
+                    formatter = _inputFormatters[i];
+                    break;
+                }
+            }
+
+            if (formatter == null)
+            {
+                // This is a configuration error that should never occur. JSON formatters are required.
+                Logger.LogCritical(
+                    502,
+                    "No {FormatterType} available for '{ContentType}'.",
+                    nameof(IInputFormatter),
+                    request.ContentType);
+
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    ReceiverResources.Receiver_MissingFormatter,
+                    nameof(IInputFormatter),
+                    request.ContentType);
+                throw new InvalidOperationException(message);
             }
 
             try
             {
                 // Read request body
-                T result = await request.Content.ReadAsAsync<T>(config.Formatters);
-                return result;
+                var result = await formatter.ReadAsync(formatterContext);
+                if (result.IsModelSet)
+                {
+                    return (T)result.Model;
+                }
             }
             catch (Exception ex)
             {
+                Logger.LogError(503, ex, "The WebHook request contained invalid JSON.");
+
                 var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_BadJson, ex.Message);
-                config.DependencyResolver.GetLogger().Error(msg, ex);
-                HttpResponse invalidBody = request.CreateErrorResponse(HttpStatusCode.BadRequest, msg, ex);
-                throw new HttpResponseException(invalidBody);
+                modelState.TryAddModelError(ModelStateRootKey, msg);
             }
+
+            return null;
         }
 
         /// <summary>
@@ -198,31 +262,35 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <remarks>This method does allow local HTTP requests using <c>localhost</c>.</remarks>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller.")]
-        protected virtual void EnsureSecureConnection(HttpRequest request)
+        protected virtual IActionResult EnsureSecureConnection(HttpRequest request)
         {
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
 
-            IDependencyResolver resolver = request.GetConfiguration().DependencyResolver;
-
             // Check to see if we have been configured to ignore this check
-            SettingsDictionary settings = resolver.GetSettings();
-            string disableHttpsCheckValue = settings.GetValueOrDefault(DisableHttpsCheckKey);
+            var disableHttpsCheckValue = _configuration[DisableHttpsCheckKey];
             if (bool.TryParse(disableHttpsCheckValue, out var disableHttpsCheck) && disableHttpsCheck == true)
             {
-                return;
+                return null;
             }
 
             // Require HTTP unless request is local
-            if (!request.IsLocal() && !request.RequestUri.IsHttps())
+            if (!request.IsLocal() && !request.IsHttps)
             {
+                Logger.LogError(
+                    504,
+                    "The WebHook receiver '{ReceiverType}' requires HTTPS in order to be secure. " +
+                    "Please register a WebHook URI of type '{SchemeName}'.",
+                    GetType().Name,
+                    Uri.UriSchemeHttps);
+
                 var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_NoHttps, GetType().Name, Uri.UriSchemeHttps);
-                resolver.GetLogger().Error(msg);
-                HttpResponse noHttps = request.CreateErrorResponse(HttpStatusCode.BadRequest, msg);
-                throw new HttpResponseException(noHttps);
+                return CreateErrorResult(StatusCodes.Status400BadRequest, msg);
             }
+
+            return null;
         }
 
         /// <summary>
@@ -235,33 +303,46 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <param name="id">A (potentially empty) ID of a particular configuration for this <see cref="IWebHookReceiver"/>. This
         /// allows an <see cref="IWebHookReceiver"/> to support multiple WebHooks with individual configurations.</param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Response is disposed by Web API.")]
-        protected virtual async Task EnsureValidCode(HttpRequest request, string id)
+        protected virtual async Task<IActionResult> EnsureValidCode(HttpRequest request, string id)
         {
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
 
-            EnsureSecureConnection(request);
-
-            NameValueCollection queryParameters = request.RequestUri.ParseQueryString();
-            var code = queryParameters[CodeQueryParameter];
-            if (string.IsNullOrEmpty(code))
+            var result = EnsureSecureConnection(request);
+            if (result != null)
             {
-                var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_NoCode, CodeQueryParameter);
-                request.GetConfiguration().DependencyResolver.GetLogger().Error(msg);
-                HttpResponse noCode = request.CreateErrorResponse(HttpStatusCode.BadRequest, msg);
-                throw new HttpResponseException(noCode);
+                return result;
             }
 
-            var secretKey = await this.GetReceiverConfig(request, Name, id, CodeMinLength, CodeMaxLength);
+            var code = request.Query[CodeQueryParameter];
+            if (StringValues.IsNullOrEmpty(code))
+            {
+                Logger.LogError(
+                    505,
+                    "The WebHook verification request must contain a '{ParameterName}' query parameter.",
+                    CodeQueryParameter);
+
+                var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_NoCode, CodeQueryParameter);
+                var noCode = CreateErrorResult(StatusCodes.Status400BadRequest, msg);
+                return noCode;
+            }
+
+            var secretKey = await GetReceiverConfig(request, Name, id, CodeMinLength, CodeMaxLength);
             if (!WebHookReceiver.SecretEqual(code, secretKey))
             {
+                Logger.LogError(
+                    506,
+                    "The '{ParameterName}' query parameter provided in the HTTP request did not match the expected value.",
+                    CodeQueryParameter);
+
                 var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_BadCode, CodeQueryParameter);
-                request.GetConfiguration().DependencyResolver.GetLogger().Error(msg);
-                HttpResponse invalidCode = request.CreateErrorResponse(HttpStatusCode.BadRequest, msg);
-                throw new HttpResponseException(invalidCode);
+                var invalidCode = CreateErrorResult(StatusCodes.Status400BadRequest, msg);
+                return invalidCode;
             }
+
+            return null;
         }
 
         /// <summary>
@@ -274,7 +355,12 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <param name="minLength">The minimum length of the key value.</param>
         /// <param name="maxLength">The maximum length of the key value.</param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller")]
-        protected virtual async Task<string> GetReceiverConfig(HttpRequest request, string name, string id, int minLength, int maxLength)
+        protected virtual async Task<string> GetReceiverConfig(
+            HttpRequest request,
+            string name,
+            string id,
+            int minLength,
+            int maxLength)
         {
             if (request == null)
             {
@@ -286,16 +372,22 @@ namespace Microsoft.AspNetCore.WebHooks
             }
 
             // Look up configuration for this receiver and instance
-            HttpConfiguration httpConfig = request.GetConfiguration();
-            IWebHookReceiverConfig receiverConfig = httpConfig.DependencyResolver.GetReceiverConfig();
-            var secret = await receiverConfig.GetReceiverConfigAsync(name, id, minLength, maxLength);
+            var secret = await _receiverConfig.GetReceiverConfigAsync(name, id, minLength, maxLength);
             if (secret == null)
             {
+                Logger.LogCritical(
+                    507,
+                    "Could not find a valid configuration for WebHook receiver '{ReceiverName}' and instance '{Id}'. " +
+                    "The setting must be set to a value between {MinLength} and {MaxLength} characters long.",
+                    name,
+                    id,
+                    minLength,
+                    maxLength);
+
                 var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_BadSecret, name, id, minLength, maxLength);
-                httpConfig.DependencyResolver.GetLogger().Error(msg);
-                HttpResponse noSecret = request.CreateErrorResponse(HttpStatusCode.InternalServerError, msg);
-                throw new HttpResponseException(noSecret);
+                throw new InvalidOperationException(msg);
             }
+
             return secret;
         }
 
@@ -305,9 +397,13 @@ namespace Microsoft.AspNetCore.WebHooks
         /// </summary>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <param name="requestHeaderName">The name of the HTTP request header to look up.</param>
+        /// <param name="modelState">The <see cref="ModelStateDictionary"/>.</param>
         /// <returns>The signature header.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller")]
-        protected virtual string GetRequestHeader(HttpRequest request, string requestHeaderName)
+        protected virtual string GetRequestHeader(
+            HttpRequest request,
+            string requestHeaderName,
+            ModelStateDictionary modelState)
         {
             if (request == null)
             {
@@ -317,17 +413,28 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 throw new ArgumentNullException(nameof(requestHeaderName));
             }
-
-            if (!request.Headers.TryGetValues(requestHeaderName, out var headers) || headers.Count() != 1)
+            if (modelState == null)
             {
-                var headersCount = headers != null ? headers.Count() : 0;
-                var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_BadHeader, requestHeaderName, headersCount);
-                request.GetConfiguration().DependencyResolver.GetLogger().Info(msg);
-                HttpResponse noHeader = request.CreateErrorResponse(HttpStatusCode.BadRequest, msg);
-                throw new HttpResponseException(noHeader);
+                throw new ArgumentNullException(nameof(modelState));
             }
 
-            return headers.First();
+            if (!request.Headers.TryGetValue(requestHeaderName, out var headers) || headers.Count != 1)
+            {
+                var headersCount = headers.Count;
+                Logger.LogInformation(
+                    508,
+                    "Expecting exactly one '{HeaderName}' header field in the WebHook request but found {HeaderCount}. " +
+                    "Please ensure that the request contains exactly one '{HeaderName}' header field.",
+                    requestHeaderName,
+                    headersCount);
+
+                var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_BadHeader, requestHeaderName, headersCount);
+                modelState.TryAddModelError(ModelStateRootKey, msg);
+
+                return null;
+            }
+
+            return headers;
         }
 
         /// <summary>
@@ -346,7 +453,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 throw new ArgumentNullException(nameof(modelState));
             }
 
-            return ReadAsJsonAsync<JObject>(request);
+            return ReadAsJsonAsync<JObject>(request, modelState);
         }
 
         /// <summary>
@@ -365,7 +472,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 throw new ArgumentNullException(nameof(modelState));
             }
 
-            return ReadAsJsonAsync<JArray>(request);
+            return ReadAsJsonAsync<JArray>(request, modelState);
         }
 
         /// <summary>
@@ -384,7 +491,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 throw new ArgumentNullException(nameof(modelState));
             }
 
-            return ReadAsJsonAsync<JToken>(request);
+            return ReadAsJsonAsync<JToken>(request, modelState);
         }
 
         /// <summary>
@@ -402,47 +509,92 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 throw new ArgumentNullException(nameof(modelState));
             }
-            HttpConfiguration config = request.GetConfiguration();
 
             // Check that there is a request body
-            if (request.Content == null)
+            if (request.Body == null || request.ContentLength == 0)
             {
-                var msg = ReceiverResources.Receiver_NoBody;
-                config.DependencyResolver.GetLogger().Info(msg);
-                HttpResponse noBody = request.CreateErrorResponse(HttpStatusCode.BadRequest, msg);
-                throw new HttpResponseException(noBody);
+                Logger.LogInformation(509, "The WebHook request entity body cannot be empty.");
+                modelState.TryAddModelError(ModelStateRootKey, ReceiverResources.Receiver_NoBody);
+
+                return null;
             }
 
             // Check that the request body is XML
-            if (!request.Content.IsXml())
+            if (!request.IsXml())
             {
-                var msg = ReceiverResources.Receiver_NoXml;
-                config.DependencyResolver.GetLogger().Info(msg);
-                HttpResponse noXml = request.CreateErrorResponse(HttpStatusCode.UnsupportedMediaType, msg);
-                throw new HttpResponseException(noXml);
+                Logger.LogInformation(510, "The WebHook request must contain an entity body formatted as XML.");
+                modelState.TryAddModelError(ModelStateRootKey, ReceiverResources.Receiver_NoXml);
+
+                return null;
+            }
+
+            var formatterContext = new InputFormatterContext(
+                request.HttpContext,
+                ModelStateRootKey,
+                modelState,
+                _metadataProvider.GetMetadataForType(typeof(XElement)),
+                _readerFactory,
+                treatEmptyInputAsDefaultValue: false);
+
+            var formatter = (IInputFormatter)null;
+            for (var i = 0; i < _inputFormatters.Count; i++)
+            {
+                if (_inputFormatters[i].CanRead(formatterContext))
+                {
+                    formatter = _inputFormatters[i];
+                    break;
+                }
+            }
+
+            if (formatter == null)
+            {
+                // This is a configuration error that should never occur. JSON formatters are required.
+                Logger.LogCritical(
+                    511,
+                    "No {FormatterType} available for '{ContentType}'.",
+                    nameof(IInputFormatter),
+                    request.ContentType);
+
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    ReceiverResources.Receiver_MissingFormatter,
+                    nameof(IInputFormatter),
+                    request.ContentType);
+                throw new InvalidOperationException(message);
             }
 
             try
             {
                 // Read request body
-                XElement result = await request.Content.ReadAsAsync<XElement>(config.Formatters);
-                return result;
+                var result = await formatter.ReadAsync(formatterContext);
+                if (result.IsModelSet)
+                {
+                    return (XElement)result.Model;
+                }
             }
             catch (Exception ex)
             {
+                Logger.LogError(
+                    512,
+                    ex,
+                    "The WebHook request contained invalid XML.");
+
                 var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_BadXml, ex.Message);
-                config.DependencyResolver.GetLogger().Error(msg, ex);
-                HttpResponse invalidBody = request.CreateErrorResponse(HttpStatusCode.BadRequest, msg, ex);
-                throw new HttpResponseException(invalidBody);
+                modelState.TryAddModelError(ModelStateRootKey, msg);
             }
+
+            return null;
         }
 
         /// <summary>
-        /// Reads the HTML Form Data HTTP request entity body.
+        /// Reads the HTML Form Data HTTP request entity body as an <see cref="IFormCollection"/>.
         /// </summary>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
-        /// <returns>A <see cref="NameValueCollection"/> containing the HTTP request entity body.</returns>
-        protected virtual async Task<NameValueCollection> ReadAsFormDataAsync(HttpRequest request, ModelStateDictionary modelState)
+        /// <returns>An <see cref="IFormCollection"/> containing the HTTP request entity body.</returns>
+        /// <param name="modelState">The <see cref="ModelStateDictionary"/>.</param>
+        protected virtual async Task<IFormCollection> ReadAsFormCollectionAsync(
+            HttpRequest request,
+            ModelStateDictionary modelState)
         {
             if (request == null)
             {
@@ -454,36 +606,69 @@ namespace Microsoft.AspNetCore.WebHooks
             }
 
             // Check that there is a request body
-            if (request.Content == null)
+            if (request.Body == null || request.ContentLength == 0)
             {
-                var msg = ReceiverResources.Receiver_NoBody;
-                request.GetConfiguration().DependencyResolver.GetLogger().Info(msg);
-                HttpResponse noBody = request.CreateErrorResponse(HttpStatusCode.BadRequest, msg);
-                throw new HttpResponseException(noBody);
+                Logger.LogError(513, "The WebHook request entity body cannot be empty.");
+                modelState.TryAddModelError(ModelStateRootKey, ReceiverResources.Receiver_NoBody);
+
+                return null;
             }
 
             // Check that the request body is form data
-            if (!request.Content.IsFormData())
+            if (!request.HasFormContentType)
             {
-                var msg = ReceiverResources.Receiver_NoFormData;
-                request.GetConfiguration().DependencyResolver.GetLogger().Info(msg);
-                HttpResponse noJson = request.CreateErrorResponse(HttpStatusCode.UnsupportedMediaType, msg);
-                throw new HttpResponseException(noJson);
+                Logger.LogError(514, "The WebHook request must contain an entity body formatted as HTML Form Data.");
+                modelState.TryAddModelError(ModelStateRootKey, ReceiverResources.Receiver_NoFormData);
+
+                return null;
             }
 
             try
             {
                 // Read request body
-                NameValueCollection result = await request.Content.ReadAsFormDataAsync();
+                var result = await request.ReadFormAsync();
                 return result;
             }
             catch (Exception ex)
             {
+                Logger.LogError(
+                    515,
+                    ex,
+                    "The WebHook request contained invalid HTML Form Data.");
+
                 var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_BadFormData, ex.Message);
-                request.GetConfiguration().DependencyResolver.GetLogger().Error(msg, ex);
-                HttpResponse invalidBody = request.CreateErrorResponse(HttpStatusCode.BadRequest, msg, ex);
-                throw new HttpResponseException(invalidBody);
+                modelState.TryAddModelError(ModelStateRootKey, msg);
+
+                return null;
             }
+        }
+
+        /// <summary>
+        /// Reads the HTML Form Data HTTP request entity body as a <see cref="NameValueCollection"/>.
+        /// </summary>
+        /// <param name="request">The current <see cref="HttpRequest"/>.</param>
+        /// <returns>An <see cref="NameValueCollection"/> containing the HTTP request entity body.</returns>
+        protected virtual async Task<NameValueCollection> ReadAsFormDataAsync(
+            HttpRequest request,
+            ModelStateDictionary modelState)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            if (modelState == null)
+            {
+                throw new ArgumentNullException(nameof(modelState));
+            }
+
+            var formCollection = await ReadAsFormCollectionAsync(request, modelState);
+            var formData = new NameValueCollection(formCollection.Count);
+            foreach (var entry in formCollection)
+            {
+                formData.Add(entry.Key, entry.Value);
+            }
+
+            return formData;
         }
 
         /// <summary>
@@ -493,16 +678,22 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <returns>A fully initialized "Method Not Allowed" <see cref="HttpResponse"/>.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller")]
-        protected virtual HttpResponse CreateBadMethodResponse(HttpRequest request)
+        protected virtual IActionResult CreateBadMethodResult(HttpRequest request)
         {
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
 
+            Logger.LogError(
+                516,
+                "The HTTP '{RequestMethod}' method is not supported by the '{ReceiverType}' WebHook receiver.",
+                request.Method,
+                GetType().Name);
+
             var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_BadMethod, request.Method, GetType().Name);
-            request.GetConfiguration().DependencyResolver.GetLogger().Error(msg);
-            HttpResponse badMethod = request.CreateErrorResponse(HttpStatusCode.MethodNotAllowed, msg);
+            var badMethod = CreateErrorResult(StatusCodes.Status405MethodNotAllowed, msg);
+
             return badMethod;
         }
 
@@ -514,16 +705,27 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <param name="signatureHeaderName">The name of the HTTP header with invalid contents.</param>
         /// <returns>A fully initialized "Bad Request" <see cref="HttpResponse"/>.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller")]
-        protected virtual HttpResponse CreateBadSignatureResponse(HttpRequest request, string signatureHeaderName)
+        protected virtual IActionResult CreateBadSignatureResult(HttpRequest request, string signatureHeaderName)
         {
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
 
-            var msg = string.Format(CultureInfo.CurrentCulture, ReceiverResources.Receiver_BadSignature, signatureHeaderName, GetType().Name);
-            request.GetConfiguration().DependencyResolver.GetLogger().Error(msg);
-            HttpResponse badSignature = request.CreateErrorResponse(HttpStatusCode.BadRequest, msg);
+            Logger.LogError(
+                517,
+                "The WebHook signature provided by the '{HeaderName}' header field does not match the value expected " +
+                "by the '{ReceiverType}' receiver. WebHook request is invalid.",
+                signatureHeaderName,
+                GetType().Name);
+
+            var msg = string.Format(
+                CultureInfo.CurrentCulture,
+                ReceiverResources.Receiver_BadSignature,
+                signatureHeaderName,
+                GetType().Name);
+            var badSignature = CreateErrorResult(StatusCodes.Status400BadRequest, msg);
+
             return badSignature;
         }
 
@@ -536,7 +738,12 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <param name="request">The <see cref="HttpRequest"/> for this WebHook invocation.</param>
         /// <param name="actions">The collection of actions associated with this WebHook invocation.</param>
         /// <param name="data">Optional data associated with this WebHook invocation.</param>
-        protected virtual async Task ExecuteWebHookAsync(string id, HttpContext context, HttpRequest request, IEnumerable<string> actions, object data)
+        protected virtual async Task<IActionResult> ExecuteWebHookAsync(
+            string id,
+            HttpContext context,
+            HttpRequest request,
+            StringValues actions,
+            object data)
         {
             if (id == null)
             {
@@ -549,10 +756,6 @@ namespace Microsoft.AspNetCore.WebHooks
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
-            }
-            if (actions == null)
-            {
-                actions = Array.Empty<string>();
             }
 
             // Execute handlers. Note that we wait for them to complete before
@@ -569,7 +772,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 Data = data,
             };
 
-            foreach (var handler in Handlers)
+            foreach (var handler in _handlers)
             {
                 // Only call handlers with matching receiver name (or no receiver name in which case they support all receivers)
                 if (handler.Receiver != null && !string.Equals(Name, handler.Receiver, StringComparison.OrdinalIgnoreCase))
@@ -579,12 +782,14 @@ namespace Microsoft.AspNetCore.WebHooks
 
                 await handler.ExecuteAsync(Name, handlerContext);
 
-                // Check if response has been set and if so stop the processing.
-                if (handlerContext.RequestHandled)
+                // Check if result has been set and if so stop the processing.
+                if (handlerContext.Result != null)
                 {
-                    break;
+                    return handlerContext.Result;
                 }
             }
+
+            return null;
         }
     }
 }
