@@ -2,12 +2,12 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.AspNetCore.Builder;
 
-namespace Microsoft.AspNetCore.WebHooks.Extensions
+namespace Microsoft.AspNetCore.Builder
 {
     public static class WebHookApplicationBuilderExtensions
     {
+        // ??? Do we need this sugar?
         public static IApplicationBuilder UseWebHooks(this IApplicationBuilder builder)
         {
             if (builder == null)

@@ -22,7 +22,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds WebHooks services to the specified <paramref name="services"/>.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection" /> to add services to.</param>
-        /// <returns>An <see cref="IMvcCoreBuilder"/> that can be used to further configure underlying MVC services.</returns>
         public static void AddWebHooks(this IServiceCollection services)
         {
             if (services == null)

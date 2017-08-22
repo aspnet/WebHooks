@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
+    // TODO: Should probably flesh this out to match HttpRequestMessage extension methods and ease transitions.
+    // TODO: May also need CreateResponse() equivalents.
+    // ??? Would a bunch of HttpRequest extension methods that add an IActionResult to a well-known entry in
+    // ??? request.HttpContext.Items work better? Seems very WebApiCompatShim-like.
     /// <summary>
     /// Methods shared between <see cref="WebHookHandler"/> and <see cref="WebHookReceiver"/>. All return
     /// <see cref="IActionResult"/>s and are similar to Web API HttpResultMessage methods or extensions.

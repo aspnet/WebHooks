@@ -2,8 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
@@ -18,7 +17,6 @@ namespace Microsoft.AspNetCore.WebHooks
         /// </summary>
         public WebHookQueueContext()
         {
-            Actions = new List<string>();
         }
 
         /// <summary>
@@ -41,7 +39,7 @@ namespace Microsoft.AspNetCore.WebHooks
             Receiver = receiver;
             Id = context.Id;
             Data = context.Data;
-            Actions = context.Actions.ToList();
+            Actions = context.Actions;
         }
 
         /// <summary>
@@ -59,7 +57,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <summary>
         /// Gets the set of actions that caused the WebHook to be fired.
         /// </summary>
-        public ICollection<string> Actions { get; }
+        public StringValues Actions { get; }
 
         /// <summary>
         /// Gets or sets the optional data associated with this WebHook. The data typically represents the

@@ -79,29 +79,19 @@ namespace Microsoft.AspNetCore.WebHooks.Controllers
                 id);
 
             var result = await receiver.ReceiveAsync(id, HttpContext, ModelState);
-            if (result == null)
+            if (result != null)
             {
-                // Receiver should update the HttpResponse before returning null.
-                if (ModelState.IsValid)
-                {
-                    result = new NoOpResult();
-                }
-                else
-                {
-                    // ... except if receiver encounters an input formatting error. Handle that case here.
-                    result = BadRequest(ModelState);
-                }
+                return result;
             }
 
-            return result;
-        }
-
-        private class NoOpResult : IActionResult
-        {
-            public Task ExecuteResultAsync(ActionContext context)
+            // Receiver should update ModelState before returning null...
+            if (!ModelState.IsValid)
             {
-                return Task.CompletedTask;
+                return BadRequest(ModelState);
             }
+
+            // ... except if everything went perfectly.
+            return Ok();
         }
     }
 }

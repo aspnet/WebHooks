@@ -1,11 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
@@ -18,14 +16,9 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <summary>
         /// Initializes a new instance of the <see cref="WebHookHandlerContext"/> with the given set of <paramref name="actions"/>.
         /// </summary>
-        public WebHookHandlerContext(IEnumerable<string> actions)
+        public WebHookHandlerContext(StringValues actions)
         {
-            if (actions == null)
-            {
-                throw new ArgumentNullException(nameof(actions));
-            }
-
-            Actions = actions.ToList();
+            Actions = actions;
         }
 
         /// <summary>
@@ -37,7 +30,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <summary>
         /// Provides the set of actions that caused the WebHook to be fired.
         /// </summary>
-        public ICollection<string> Actions { get; }
+        public StringValues Actions { get; }
 
         /// <summary>
         /// Gets or sets the optional data associated with this WebHook. The data typically represents the

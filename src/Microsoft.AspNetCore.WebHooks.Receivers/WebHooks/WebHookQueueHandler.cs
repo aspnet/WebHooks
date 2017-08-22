@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.Extensions.Logging;
 
@@ -46,7 +47,7 @@ namespace Microsoft.AspNetCore.WebHooks
             try
             {
                 var queueContext = new WebHookQueueContext(receiver, context);
-                await EnqueueAsync(queueContext);
+                context.Result = await EnqueueAsync(queueContext);
             }
             catch (Exception ex)
             {
@@ -63,6 +64,6 @@ namespace Microsoft.AspNetCore.WebHooks
         /// the WebHook.
         /// </summary>
         /// <param name="context">The <see cref="WebHookQueueContext"/> for the WebHook to be enqueued.</param>
-        public abstract Task EnqueueAsync(WebHookQueueContext context);
+        public abstract Task<IActionResult> EnqueueAsync(WebHookQueueContext context);
     }
 }
