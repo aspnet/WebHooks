@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);ASPNETWEBHOOKS;BUILD_GENERATED_VERSION;NOT_CLS_COMPLIANT</DefineConstants>
+    <RootNamespace>Microsoft.AspNetCore.WebHooks</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.AspNetCore.WebHooks.Receivers\Microsoft.AspNetCore.WebHooks.Receivers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\GitHubReceiverResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GitHubReceiverResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\GitHubReceiverResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GitHubReceiverResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
