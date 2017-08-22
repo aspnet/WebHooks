@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class CommonResources {
@@ -61,15 +61,6 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WebHooks support has not been initialized correctly. Please call the initializer &apos;{0}&apos; on startup. See &apos;http://go.microsoft.com/fwlink/?LinkId=799408&apos; for details on how to initialize WebHooks..
-        /// </summary>
-        internal static string Config_NotInitialized {
-            get {
-                return ResourceManager.GetString("Config_NotInitialized", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cannot read value &apos;{0}&apos; as type &apos;{1}&apos;..
         /// </summary>
         internal static string DateTime_BadFormat {
@@ -93,33 +84,6 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         internal static string EncodingUtils_InvalidHexValue {
             get {
                 return ResourceManager.GetString("EncodingUtils_InvalidHexValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Could not verify the validity of the encrypted data..
-        /// </summary>
-        internal static string Encryptor_InvalidHash {
-            get {
-                return ResourceManager.GetString("Encryptor_InvalidHash", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The encryption key provided by setting &apos;{0}&apos; must be exactly 32 bytes long when encoded as UTF-8 but was found to be {1} bytes long..
-        /// </summary>
-        internal static string Encryptor_InvalidKey {
-            get {
-                return ResourceManager.GetString("Encryptor_InvalidKey", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No WebHook setting was found with key &apos;{0}&apos;. Please ensure that the WebHooks module is initialized with the correct application settings..
-        /// </summary>
-        internal static string Settings_KeyNotFound {
-            get {
-                return ResourceManager.GetString("Settings_KeyNotFound", resourceCulture);
             }
         }
     }
