@@ -2,17 +2,21 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;       // ??? Buffering helper is pub-Internal.
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Mvc.Internal;        // ??? IHttpRequestStreamReaderFactory is pub-Internal.
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebHooks.Properties;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -172,22 +176,40 @@ namespace Microsoft.AspNetCore.WebHooks
                 return invalidEncoding;
             }
 
+            // Ensure we can read body without messing up JSON etc. deserialization; body will be read at least twice.
+            if (!request.Body.CanSeek)
+            {
+                BufferingHelper.EnableRewind(request);
+                Debug.Assert(request.Body.CanSeek);
+
+                await request.Body.DrainAsync(CancellationToken.None);
+            }
+
+            // Always start at the beginning.
+            request.Body.Seek(0L, SeekOrigin.Begin);
+
             // Get the actual hash of the request body
             byte[] actualHash;
             var secret = Encoding.UTF8.GetBytes(secretKey);
             using (var hasher = new HMACSHA1(secret))
             {
-                var data = new byte[request.Body.Length];
+                // TODO: Handle (error) case where ContentLength > int.MaxValue.
+                var length = (int)(request.ContentLength ?? request.Body.Length);
+                var data = new byte[length];
 
-                // TODO: Make sure filter making Body seek-able is enabled and works for form data case.
-                request.Body.Position = 0L;
-
-                // TODO: Handle (error) case where Body.Length > int.MaxValue.
-                // TODO: Might want a ReadAsBytesAsync extension method somewhere.
-                var count = 0;
-                while (count < request.Body.Length)
+                // TODO: This is a common pattern in WebHooks receivers; likely need ReadAsBytesAsync() somewhere.
+                try
                 {
-                    count += await request.Body.ReadAsync(data, offset: count, count: (int)request.Body.Length - count);
+                    var offset = 0;
+                    while (offset < length)
+                    {
+                        offset += await request.Body.ReadAsync(data, offset, count: length - offset);
+                    }
+                }
+                finally
+                {
+                    // Reset Position because JsonInputFormatter et cetera always start from current position.
+                    request.Body.Seek(0L, SeekOrigin.Begin);
                 }
 
                 actualHash = hasher.ComputeHash(data);
