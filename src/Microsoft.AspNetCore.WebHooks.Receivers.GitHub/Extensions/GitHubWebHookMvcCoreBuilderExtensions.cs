@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    // ??? Should we remove provide do-nothing wrappers? I can see including them where the receiver requires specific
+    // ??? Should we provide do-nothing wrappers? I can see including them where the receiver requires specific
     // ??? configuration but am less comfortable with providing the wrappers by default.
     /// <summary>
     /// Extension methods for <see cref="HttpConfiguration"/>.
