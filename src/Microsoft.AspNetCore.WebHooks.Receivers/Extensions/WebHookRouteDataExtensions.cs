@@ -1,0 +1,64 @@
+﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+using System;
+using Microsoft.AspNetCore.WebHooks.Routes;
+
+namespace Microsoft.AspNetCore.Routing
+{
+    /// <summary>
+    /// Extension methods for the <see cref="RouteData"/> class.
+    /// </summary>
+    public static class WebHookRouteDataExtensions
+    {
+        /// <summary>
+        /// Gets the receiver name for the current request.
+        /// </summary>
+        /// <param name="routeData">The <see cref="RouteData"/> for the current request.</param>
+        /// <param name="receiverName">Set to the name of the requested receiver.</param>
+        /// <returns>
+        /// <c>true</c> if a receiver name was found in the <paramref name="routeData"/>; <c>false</c> otherwise.
+        /// </returns>
+        public static bool TryGetReceiverName(this RouteData routeData, out string receiverName)
+        {
+            if (routeData == null)
+            {
+                throw new ArgumentNullException(nameof(routeData));
+            }
+
+            if (routeData.Values.TryGetValue(WebHookReceiverRouteNames.ReceiverKeyName, out var receiver))
+            {
+                receiverName = receiver as string;
+                return receiverName != null;
+            }
+
+            receiverName = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Gets the receiver id for the current request.
+        /// </summary>
+        /// <param name="routeData">The <see cref="RouteData"/> for the current request.</param>
+        /// <param name="receiverId">Set to the id of the requested receiver.</param>
+        /// <returns>
+        /// <c>true</c> if a receiver id was found in the <paramref name="routeData"/>; <c>false</c> otherwise.
+        /// </returns>
+        public static bool TryGetReceiverId(this RouteData routeData, out string receiverId)
+        {
+            if (routeData == null)
+            {
+                throw new ArgumentNullException(nameof(routeData));
+            }
+
+            if (routeData.Values.TryGetValue(WebHookReceiverRouteNames.IdKeyName, out var identifier))
+            {
+                receiverId = identifier as string;
+                return receiverId != null;
+            }
+
+            receiverId = null;
+            return false;
+        }
+    }
+}
