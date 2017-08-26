@@ -5,7 +5,7 @@ using System;
 using System.Globalization;
 using Microsoft.AspNetCore.WebHooks.Properties;
 
-namespace Microsoft.AspNetCore.WebHooks
+namespace Microsoft.AspNetCore.WebHooks.Utilities
 {
     /// <summary>
     /// Utilities for converting to and from hex-encoded and base64-encoded strings.
