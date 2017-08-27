@@ -92,8 +92,18 @@ namespace Microsoft.AspNetCore.WebHooks
 
         /// <inheritdoc />
         /// <remarks>Template is the same for all WebHook actions to make route values consistent.</remarks>
-        public string Template =>
-            $"/api/webhooks/incoming/{{{WebHookReceiverRouteNames.ReceiverKeyName}}}/{{{WebHookReceiverRouteNames.IdKeyName}?}}";
+        public string Template
+        {
+            get
+            {
+                if (_receiver == null)
+                {
+                    return $"/api/webhooks/incoming/{{{WebHookReceiverRouteNames.ReceiverKeyName}}}/{{{WebHookReceiverRouteNames.IdKeyName}?}}";
+                }
+
+                return $"/api/webhooks/incoming/[{WebHookReceiverRouteNames.ReceiverKeyName}]/{{{WebHookReceiverRouteNames.IdKeyName}?}}";
+            }
+        }
 
         /// <inheritdoc />
         public string RouteKey => _receiver == null ? null : WebHookReceiverRouteNames.ReceiverKeyName;

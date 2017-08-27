@@ -30,6 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             var services = builder.Services;
             services.TryAddSingleton<IWebHookReceiverConfig, WebHookReceiverConfig>();
+            services.TryAddSingleton<WebHookApplicableFilter>();
 
             // TODO: Decide if this filter needs a non-default Order.
             builder.AddSingletonFilter<WebHookExceptionFilter>();

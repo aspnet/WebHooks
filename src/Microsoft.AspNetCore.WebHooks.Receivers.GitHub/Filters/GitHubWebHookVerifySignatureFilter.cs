@@ -50,6 +50,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             {
                 throw new ArgumentNullException(nameof(context));
             }
+            if (next == null)
+            {
+                throw new ArgumentNullException(nameof(next));
+            }
 
             if (context.RouteData.TryGetReceiverName(out var receiver) && IsApplicable(receiver))
             {
@@ -142,6 +146,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
             }
+
+            await next();
         }
     }
 }
