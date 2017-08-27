@@ -2,14 +2,19 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;          // ??? Will we run FxCop on the AspNetCore projects?
 using System.Globalization;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;       // ??? BufferingHelper is pub-Internal.
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.AspNetCore.WebHooks.Utilities;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -18,7 +23,7 @@ namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
     /// Base class for <see cref="IWebHookReceiver"/> implementations. Subclasses normally also implement
-    /// <see cref="Mvc.Filters.IResourceFilter"/>.
+    /// <see cref="Mvc.Filters.IResourceFilter"/> or <see cref="Mvc.Filters.IAsyncResourceFilter"/>.
     /// </summary>
     public abstract class WebHookReceiver : IWebHookReceiver
     {
@@ -84,6 +89,9 @@ namespace Microsoft.AspNetCore.WebHooks
 
             return string.Equals(Name, receiverName, StringComparison.OrdinalIgnoreCase);
         }
+
+        // TODO: Move some of the remaining methods into base IFilterResource implementations i.e. more classes
+        // like WebHookVerifyMethodFilter. Do not need all of these in every receiver / filter.
 
         /// <summary>
         /// Provides a time consistent comparison of two secrets in the form of two byte arrays.
@@ -253,6 +261,25 @@ namespace Microsoft.AspNetCore.WebHooks
         }
 
         /// <summary>
+        /// Ensure we can read the <paramref name="request"/> body without messing up JSON etc. deserialization. Body
+        /// will be read at least twice in most receivers.
+        /// </summary>
+        /// <param name="request">The <see cref="HttpRequest"/> to prepare.</param>
+        public async Task PrepareRequestBody(HttpRequest request)
+        {
+            if (!request.Body.CanSeek)
+            {
+                BufferingHelper.EnableRewind(request);
+                Debug.Assert(request.Body.CanSeek);
+
+                await request.Body.DrainAsync(CancellationToken.None);
+            }
+
+            // Always start at the beginning.
+            request.Body.Seek(0L, SeekOrigin.Begin);
+        }
+
+        /// <summary>
         /// Gets the locally configured WebHook secret key used to validate any signature header provided in a WebHook
         /// request.
         /// </summary>
@@ -362,43 +389,6 @@ namespace Microsoft.AspNetCore.WebHooks
             return headers;
         }
 
-        // ??? Do we need this method i.e. is 405 vs 400 important? If not, just set WebHookActionAttribute.HttpMethods.
-        /// <summary>
-        /// Returns a new <see cref="IActionResult"/> that when executed produces a response indicating that a
-        /// request with a non-supported HTTP method could not be processed.
-        /// </summary>
-        /// <param name="request">The current <see cref="HttpRequest"/>.</param>
-        /// <returns>
-        /// An <see cref="IActionResult"/> that when executed will produce a response with status code 405 "Method Not
-        /// Allowed" and containing details about the problem.
-        /// </returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller")]
-        protected virtual IActionResult CreateBadMethodResult(HttpRequest request)
-        {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-
-            Logger.LogError(
-                505,
-                "The HTTP '{RequestMethod}' method is not supported by the '{ReceiverType}' WebHook receiver.",
-                request.Method,
-                GetType().Name);
-
-            var msg = string.Format(
-                CultureInfo.CurrentCulture,
-                Resources.Receiver_BadMethod,
-                request.Method,
-                GetType().Name);
-
-            // ??? Should we instead provide CreateErrorResult(...) overloads with `int statusCode` parameters?
-            var badMethod = WebHookResultUtilities.CreateErrorResult(msg);
-            badMethod.StatusCode = StatusCodes.Status405MethodNotAllowed;
-
-            return badMethod;
-        }
-
         /// <summary>
         /// Returns a new <see cref="IActionResult"/> that when executed produces a response indicating that a
         /// request had an invalid signature and as a result could not be processed.
@@ -418,7 +408,7 @@ namespace Microsoft.AspNetCore.WebHooks
             }
 
             Logger.LogError(
-                506,
+                505,
                 "The WebHook signature provided by the '{HeaderName}' header field does not match the value expected " +
                 "by the '{ReceiverType}' receiver. WebHook request is invalid.",
                 signatureHeaderName,

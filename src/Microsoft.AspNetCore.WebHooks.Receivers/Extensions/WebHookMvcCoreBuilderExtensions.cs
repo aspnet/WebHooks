@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.WebHooks;
 using Microsoft.AspNetCore.WebHooks.Filters;
@@ -16,9 +17,10 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class WebHookMvcCoreBuilderExtensions
     {
         /// <summary>
-        /// Adds WebHooks configuration and services to the specified <paramref name="services"/>.
+        /// Add WebHooks configuration and services to the specified <paramref name="builder"/>.
         /// </summary>
         /// <param name="builder">The <see cref="IMvcCoreBuilder" /> to configure.</param>
+        /// <returns>The <paramref name="builder"/>.</returns>
         public static IMvcCoreBuilder AddWebHooks(this IMvcCoreBuilder builder)
         {
             if (builder == null)
@@ -29,6 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var services = builder.Services;
             services.TryAddSingleton<IWebHookReceiverConfig, WebHookReceiverConfig>();
 
+            // TODO: Decide if this filter needs a non-default Order.
             builder.AddSingletonFilter<WebHookExceptionFilter>();
 
             return builder;
@@ -40,7 +43,30 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TFilter">The <see cref="IFilterMetadata"/> type to add.</typeparam>
         /// <param name="builder">The <see cref="IMvcCoreBuilder" /> to configure.</param>
-        public static void AddSingletonFilter<TFilter>(this IMvcCoreBuilder builder)
+        /// <returns>The <paramref name="builder"/>.</returns>
+        /// <remarks>This method may be called multiple times for the same <typeparamref name="TFilter"/>.</remarks>
+        public static IMvcCoreBuilder AddSingletonFilter<TFilter>(this IMvcCoreBuilder builder)
+            where TFilter : class, IFilterMetadata
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            return builder.AddSingletonFilter<TFilter>(order: 0);
+        }
+
+        /// <summary>
+        /// Add <typeparamref name="TFilter"/> as a singleton filter with given <paramref name="order"/>. Register
+        /// <typeparamref name="TFilter"/> as a singleton service and add it to
+        /// <see cref="AspNetCore.Mvc.MvcOptions.Filters"/>.
+        /// </summary>
+        /// <typeparam name="TFilter">The <see cref="IFilterMetadata"/> type to add.</typeparam>
+        /// <param name="builder">The <see cref="IMvcCoreBuilder" /> to configure.</param>
+        /// <param name="order">The <see cref="IOrderedFilter.Order"/> of the new filter.</param>
+        /// <returns>The <paramref name="builder"/>.</returns>
+        /// <remarks>This method may be called multiple times for the same <typeparamref name="TFilter"/>.</remarks>
+        public static IMvcCoreBuilder AddSingletonFilter<TFilter>(this IMvcCoreBuilder builder, int order)
             where TFilter : class, IFilterMetadata
         {
             if (builder == null)
@@ -56,9 +82,42 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 var filters = options.Filters;
 
-                // TODO: Decide if any filters need non-default Order values.
-                filters.AddService<TFilter>();
+                // Remove existing registration of this type if it has a different Order. IsReusable should always be
+                // false (deferring lifetime choices to DI).
+                var i = 0;
+                var found = false;
+                while (i < filters.Count)
+                {
+                    var filter = filters[i];
+                    if (filter is ServiceFilterAttribute serviceFilter)
+                    {
+                        if (serviceFilter.ServiceType == typeof(TFilter))
+                        {
+                            if (!serviceFilter.IsReusable && serviceFilter.Order == order)
+                            {
+                                // Ignore odd cases where collection already contains duplicates.
+                                found = true;
+                                break;
+                            }
+                            else
+                            {
+                                // Replace existing registration with correct Order and IsReusable. Do not increment i.
+                                filters.RemoveAt(i);
+                                continue;
+                            }
+                        }
+                    }
+
+                    i++;
+                }
+
+                if (!found)
+                {
+                    filters.AddService<TFilter>(order);
+                }
             });
+
+            return builder;
         }
     }
 }

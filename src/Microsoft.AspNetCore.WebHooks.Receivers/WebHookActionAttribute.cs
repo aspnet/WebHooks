@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.WebHooks.Filters;
@@ -17,12 +18,12 @@ namespace Microsoft.AspNetCore.WebHooks
     // ??? various WebHooks protocols.
     // ??? Should this also implement IOrderedFilter? For now, doesn't seem important when we check receivers exist.
     /// <summary>
-    /// An <see cref="Attribute"/> indicating the associated action is a WebHooks endpoint. Also configures a
-    /// <see cref="WebHookApplicableFilter"/> for the action.
+    /// An <see cref="Attribute"/> indicating the associated action is a WebHooks endpoint. Configures routing and adds
+    /// a <see cref="WebHookApplicableFilter"/> for the action. Also specifies the supported request content types.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public abstract class WebHookActionAttribute
-        : AllowAnonymousAttribute, IRouteTemplateProvider, IRouteValueProvider, IFilterFactory
+        : ConsumesAttribute, IAllowAnonymous, IRouteTemplateProvider, IRouteValueProvider, IFilterFactory
     {
         private readonly string _receiver;
 
@@ -37,9 +38,14 @@ namespace Microsoft.AspNetCore.WebHooks
         /// </code>
         /// </para>
         /// <para>This constructor should usually be used at most once in a WebHooks application.</para>
-        /// <para>The default <see cref="Name"/> is <see cref="WebHookReceiverRouteNames.ReceiversAction"/>.</para>
+        /// <para>
+        /// The default route <see cref="Name"/> is <see cref="WebHookReceiverRouteNames.ReceiversAction"/>.
+        /// </para>
         /// </summary>
-        protected WebHookActionAttribute()
+        /// <param name="contentType">The first supported content type.</param>
+        /// <param name="otherContentTypes">Zero or more additional supported content types.</param>
+        protected WebHookActionAttribute(string contentType, params string[] otherContentTypes)
+            : base(contentType, otherContentTypes)
         {
             Name = WebHookReceiverRouteNames.ReceiversAction;
         }
@@ -62,10 +68,13 @@ namespace Microsoft.AspNetCore.WebHooks
         /// This constructor should usually be used at most once per <paramref name="receiver"/> name in a WebHooks
         /// application.
         /// </para>
-        /// <para>The default <see cref="Name"/> is <c>null</c>.</para>
+        /// <para>The default route <see cref="Name"/> is <c>null</c>.</para>
         /// </summary>
         /// <param name="receiver">The name of an available <see cref="IWebHookReceiver"/>.</param>
-        protected WebHookActionAttribute(string receiver)
+        /// <param name="contentType">The first supported content type.</param>
+        /// <param name="otherContentTypes">Zero or more additional supported content types.</param>
+        protected WebHookActionAttribute(string receiver, string contentType, params string[] otherContentTypes)
+            : base(contentType, otherContentTypes)
         {
             if (receiver == null)
             {
