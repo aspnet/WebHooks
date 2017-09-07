@@ -14,10 +14,11 @@ namespace Microsoft.AspNetCore.WebHooks
     public static class WebHookReceiverConfigExtensions
     {
         /// <summary>
-        /// Gets the receiver configuration with the given <paramref name="name"/> and <paramref name="id"/>.
+        /// Gets the receiver configuration with the given <paramref name="configurationName"/> and
+        /// <paramref name="id"/>.
         /// </summary>
         /// <param name="config">The current <see cref="IWebHookReceiverConfig"/>.</param>
-        /// <param name="name">
+        /// <param name="configurationName">
         /// The name of the configuration to obtain. Typically this is the name of the receiver, e.g. <c>github</c>.
         /// </param>
         /// <param name="id">
@@ -28,7 +29,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <param name="maxLength">The maximum length of the key value.</param>
         public static async Task<string> GetReceiverConfigAsync(
             this IWebHookReceiverConfig config,
-            string name,
+            string configurationName,
             string id,
             int minLength,
             int maxLength)
@@ -37,13 +38,13 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 throw new ArgumentNullException(nameof(config));
             }
-            if (name == null)
+            if (configurationName == null)
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentNullException(nameof(configurationName));
             }
 
-            // Look up configuration for this receiver and instance
-            var secret = await config.GetReceiverConfigAsync(name, id);
+            // Look up configuration for this name and id.
+            var secret = await config.GetReceiverConfigAsync(configurationName, id);
 
             // Verify that configuration value matches length requirements
             if (secret == null || secret.Length < minLength || secret.Length > maxLength)

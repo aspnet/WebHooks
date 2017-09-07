@@ -41,7 +41,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         }
 
         /// <inheritdoc />
-        public override string Name => GitHubWebHookConstants.ReceiverName;
+        public override string ReceiverName => GitHubWebHookConstants.ReceiverName;
 
         /// <inheritdoc />
         public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
@@ -78,13 +78,13 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                         SignatureHeaderKey,
                         "<value>");
 
-                    var msg = string.Format(
+                    var message = string.Format(
                         CultureInfo.CurrentCulture,
                         Resources.Receiver_BadHeaderValue,
                         SignatureHeaderName,
                         SignatureHeaderKey,
                         "<value>");
-                    var invalidHeader = WebHookResultUtilities.CreateErrorResult(msg);
+                    var invalidHeader = WebHookResultUtilities.CreateErrorResult(message);
 
                     context.Result = invalidHeader;
                     return;
@@ -104,11 +104,11 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                         "The '{HeaderName}' header value is invalid. It must be a valid hex-encoded string.",
                         SignatureHeaderName);
 
-                    var msg = string.Format(
+                    var message = string.Format(
                         CultureInfo.CurrentCulture,
                         Resources.Receiver_BadHeaderEncoding,
                         SignatureHeaderName);
-                    var invalidEncoding = WebHookResultUtilities.CreateErrorResult(msg);
+                    var invalidEncoding = WebHookResultUtilities.CreateErrorResult(message);
 
                     context.Result = invalidEncoding;
                     return;
@@ -116,7 +116,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
                 // 2. Get the configured secret key.
                 context.RouteData.TryGetReceiverId(out var id);
-                var secretKey = await GetReceiverConfig(request, Name, id, SecretMinLength, SecretMaxLength);
+                var secretKey = await GetReceiverConfig(request, ReceiverName, id, SecretMinLength, SecretMaxLength);
                 var secret = Encoding.UTF8.GetBytes(secretKey);
 
                 // 3. Get the actual hash of the request body.

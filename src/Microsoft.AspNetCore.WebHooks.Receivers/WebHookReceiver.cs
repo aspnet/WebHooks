@@ -58,7 +58,7 @@ namespace Microsoft.AspNetCore.WebHooks
         }
 
         /// <inheritdoc />
-        public abstract string Name { get; }
+        public abstract string ReceiverName { get; }
 
         /// <summary>
         /// Gets the current <see cref="IConfiguration"/> for the application.
@@ -87,7 +87,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 throw new ArgumentNullException(nameof(receiverName));
             }
 
-            return string.Equals(Name, receiverName, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(ReceiverName, receiverName, StringComparison.OrdinalIgnoreCase);
         }
 
         // TODO: Move some of the remaining methods into base IFilterResource implementations i.e. more classes
@@ -243,7 +243,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 return noCode;
             }
 
-            var secretKey = await GetReceiverConfig(request, Name, id, CodeMinLength, CodeMaxLength);
+            var secretKey = await GetReceiverConfig(request, ReceiverName, id, CodeMinLength, CodeMaxLength);
             if (!WebHookReceiver.SecretEqual(code, secretKey))
             {
                 Logger.LogError(
@@ -284,8 +284,8 @@ namespace Microsoft.AspNetCore.WebHooks
         /// request.
         /// </summary>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
-        /// <param name="name">
-        /// The name of the config to obtain. Typically this the name of the receiver, e.g. <c>github</c>.
+        /// <param name="configurationName">
+        /// The name of the configuration to obtain. Typically this the name of the receiver, e.g. <c>github</c>.
         /// </param>
         /// <param name="id">
         /// A (potentially empty) ID of a particular configuration for this <see cref="IWebHookReceiver"/>. This
@@ -297,7 +297,7 @@ namespace Microsoft.AspNetCore.WebHooks
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller")]
         protected virtual async Task<string> GetReceiverConfig(
             HttpRequest request,
-            string name,
+            string configurationName,
             string id,
             int minLength,
             int maxLength)
@@ -306,20 +306,20 @@ namespace Microsoft.AspNetCore.WebHooks
             {
                 throw new ArgumentNullException(nameof(request));
             }
-            if (name == null)
+            if (configurationName == null)
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentNullException(nameof(configurationName));
             }
 
             // Look up configuration for this receiver and instance
-            var secret = await ReceiverConfig.GetReceiverConfigAsync(name, id, minLength, maxLength);
+            var secret = await ReceiverConfig.GetReceiverConfigAsync(configurationName, id, minLength, maxLength);
             if (secret == null)
             {
                 Logger.LogCritical(
                     503,
                     "Could not find a valid configuration for WebHook receiver '{ReceiverName}' and instance '{Id}'. " +
                     "The setting must be set to a value between {MinLength} and {MaxLength} characters long.",
-                    name,
+                    configurationName,
                     id,
                     minLength,
                     maxLength);
@@ -327,7 +327,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 var msg = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.Receiver_BadSecret,
-                    name,
+                    configurationName,
                     id,
                     minLength,
                     maxLength);

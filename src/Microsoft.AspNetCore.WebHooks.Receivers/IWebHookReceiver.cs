@@ -19,14 +19,15 @@ namespace Microsoft.AspNetCore.WebHooks
         /// '<c>https://&lt;host&gt;/api/webhooks/incoming/&lt;name&gt;</c>'.
         /// </para>
         /// </summary>
-        string Name { get; }
+        /// <value>Must not return an empty string.</value>
+        string ReceiverName { get; }
 
         /// <summary>
         /// Gets an indication that this <see cref="IWebHookReceiver"/> should execute in the current request.
         /// </summary>
         /// <param name="receiverName">The name of the <see cref="IWebHookReceiver"/> requested.</param>
         /// <returns>
-        /// <c>true</c> if this <see cref="IWebHookReceiver"/> should execute; <c>false</c>otherwise.
+        /// <c>true</c> if this <see cref="IWebHookReceiver"/> should execute; <c>false</c> otherwise.
         /// </returns>
         bool IsApplicable(string receiverName);
     }

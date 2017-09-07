@@ -40,11 +40,11 @@ namespace Microsoft.AspNetCore.Routing
         /// Gets the receiver id for the current request.
         /// </summary>
         /// <param name="routeData">The <see cref="RouteData"/> for the current request.</param>
-        /// <param name="receiverId">Set to the id of the requested receiver.</param>
+        /// <param name="id">Set to the id of the requested receiver.</param>
         /// <returns>
         /// <c>true</c> if a receiver id was found in the <paramref name="routeData"/>; <c>false</c> otherwise.
         /// </returns>
-        public static bool TryGetReceiverId(this RouteData routeData, out string receiverId)
+        public static bool TryGetReceiverId(this RouteData routeData, out string id)
         {
             if (routeData == null)
             {
@@ -53,11 +53,11 @@ namespace Microsoft.AspNetCore.Routing
 
             if (routeData.Values.TryGetValue(WebHookReceiverRouteNames.IdKeyName, out var identifier))
             {
-                receiverId = identifier as string;
-                return receiverId != null;
+                id = identifier as string;
+                return id != null;
             }
 
-            receiverId = null;
+            id = null;
             return false;
         }
     }

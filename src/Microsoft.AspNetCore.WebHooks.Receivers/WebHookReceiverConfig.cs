@@ -40,18 +40,18 @@ namespace Microsoft.AspNetCore.WebHooks
         public IConfiguration Configuration { get; }
 
         /// <inheritdoc />
-        public virtual Task<string> GetReceiverConfigAsync(string name, string id)
+        public virtual Task<string> GetReceiverConfigAsync(string configurationName, string id)
         {
-            if (name == null)
+            if (configurationName == null)
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentNullException(nameof(configurationName));
             }
             if (id == null)
             {
                 id = string.Empty;
             }
 
-            var key = GetConfigKey(name, id);
+            var key = GetConfigKey(configurationName, id);
             var result = _settings.TryGetValue(key, out var value) ? value : null;
 
             // ??? Why does this method return a Task?
@@ -69,8 +69,8 @@ namespace Microsoft.AspNetCore.WebHooks
                 if (key.Length > ConfigKeyPrefix.Length &&
                     key.StartsWith(ConfigKeyPrefix, StringComparison.OrdinalIgnoreCase))
                 {
-                    // Extract receiver name
-                    var receiver = key.Substring(ConfigKeyPrefix.Length);
+                    // Extract configuration (again, likely receiver) name
+                    var configurationName = key.Substring(ConfigKeyPrefix.Length);
 
                     // Parse values
                     var segments = setting.Value.SplitAndTrim(',');
@@ -79,11 +79,11 @@ namespace Microsoft.AspNetCore.WebHooks
                         var values = segment.SplitAndTrim('=');
                         if (values.Length == 1)
                         {
-                            AddKey(settings, logger, receiver, string.Empty, values[0]);
+                            AddKey(settings, logger, configurationName, string.Empty, values[0]);
                         }
                         else if (values.Length == 2)
                         {
-                            AddKey(settings, logger, receiver, values[0], values[1]);
+                            AddKey(settings, logger, configurationName, values[0], values[1]);
                         }
                         else
                         {
@@ -114,19 +114,19 @@ namespace Microsoft.AspNetCore.WebHooks
         internal static void AddKey(
             IDictionary<string, string> settings,
             ILogger logger,
-            string receiver,
+            string configurationName,
             string id,
             string value)
         {
-            var lookupKey = GetConfigKey(receiver, id);
+            var lookupKey = GetConfigKey(configurationName, id);
 
             try
             {
                 settings.Add(lookupKey, value);
                 logger.LogInformation(
                     2,
-                    "Registered configuration setting '{Receiver}' for ID '{Id}'.",
-                    receiver,
+                    "Registered configuration setting '{ConfigurationName}' for ID '{Id}'.",
+                    configurationName,
                     id);
             }
             catch (Exception ex)
@@ -134,23 +134,23 @@ namespace Microsoft.AspNetCore.WebHooks
                 logger.LogError(
                     3,
                     ex,
-                    "Could not add configuration for receiver '{Receiver}' and id '{Id}'.",
-                    receiver,
+                    "Could not add configuration for receiver '{ConfigurationName}' and id '{Id}'.",
+                    configurationName,
                     id);
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.Config_AddFailure,
-                    receiver,
+                    configurationName,
                     id,
                     ex.Message);
                 throw new InvalidOperationException(message);
             }
         }
 
-        internal static string GetConfigKey(string receiver, string id)
+        internal static string GetConfigKey(string configurationName, string id)
         {
-            return (receiver + "/" + id).ToLowerInvariant();
+            return (configurationName + "/" + id).ToLowerInvariant();
         }
     }
 }

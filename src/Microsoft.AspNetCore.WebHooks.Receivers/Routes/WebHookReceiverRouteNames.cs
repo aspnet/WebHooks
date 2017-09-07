@@ -9,20 +9,20 @@ namespace Microsoft.AspNetCore.WebHooks.Routes
     public static class WebHookReceiverRouteNames
     {
         /// <summary>
-        /// Gets the name of the action for receiving WebHook requests.
+        /// Gets the name of the route for receiving generic WebHook requests.
         /// </summary>
-        public static string ReceiversAction { get; } = "ReceiversAction";
+        public static string ReceiverRouteName => "ReceiversAction";
 
         /// <summary>
         /// Gets the name of the <see cref="Routing.RouteValueDictionary"/> entry containing the receiver name for the
         /// current request.
         /// </summary>
-        public static string ReceiverKeyName { get; } = "webHookReceiver";
+        public static string ReceiverKeyName => "webHookReceiver";
 
         /// <summary>
         /// Gets the name of the <see cref="Routing.RouteValueDictionary"/> entry containing the receiver id for the
         /// current request.
         /// </summary>
-        public static string IdKeyName { get; } = "id";
+        public static string IdKeyName => "id";
     }
 }

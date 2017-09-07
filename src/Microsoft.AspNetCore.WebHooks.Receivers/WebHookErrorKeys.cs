@@ -14,46 +14,46 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <summary>
         /// Provides a key for the Message.
         /// </summary>
-        public static readonly string MessageKey = "Message";
+        public static string MessageKey => "Message";
 
         /// <summary>
         /// Provides a key for the MessageDetail.
         /// </summary>
-        public static readonly string MessageDetailKey = "MessageDetail";
+        public static string MessageDetailKey => "MessageDetail";
 
         /// <summary>
         /// Provides a key for the ModelState.
         /// </summary>
-        public static readonly string ModelStateKey = "ModelState";
+        public static string ModelStateKey => "ModelState";
 
         /// <summary>
         /// Provides a key for the ExceptionMessage.
         /// </summary>
-        public static readonly string ExceptionMessageKey = "ExceptionMessage";
+        public static string ExceptionMessageKey => "ExceptionMessage";
 
         /// <summary>
         /// Provides a key for the ExceptionType.
         /// </summary>
-        public static readonly string ExceptionTypeKey = "ExceptionType";
+        public static string ExceptionTypeKey => "ExceptionType";
 
         /// <summary>
         /// Provides a key for the StackTrace.
         /// </summary>
-        public static readonly string StackTraceKey = "StackTrace";
+        public static string StackTraceKey => "StackTrace";
 
         /// <summary>
         /// Provides a key for the InnerException.
         /// </summary>
-        public static readonly string InnerExceptionKey = "InnerException";
+        public static string InnerExceptionKey => "InnerException";
 
         /// <summary>
         /// Provides a key for the MessageLanguage.
         /// </summary>
-        public static readonly string MessageLanguageKey = "MessageLanguage";
+        public static string MessageLanguageKey => "MessageLanguage";
 
         /// <summary>
         /// Provides a key for the ErrorCode.
         /// </summary>
-        public static readonly string ErrorCodeKey = "ErrorCode";
+        public static string ErrorCodeKey => "ErrorCode";
     }
 }

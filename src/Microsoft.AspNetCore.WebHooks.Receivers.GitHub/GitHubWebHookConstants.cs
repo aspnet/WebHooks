@@ -16,12 +16,11 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <summary>
         /// Gets the name of the header containing the GitHub action e.g. <c>ping</c> or <c>push</c>.
         /// </summary>
-        /// <remarks>??? Should this be a const field to allow use in [FromHeader] attributes?</remarks>
         public static string EventHeaderName => "X-Github-Event";
 
         /// <summary>
         /// Gets the name of the GitHub ping event.
         /// </summary>
-        public static string PingEvent => "ping";
+        public static string PingEventName => "ping";
     }
 }

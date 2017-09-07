@@ -23,7 +23,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         }
 
         /// <inheritdoc />
-        public override string Name => GitHubWebHookConstants.ReceiverName;
+        public override string ReceiverName => GitHubWebHookConstants.ReceiverName;
 
         /// <inheritdoc />
         public override bool AllowGet => false;

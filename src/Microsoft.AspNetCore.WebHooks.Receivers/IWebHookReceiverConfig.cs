@@ -21,14 +21,19 @@ namespace Microsoft.AspNetCore.WebHooks
         IConfiguration Configuration { get; }
 
         /// <summary>
-        /// Gets the receiver configuration for a given <paramref name="name"/> and a particular <paramref name="id"/>
-        /// or <c>null</c> if not found.
+        /// Gets the receiver configuration for a given <paramref name="configurationName"/> and a particular
+        /// <paramref name="id"/> or <c>null</c> if not found.
         /// </summary>
-        /// <param name="name">The case-insensitive name of the receiver configuration used by the incoming WebHook. The receiver
-        /// name can for example be <c>dropbox</c> or <c>github</c>.</param>
-        /// <param name="id">A (possibly empty) ID of a particular configuration for the given <paramref name="name"/>.
-        /// This can be used for one receiver to differentiate between multiple configurations.</param>
+        /// <param name="configurationName">
+        /// The case-insensitive name of the receiver configuration used by the incoming WebHook. Typically this is the
+        /// name of the receiver, e.g. <c>github</c>.
+        /// </param>
+        /// <param name="id">
+        /// A (possibly <c>null </c> or empty) ID of a particular configuration for the given
+        /// <paramref name="configurationName"/>. This can be used for one receiver to differentiate between multiple
+        /// configurations.
+        /// </param>
         /// <returns>The requested config, or <c>null</c> if not found.</returns>
-        Task<string> GetReceiverConfigAsync(string name, string id);
+        Task<string> GetReceiverConfigAsync(string configurationName, string id);
     }
 }
