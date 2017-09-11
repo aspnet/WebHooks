@@ -28,6 +28,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(builder));
             }
 
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IWebHookMetadata, GitHubWebHookMetadata>());
             builder.AddJsonFormatters();
             builder.AddWebHooks();
 

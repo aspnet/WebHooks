@@ -5,7 +5,8 @@ namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
     /// Provides an abstraction for processing incoming WebHooks from a particular WebHook generator, for example
-    /// <c>Dropbox</c>, <c>GitHub</c>, etc.
+    /// <c>Dropbox</c>, <c>GitHub</c>, etc. All <see cref="Metadata.IWebHookMetadata"/> services and receiver-specific
+    /// filters should implement this interface.
     /// </summary>
     public interface IWebHookReceiver
     {
