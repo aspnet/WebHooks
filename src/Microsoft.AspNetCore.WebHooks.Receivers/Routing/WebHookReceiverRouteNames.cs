@@ -1,7 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-namespace Microsoft.AspNetCore.WebHooks.Routes
+namespace Microsoft.AspNetCore.WebHooks.Routing
 {
     /// <summary>
     /// Provides a set of common route names used for receiving incoming WebHooks.
@@ -12,6 +12,12 @@ namespace Microsoft.AspNetCore.WebHooks.Routes
         /// Gets the name of the route for receiving generic WebHook requests.
         /// </summary>
         public static string ReceiverRouteName => "ReceiversAction";
+
+        /// <summary>
+        /// Gets the name of the <see cref="Routing.RouteValueDictionary"/> entry containing the event name for the
+        /// current request.
+        /// </summary>
+        public static string EventKeyName => "event";
 
         /// <summary>
         /// Gets the name of the <see cref="Routing.RouteValueDictionary"/> entry containing the receiver name for the

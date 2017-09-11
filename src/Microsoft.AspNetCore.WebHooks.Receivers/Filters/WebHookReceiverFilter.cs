@@ -19,13 +19,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
-namespace Microsoft.AspNetCore.WebHooks
+namespace Microsoft.AspNetCore.WebHooks.Filters
 {
     /// <summary>
-    /// Base class for <see cref="IWebHookReceiver"/> implementations. Subclasses normally also implement
-    /// <see cref="Mvc.Filters.IResourceFilter"/> or <see cref="Mvc.Filters.IAsyncResourceFilter"/>.
+    /// Base class for <see cref="IWebHookReceiver"/> implementations that for example verify request signatures.
+    /// Subclasses normally also implement <see cref="Mvc.Filters.IResourceFilter"/> or
+    /// <see cref="Mvc.Filters.IAsyncResourceFilter"/>. Subclasses should have an
+    /// <see cref="Mvc.Filters.IOrderedFilter.Order"/> less than <see cref="WebHookVerifyMethodFilter.Order"/>.
     /// </summary>
-    public abstract class WebHookReceiver : IWebHookReceiver
+    public abstract class WebHookReceiverFilter : IWebHookReceiver
     {
         // Application setting for disabling HTTPS check
         internal const string DisableHttpsCheckKey = "MS_WebHookDisableHttpsCheck";
@@ -36,13 +38,13 @@ namespace Microsoft.AspNetCore.WebHooks
         internal const string CodeQueryParameter = "code";
 
         /// <summary>
-        /// Instantiates a new <see cref="WebHookReceiver"/> instance.
+        /// Instantiates a new <see cref="WebHookReceiverFilter"/> instance.
         /// </summary>
         /// <param name="loggerFactory">
         /// The <see cref="ILoggerFactory"/> used to initialize <see cref="Logger"/>.
         /// </param>
         /// <param name="receiverConfig">The <see cref="IWebHookReceiverConfig"/>.</param>
-        protected WebHookReceiver(ILoggerFactory loggerFactory, IWebHookReceiverConfig receiverConfig)
+        protected WebHookReceiverFilter(ILoggerFactory loggerFactory, IWebHookReceiverConfig receiverConfig)
         {
             if (loggerFactory == null)
             {
@@ -89,9 +91,6 @@ namespace Microsoft.AspNetCore.WebHooks
 
             return string.Equals(ReceiverName, receiverName, StringComparison.OrdinalIgnoreCase);
         }
-
-        // TODO: Move some of the remaining methods into base IFilterResource implementations i.e. more classes
-        // like WebHookVerifyMethodFilter. Do not need all of these in every receiver / filter.
 
         /// <summary>
         /// Provides a time consistent comparison of two secrets in the form of two byte arrays.
@@ -150,9 +149,10 @@ namespace Microsoft.AspNetCore.WebHooks
         }
 
         /// <summary>
-        /// Some WebHooks rely on HTTPS for sending WebHook requests in a secure manner. A <see cref="WebHookReceiver"/>
-        /// can call this method to ensure that the incoming WebHook request is using HTTPS. If the request is not
-        /// using HTTPS an error will be generated and the request will not be further processed.
+        /// Some WebHooks rely on HTTPS for sending WebHook requests in a secure manner. A
+        /// <see cref="WebHookReceiverFilter"/> can call this method to ensure that the incoming WebHook request is
+        /// using HTTPS. If the request is not using HTTPS an error will be generated and the request will not be
+        /// further processed.
         /// </summary>
         /// <remarks>This method does allow local HTTP requests using <c>localhost</c>.</remarks>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
@@ -185,12 +185,12 @@ namespace Microsoft.AspNetCore.WebHooks
                     GetType().Name,
                     Uri.UriSchemeHttps);
 
-                var msg = string.Format(
+                var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.Receiver_NoHttps,
                     GetType().Name,
                     Uri.UriSchemeHttps);
-                var noHttps = WebHookResultUtilities.CreateErrorResult(msg);
+                var noHttps = WebHookResultUtilities.CreateErrorResult(message);
 
                 return noHttps;
             }
@@ -207,8 +207,8 @@ namespace Microsoft.AspNetCore.WebHooks
         /// </summary>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <param name="id">
-        /// A (potentially empty) ID of a particular configuration for this <see cref="IWebHookReceiver"/>. This
-        /// allows an <see cref="IWebHookReceiver"/> to support multiple WebHooks with individual configurations.
+        /// A (potentially empty) ID of a particular configuration for this <see cref="WebHookReceiverFilter"/>. This
+        /// allows an <see cref="WebHookReceiverFilter"/> to support multiple senders with individual configurations.
         /// </param>
         /// <returns>
         /// A <see cref="Task"/> that on completion provides <c>null</c> in the success case. When a check fails,
@@ -237,22 +237,22 @@ namespace Microsoft.AspNetCore.WebHooks
                     "The WebHook verification request must contain a '{ParameterName}' query parameter.",
                     CodeQueryParameter);
 
-                var msg = string.Format(CultureInfo.CurrentCulture, Resources.Receiver_NoCode, CodeQueryParameter);
-                var noCode = WebHookResultUtilities.CreateErrorResult(msg);
+                var message = string.Format(CultureInfo.CurrentCulture, Resources.Receiver_NoCode, CodeQueryParameter);
+                var noCode = WebHookResultUtilities.CreateErrorResult(message);
 
                 return noCode;
             }
 
             var secretKey = await GetReceiverConfig(request, ReceiverName, id, CodeMinLength, CodeMaxLength);
-            if (!WebHookReceiver.SecretEqual(code, secretKey))
+            if (!SecretEqual(code, secretKey))
             {
                 Logger.LogError(
                     502,
                     "The '{ParameterName}' query parameter provided in the HTTP request did not match the expected value.",
                     CodeQueryParameter);
 
-                var msg = string.Format(CultureInfo.CurrentCulture, Resources.Receiver_BadCode, CodeQueryParameter);
-                var invalidCode = WebHookResultUtilities.CreateErrorResult(msg);
+                var message = string.Format(CultureInfo.CurrentCulture, Resources.Receiver_BadCode, CodeQueryParameter);
+                var invalidCode = WebHookResultUtilities.CreateErrorResult(message);
 
                 return invalidCode;
             }
@@ -288,8 +288,8 @@ namespace Microsoft.AspNetCore.WebHooks
         /// The name of the configuration to obtain. Typically this the name of the receiver, e.g. <c>github</c>.
         /// </param>
         /// <param name="id">
-        /// A (potentially empty) ID of a particular configuration for this <see cref="IWebHookReceiver"/>. This
-        /// allows an <see cref="IWebHookReceiver"/> to support multiple WebHooks with individual configurations.
+        /// A (potentially empty) ID of a particular configuration for this <see cref="WebHookReceiverFilter"/>. This
+        /// allows an <see cref="WebHookReceiverFilter"/> to support multiple senders with individual configurations.
         /// </param>
         /// <param name="minLength">The minimum length of the key value.</param>
         /// <param name="maxLength">The maximum length of the key value.</param>
@@ -324,14 +324,14 @@ namespace Microsoft.AspNetCore.WebHooks
                     minLength,
                     maxLength);
 
-                var msg = string.Format(
+                var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.Receiver_BadSecret,
                     configurationName,
                     id,
                     minLength,
                     maxLength);
-                throw new InvalidOperationException(msg);
+                throw new InvalidOperationException(message);
             }
 
             return secret;
@@ -374,12 +374,12 @@ namespace Microsoft.AspNetCore.WebHooks
                     headerName,
                     headersCount);
 
-                var msg = string.Format(
+                var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.Receiver_BadHeader,
                     headerName,
                     headersCount);
-                errorResult = WebHookResultUtilities.CreateErrorResult(msg);
+                errorResult = WebHookResultUtilities.CreateErrorResult(message);
 
                 return null;
             }
@@ -414,12 +414,12 @@ namespace Microsoft.AspNetCore.WebHooks
                 signatureHeaderName,
                 GetType().Name);
 
-            var msg = string.Format(
+            var message = string.Format(
                 CultureInfo.CurrentCulture,
                 Resources.Receiver_BadSignature,
                 signatureHeaderName,
                 GetType().Name);
-            var badSignature = WebHookResultUtilities.CreateErrorResult(msg);
+            var badSignature = WebHookResultUtilities.CreateErrorResult(message);
 
             return badSignature;
         }
