@@ -2,131 +2,71 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.WebHooks.Filters;
-using Microsoft.AspNetCore.WebHooks.Routes;
-using Microsoft.Extensions.DependencyInjection;
+using System.Globalization;
+using Microsoft.AspNetCore.WebHooks.Metadata;
+using Microsoft.AspNetCore.WebHooks.Properties;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
-    // ??? Is the WebHookVerifyMethodFilter's checks sufficient for all cases? Only avoid problems with CORS etc. due
-    // ??? to constrained routing and the conditional application of our filters. On the other hand, could implement
-    // ??? IActionHttpMethodProvider if that's considered simpler and are fine with 404 (not 405) responses in the
-    // ??? various WebHooks protocols.
-    // ??? Should this also implement IOrderedFilter? For now, doesn't seem important when we check receivers exist.
     /// <summary>
-    /// An <see cref="Attribute"/> indicating the associated action is a WebHooks endpoint. Configures routing and adds
-    /// a <see cref="WebHookApplicableFilter"/> for the action. Also specifies the supported request content types.
+    /// An <see cref="Attribute"/> indicating the associated action is a WebHooks endpoint for all enabled
+    /// receivers. Specifies the expected <see cref="BodyType"/>, optional <see cref="EventName"/>, and optional
+    /// <see cref="WebHookActionAttributeBase.Id"/>. Also adds a <see cref="Filters.WebHookApplicableFilter"/> for the
+    /// action.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public abstract class WebHookActionAttribute
-        : ConsumesAttribute, IAllowAnonymous, IRouteTemplateProvider, IRouteValueProvider, IFilterFactory
+    public class WebHookActionAttribute :
+        WebHookActionAttributeBase,
+        IWebHookRequestMetadata,
+        IWebHookEventSelectorMetadata
     {
-        private readonly string _receiver;
+        private WebHookBodyType _bodyType = WebHookBodyType.Json;
+        private string _eventName;
 
         /// <summary>
-        /// <para>
-        /// Instantiates a new <see cref="WebHookActionAttribute"/> indicating the associated action is a WebHooks
-        /// endpoint for multiple receivers.
-        /// </para>
-        /// <para>The signature of the action should be:
-        /// <code>
-        /// Task{IActionResult} ActionName([FromRoute] string webHookReceiver, [FromRoute] string id = "", ...)
-        /// </code>
-        /// </para>
-        /// <para>This constructor should usually be used at most once in a WebHooks application.</para>
-        /// <para>
-        /// The default route <see cref="Name"/> is <see cref="WebHookReceiverRouteNames.ReceiversAction"/>.
-        /// </para>
+        /// Gets or sets the <see cref="WebHookBodyType"/> this action expects.
         /// </summary>
-        /// <param name="contentType">The first supported content type.</param>
-        /// <param name="otherContentTypes">Zero or more additional supported content types.</param>
-        protected WebHookActionAttribute(string contentType, params string[] otherContentTypes)
-            : base(contentType, otherContentTypes)
-        {
-            Name = WebHookReceiverRouteNames.ReceiversAction;
-        }
-
-        /// <summary>
-        /// <para>
-        /// Instantiates a new <see cref="WebHookActionAttribute"/> indicating the associated action is a WebHooks
-        /// endpoint for the given <paramref name="receiver"/>.
-        /// </para>
-        /// <para>The signature of the action should be:
-        /// <code>
-        /// Task{IActionResult} ActionName([FromRoute] string id = "", ...)
-        /// </code>
-        /// or,
-        /// <code>
-        /// Task{IActionResult} ActionName([FromRoute] string webHookReceiver, [FromRoute] string id = "", ...)
-        /// </code>
-        /// </para>
-        /// <para>
-        /// This constructor should usually be used at most once per <paramref name="receiver"/> name in a WebHooks
-        /// application.
-        /// </para>
-        /// <para>The default route <see cref="Name"/> is <c>null</c>.</para>
-        /// </summary>
-        /// <param name="receiver">The name of an available <see cref="IWebHookReceiver"/>.</param>
-        /// <param name="contentType">The first supported content type.</param>
-        /// <param name="otherContentTypes">Zero or more additional supported content types.</param>
-        protected WebHookActionAttribute(string receiver, string contentType, params string[] otherContentTypes)
-            : base(contentType, otherContentTypes)
-        {
-            if (receiver == null)
-            {
-                throw new ArgumentNullException(nameof(receiver));
-            }
-
-            _receiver = receiver;
-        }
-
-        /// <inheritdoc />
-        public int? Order { get; set; }
-
-        /// <inheritdoc />
-        public string Name { get; set; }
-
-        /// <inheritdoc />
-        /// <remarks>Template is the same for all WebHook actions to make route values consistent.</remarks>
-        public string Template
+        /// <value>Default value is <see cref="WebHookBodyType.Json"/>.</value>
+        public WebHookBodyType BodyType
         {
             get
             {
-                if (_receiver == null)
+                return _bodyType;
+            }
+            set
+            {
+                if (!Enum.IsDefined(typeof(WebHookBodyType), value))
                 {
-                    return $"/api/webhooks/incoming/{{{WebHookReceiverRouteNames.ReceiverKeyName}}}/{{{WebHookReceiverRouteNames.IdKeyName}?}}";
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.General_InvalidEnumValue,
+                        nameof(WebHookBodyType),
+                        value);
+                    throw new ArgumentException(message, nameof(value));
                 }
 
-                return $"/api/webhooks/incoming/[{WebHookReceiverRouteNames.ReceiverKeyName}]/{{{WebHookReceiverRouteNames.IdKeyName}?}}";
+                _bodyType = value;
             }
         }
 
-        /// <inheritdoc />
-        public string RouteKey => _receiver == null ? null : WebHookReceiverRouteNames.ReceiverKeyName;
-
-        /// <inheritdoc />
-        public string RouteValue => _receiver;
-
-        /// <inheritdoc />
-        /// <remarks>
-        /// Allow <see cref="WebHookApplicableFilter"/>'s registration in DI to determine its lifetime.
-        /// </remarks>
-        public bool IsReusable => false;
-
-        /// <inheritdoc />
-        public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
+        /// <summary>
+        /// Gets or sets the name of the event the associated controller action accepts.
+        /// </summary>
+        /// <value>Default value is <c>null</c>, indicating this action accepts all events.</value>
+        public string EventName
         {
-            if (serviceProvider == null)
+            get
             {
-                throw new ArgumentNullException(nameof(serviceProvider));
+                return _eventName;
             }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentException(Resources.General_ArgumentCannotBeNullOrEmpty, nameof(value));
+                }
 
-            var filter = serviceProvider.GetRequiredService<WebHookApplicableFilter>();
-            return filter;
+                _eventName = value;
+            }
         }
     }
 }
