@@ -61,6 +61,15 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Value cannot be null or empty..
+        /// </summary>
+        internal static string General_ArgumentCannotBeNullOrEmpty {
+            get {
+                return ResourceManager.GetString("General_ArgumentCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; header value is invalid. It must be a valid hex-encoded string..
         /// </summary>
         internal static string Receiver_BadHeaderEncoding {

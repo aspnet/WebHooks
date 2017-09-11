@@ -61,11 +61,11 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The {0} array must not be empty..
+        ///   Looks up a localized string similar to {0} property must not be set to &apos;{1}&apos;..
         /// </summary>
-        internal static string ActionAttribute_EmptyArray {
+        internal static string ActionAttribute_UnsupportedValue {
             get {
-                return ResourceManager.GetString("ActionAttribute_EmptyArray", resourceCulture);
+                return ResourceManager.GetString("ActionAttribute_UnsupportedValue", resourceCulture);
             }
         }
         
@@ -84,6 +84,24 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         internal static string Config_BadValue {
             get {
                 return ResourceManager.GetString("Config_BadValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value cannot be null or empty..
+        /// </summary>
+        internal static string General_ArgumentCannotBeNullOrEmpty {
+            get {
+                return ResourceManager.GetString("General_ArgumentCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enum type {0} has no defined &apos;{1}&apos; value..
+        /// </summary>
+        internal static string General_InvalidEnumValue {
+            get {
+                return ResourceManager.GetString("General_InvalidEnumValue", resourceCulture);
             }
         }
         
@@ -156,6 +174,42 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         internal static string ResultUtilities_GenericError {
             get {
                 return ResourceManager.GetString("ResultUtilities_GenericError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} and {1} were applied to the same action. {0} must not be combined with another attribute that provides a route template..
+        /// </summary>
+        internal static string RoutingConvention_MixedRouteWithWebHookAction {
+            get {
+                return ResourceManager.GetString("RoutingConvention_MixedRouteWithWebHookAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The WebHook request must contain an entity body formatted as HTML Form Data..
+        /// </summary>
+        internal static string VerifyBody_NoFormData {
+            get {
+                return ResourceManager.GetString("VerifyBody_NoFormData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The WebHook request must contain an entity body formatted as JSON..
+        /// </summary>
+        internal static string VerifyBody_NoJson {
+            get {
+                return ResourceManager.GetString("VerifyBody_NoJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The WebHook request must contain an entity body formatted as XML..
+        /// </summary>
+        internal static string VerifyBody_NoXml {
+            get {
+                return ResourceManager.GetString("VerifyBody_NoXml", resourceCulture);
             }
         }
     }
