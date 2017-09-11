@@ -32,10 +32,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IWebHookReceiverConfig, WebHookReceiverConfig>();
             services.TryAddSingleton<WebHookApplicableFilter>();
 
-            // TODO: Decide if this filter needs a non-default Order.
-            builder.AddSingletonFilter<WebHookExceptionFilter>();
-
-            return builder;
+            // TODO: Decide if WebHookExceptionFilter needs a non-default Order too.
+            return builder
+                .AddSingletonFilter<WebHookExceptionFilter>()
+                .AddSingletonFilter<WebHookPingResponseFilter>(WebHookPingResponseFilter.Order)
+                .AddSingletonFilter<WebHookVerifyMethodFilter>(WebHookVerifyMethodFilter.Order);
         }
 
         /// <summary>

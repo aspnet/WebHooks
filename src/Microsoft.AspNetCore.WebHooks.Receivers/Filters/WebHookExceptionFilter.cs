@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// An <see cref="IExceptionFilter"/> implementation that returns a structured response to WebHooks requests when
     /// an <see cref="Exception"/> is thrown.
     /// </summary>
-    public class WebHookExceptionFilter : IExceptionFilter, IOrderedFilter
+    public class WebHookExceptionFilter : IExceptionFilter
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ILogger _logger;
@@ -29,9 +29,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             _hostingEnvironment = hostingEnvironment;
             _logger = loggerFactory.CreateLogger<WebHookExceptionFilter>();
         }
-
-        /// <inheritdoc />
-        public int Order { get; set; }
 
         /// <inheritdoc />
         public void OnException(ExceptionContext context)

@@ -4,6 +4,8 @@
 using System;
 using System.ComponentModel;
 using Microsoft.AspNetCore.WebHooks.Filters;
+using Microsoft.AspNetCore.WebHooks.Metadata;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -14,9 +16,6 @@ namespace Microsoft.Extensions.DependencyInjection
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class GitHubWebHookMvcCoreBuilderExtensions
     {
-        // The ConsumesAttribute and our WebHookActionAttribute subclasses do not implement IOrderedFilter.
-        private const int ConsumesAttributeFilterOrder = 0;
-
         /// <summary>
         /// Add GitHub WebHooks configuration and services to the specified <paramref name="builder"/>.
         /// </summary>
@@ -29,18 +28,11 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IWebHookMetadata, GitHubWebHookMetadata>());
-            builder.AddJsonFormatters();
-            builder.AddWebHooks();
 
-            // 1. Confirm it's a POST request
-            // 2. Confirm signature
-            // 3. Confirm Body contains JSON i.e. execute ConsumesAttribute.OnResourceExecuting()
-            // 4. Short-circuit ping requests
-            builder.AddSingletonFilter<GitHubWebHookVerifyActionFilter>(ConsumesAttributeFilterOrder + 10);
-            builder.AddSingletonFilter<GitHubWebHookVerifyMethodFilter>(ConsumesAttributeFilterOrder - 20);
-            builder.AddSingletonFilter<GitHubWebHookVerifySignatureFilter>(ConsumesAttributeFilterOrder - 10);
-
-            return builder;
+            return builder
+                .AddJsonFormatters()
+                .AddWebHooks()
+                .AddSingletonFilter<GitHubWebHookVerifySignatureFilter>(WebHookVerifyMethodFilter.Order - 10);
         }
     }
 }

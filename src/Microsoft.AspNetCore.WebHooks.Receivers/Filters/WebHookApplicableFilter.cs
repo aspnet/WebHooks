@@ -17,15 +17,13 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     {
         private readonly ILogger _logger;
 
+        /// <summary>
+        /// Instantiates a new <see cref="WebHookApplicableFilter"/> with the given <paramref name="loggerFactory"/>.
+        /// </summary>
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
         public WebHookApplicableFilter(ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<WebHookApplicableFilter>();
-        }
-
-        /// <inheritdoc />
-        public void OnResourceExecuted(ResourceExecutedContext context)
-        {
-            // No-op
         }
 
         /// <summary>
@@ -72,6 +70,12 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 "Processing incoming WebHook request with receiver '{ReceiverName}' and id '{Id}'.",
                 receiverName,
                 id);
+        }
+
+        /// <inheritdoc />
+        public void OnResourceExecuted(ResourceExecutedContext context)
+        {
+            // No-op
         }
     }
 }

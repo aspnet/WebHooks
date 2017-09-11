@@ -7,6 +7,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebHooks.Properties;
@@ -55,10 +56,12 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(next));
             }
 
-            if (context.RouteData.TryGetReceiverName(out var receiver) && IsApplicable(receiver))
+            var request = context.HttpContext.Request;
+            if (context.RouteData.TryGetReceiverName(out var receiver) &&
+                IsApplicable(receiver) &&
+                HttpMethods.IsPost(request.Method))
             {
                 // 1. Get the expected hash from the signature header.
-                var request = context.HttpContext.Request;
                 var header = GetRequestHeader(request, SignatureHeaderName, out var error);
                 if (error != null)
                 {
@@ -66,7 +69,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                // ??? Do we have efficient name / value parsers somewhere in HttpAbstractions?
+                // ??? Do we have efficient name / value parsers that can be used here e.g. in HttpAbstractions?
                 var values = header.SplitAndTrim('=');
                 if (values.Length != 2 ||
                     !string.Equals(values[0], SignatureHeaderKey, StringComparison.OrdinalIgnoreCase))
