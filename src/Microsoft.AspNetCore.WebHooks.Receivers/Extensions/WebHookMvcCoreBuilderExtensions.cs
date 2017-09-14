@@ -39,11 +39,13 @@ namespace Microsoft.Extensions.DependencyInjection
             services
                 .TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, WebHookRoutingProvider>());
 
-            services.TryAddSingleton<IWebHookReceiverConfig, WebHookReceiverConfig>();
-            services.TryAddSingleton<WebHookReceiverExistsFilter>();
+            services.TryAddSingleton<WebHookReceiverExistsConstraint>();
             services.TryAddSingleton<WebHookMultipleEventMapperConstraint>();
 
-            // TODO: Decide if WebHookExceptionFilter needs a non-default Order too.
+            services.TryAddSingleton<IWebHookReceiverConfig, WebHookReceiverConfig>();
+            services.TryAddSingleton<WebHookReceiverExistsFilter>();
+
+            // ??? Does WebHookExceptionFilter need a non-default Order too?
             return builder
                 .AddSingletonFilter<WebHookExceptionFilter>()
                 .AddSingletonFilter<WebHookPingResponseFilter>(WebHookPingResponseFilter.Order)

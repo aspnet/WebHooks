@@ -38,8 +38,8 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
         /// Gets the <see cref="IActionConstraint.Order"/> value used in all <see cref="WebHookEventMapperConstraint"/>
         /// instances.
         /// </summary>
-        /// <value>Chosen to run this constraint early in action selection.</value>
-        public static int Order => -500;
+        /// <value>Chosen to run this constraint just after <see cref="WebHookIdConstraint"/>.</value>
+        public static int Order => WebHookIdConstraint.Order + 10;
 
         /// <inheritdoc />
         int IActionConstraint.Order => Order;

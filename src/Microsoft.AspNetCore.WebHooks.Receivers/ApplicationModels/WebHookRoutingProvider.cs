@@ -21,14 +21,25 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
     /// </summary>
     public class WebHookRoutingProvider : IApplicationModelProvider
     {
+        private readonly WebHookReceiverExistsConstraint _existsConstraint;
+        private readonly WebHookMultipleEventMapperConstraint _eventMapperConstraint;
         private readonly ILoggerFactory _loggerFactory;
 
+        // ??? Should we use constraint factories to let DI choose the constraint lifetimes?
+        // ??? Should we use a factory for just WebHookMultipleEventMapperConstraint? It's not universally used.
         /// <summary>
-        /// Instantiates a new <see cref="WebHookRoutingProvider"/> with the given <paramref name="loggerFactory"/>.
+        /// Instantiates a new <see cref="WebHookRoutingProvider"/> with the given
+        /// <paramref name="existsConstraint"/>, <paramref name="eventMapperConstraint"/> and
+        /// <paramref name="loggerFactory"/>.
         /// </summary>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
-        public WebHookRoutingProvider(ILoggerFactory loggerFactory)
+        public WebHookRoutingProvider(
+            WebHookReceiverExistsConstraint existsConstraint,
+            WebHookMultipleEventMapperConstraint eventMapperConstraint,
+            ILoggerFactory loggerFactory)
         {
+            _existsConstraint = existsConstraint;
+            _eventMapperConstraint = eventMapperConstraint;
             _loggerFactory = loggerFactory;
         }
 
@@ -54,7 +65,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             }
         }
 
-                /// <inheritdoc />
+        /// <inheritdoc />
         public void OnProvidersExecuted(ApplicationModelProviderContext context)
         {
             // Nothing to do.
@@ -70,10 +81,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 return;
             }
 
-            var routeValues = action.RouteValues;
-            AddRouteValues(attribute, routeValues);
-
-            var template = ChooseTemplate(routeValues);
+            var template = ChooseTemplate(action.RouteValues);
             var selectors = action.Selectors;
             if (selectors.Count == 0)
             {
@@ -91,6 +99,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 }
             }
 
+            AddConstraints(attribute, selectors);
             AddConstraints(action.Properties, selectors);
 
             if (action.Properties.TryGetValue(typeof(IWebHookRequestMetadata), out var requestMetadata))
@@ -101,51 +110,13 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             }
         }
 
-        // Add specified route values to constrain the route. Similar to 2 or 3 IRouteValueProvider attributes.
-        private static void AddRouteValues(
-            WebHookActionAttributeBase attribute,
-            IDictionary<string, string> routeValues)
-        {
-            if (attribute.ReceiverName != null &&
-                !routeValues.ContainsKey(WebHookReceiverRouteNames.ReceiverKeyName))
-            {
-                routeValues.Add(WebHookReceiverRouteNames.ReceiverKeyName, attribute.ReceiverName);
-            }
-
-            if (attribute.Id != null &&
-                !routeValues.ContainsKey(WebHookReceiverRouteNames.IdKeyName))
-            {
-                routeValues.Add(WebHookReceiverRouteNames.IdKeyName, attribute.Id);
-            }
-
-            if (attribute is IWebHookEventSelectorMetadata eventSelector &&
-                eventSelector.EventName != null &&
-                !routeValues.ContainsKey(WebHookReceiverRouteNames.EventKeyName))
-            {
-                routeValues.Add(WebHookReceiverRouteNames.EventKeyName, eventSelector.EventName);
-            }
-        }
-
+        // Use a constant template since we'll need constraints in any case. That is, need constraints either to match
+        // receiver names and ids (current choice) or need them to map another route value to what model binding expects.
         private static string ChooseTemplate(IDictionary<string, string> routeValues)
         {
-            var template = "/api/webhooks/incoming/";
-            if (routeValues.ContainsKey(WebHookReceiverRouteNames.ReceiverKeyName))
-            {
-                template += $"[{WebHookReceiverRouteNames.ReceiverKeyName}]/";
-            }
-            else
-            {
-                template += $"{{{WebHookReceiverRouteNames.ReceiverKeyName}}}/";
-            }
-
-            if (routeValues.ContainsKey(WebHookReceiverRouteNames.IdKeyName))
-            {
-                template += $"[[{WebHookReceiverRouteNames.IdKeyName}]";
-            }
-            else
-            {
-                template += $"{{{WebHookReceiverRouteNames.IdKeyName}?}}";
-            }
+            var template = "/api/webhooks/incoming/"
+                + $"{{{WebHookReceiverRouteNames.ReceiverKeyName}}}/"
+                + $"{{{WebHookReceiverRouteNames.IdKeyName}?}}";
 
             return template;
         }
@@ -184,6 +155,23 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             }
         }
 
+        private void AddConstraints(WebHookActionAttributeBase attribute, IList<SelectorModel> selectors)
+        {
+            AddConstraint(_existsConstraint, selectors);
+
+            if (attribute.ReceiverName != null)
+            {
+                var constraint = new WebHookReceiverNameConstraint(attribute.ReceiverName);
+                AddConstraint(constraint, selectors);
+            }
+
+            if (attribute.Id != null)
+            {
+                var constraint = new WebHookIdConstraint(attribute.Id);
+                AddConstraint(constraint, selectors);
+            }
+        }
+
         private void AddConstraints(IDictionary<object, object> properties, IList<SelectorModel> selectors)
         {
             if (properties.TryGetValue(typeof(IWebHookEventMetadata), out var eventMetadata))
@@ -195,7 +183,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 }
                 else
                 {
-                    constraint = new WebHookMultipleEventMapperConstraintFactory();
+                    constraint = _eventMapperConstraint;
                 }
 
                 AddConstraint(constraint, selectors);
