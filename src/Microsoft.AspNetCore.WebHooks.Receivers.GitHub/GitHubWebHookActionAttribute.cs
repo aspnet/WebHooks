@@ -10,7 +10,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <summary>
     /// An <see cref="Attribute"/> indicating the associated action is a GitHub WebHooks endpoint. Specifies whether
     /// the action <see cref="AcceptFormData"/>, optional <see cref="EventName"/>, and optional
-    /// <see cref="WebHookActionAttributeBase.Id"/>. Also adds a <see cref="Filters.WebHookApplicableFilter"/> for the
+    /// <see cref="WebHookActionAttributeBase.Id"/>. Also adds a <see cref="Filters.WebHookReceiverExistsFilter"/> for the
     /// action.
     /// </summary>
     public class GitHubWebHookActionAttribute :

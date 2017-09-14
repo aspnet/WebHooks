@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <summary>
     /// Base for <see cref="Attribute"/>s indicating the associated action is a WebHooks endpoint. Specifies the
     /// required (in most cases) <see cref="ReceiverName"/> and optional <see cref="Id"/>. Also adds a
-    /// <see cref="WebHookApplicableFilter"/> for the action.
+    /// <see cref="WebHookReceiverExistsFilter"/> for the action.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public abstract class WebHookActionAttributeBase : Attribute, IAllowAnonymous, IFilterFactory
@@ -104,7 +104,7 @@ namespace Microsoft.AspNetCore.WebHooks
 
         /// <inheritdoc />
         /// <remarks>
-        /// Allow the <see cref="WebHookApplicableFilter"/> service's registration to determine its lifetime.
+        /// Allow the <see cref="WebHookReceiverExistsFilter"/> service's registration to determine its lifetime.
         /// </remarks>
         bool IFilterFactory.IsReusable => false;
 
@@ -116,7 +116,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 throw new ArgumentNullException(nameof(serviceProvider));
             }
 
-            var filter = serviceProvider.GetRequiredService<WebHookApplicableFilter>();
+            var filter = serviceProvider.GetRequiredService<WebHookReceiverExistsFilter>();
             return filter;
         }
     }

@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <summary>
     /// An <see cref="Attribute"/> indicating the associated action is a WebHooks endpoint for all enabled
     /// receivers. Specifies the expected <see cref="BodyType"/>, optional <see cref="EventName"/>, and optional
-    /// <see cref="WebHookActionAttributeBase.Id"/>. Also adds a <see cref="Filters.WebHookApplicableFilter"/> for the
+    /// <see cref="WebHookActionAttributeBase.Id"/>. Also adds a <see cref="Filters.WebHookReceiverExistsFilter"/> for the
     /// action.
     /// </summary>
     public class WebHookActionAttribute :
