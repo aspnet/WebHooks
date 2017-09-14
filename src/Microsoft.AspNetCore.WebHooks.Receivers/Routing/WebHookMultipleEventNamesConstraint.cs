@@ -15,18 +15,18 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
     /// <see cref="IWebHookEventMetadata"/> for a WebHook request. It then uses that metadata and a specified event
     /// name to select candidate actions.
     /// </summary>
-    public class WebHookMultipleEventSelectorConstraint : WebHookEventSelectorConstraint
+    public class WebHookMultipleEventNamesConstraint : WebHookEventNamesConstraint
     {
         private readonly string _eventName;
         private readonly IEnumerable<IWebHookEventMetadata> _eventMetadata;
 
         /// <summary>
-        /// Instantiates a new <see cref="WebHookEventSelectorConstraint"/> instance with the given
+        /// Instantiates a new <see cref="WebHookEventNamesConstraint"/> instance with the given
         /// <paramref name="eventName"/> and <paramref name="pingEventName"/>.
         /// </summary>
         /// <param name="eventName">Name of the event this action expects.</param>
         /// <param name="eventMetadata">The collection of <see cref="IWebHookEventMetadata"/> services.</param>
-        public WebHookMultipleEventSelectorConstraint(
+        public WebHookMultipleEventNamesConstraint(
             string eventName,
             IEnumerable<IWebHookEventMetadata> eventMetadata)
         {
@@ -54,7 +54,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
             }
 
 
-            // ??? Should we thrown if this is reached? Should be impossible given the template strings used.
+            // ??? Should we thrown if this is reached? Should be impossible given earlier constraints.
             return false;
         }
     }

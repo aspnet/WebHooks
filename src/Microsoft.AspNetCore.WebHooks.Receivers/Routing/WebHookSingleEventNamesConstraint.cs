@@ -7,21 +7,20 @@ using Microsoft.AspNetCore.Mvc.ActionConstraints;
 namespace Microsoft.AspNetCore.WebHooks.Routing
 {
     /// <summary>
-    /// An <see cref="IActionConstraint"/> implementations which uses WebHook event names to select
-    /// candidate actions.
+    /// An <see cref="IActionConstraint"/> implementations which uses WebHook event names to select candidate actions.
     /// </summary>
-    public class WebHookSingleEventSelectorConstraint : WebHookEventSelectorConstraint
+    public class WebHookSingleEventNamesConstraint : WebHookEventNamesConstraint
     {
         private readonly string _eventName;
         private readonly string _pingEventName;
 
         /// <summary>
-        /// Instantiates a new <see cref="WebHookEventSelectorConstraint"/> instance with the given
+        /// Instantiates a new <see cref="WebHookEventNamesConstraint"/> instance with the given
         /// <paramref name="eventName"/> and <paramref name="pingEventName"/>.
         /// </summary>
-        /// <param name="eventName">Name of the event this action expects.</param>
-        /// <param name="pingEventName">Name of the ping event for the receiver this action expects, if any.</param>
-        public WebHookSingleEventSelectorConstraint(string eventName, string pingEventName)
+        /// <param name="eventName">The event name to match.</param>
+        /// <param name="pingEventName">Name of the ping event this action expects, if any.</param>
+        public WebHookSingleEventNamesConstraint(string eventName, string pingEventName)
         {
             if (eventName == null)
             {

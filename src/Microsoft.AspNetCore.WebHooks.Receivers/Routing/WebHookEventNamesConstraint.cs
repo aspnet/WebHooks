@@ -12,12 +12,12 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
     /// A base class for <see cref="IActionConstraint"/> implementations which use WebHook event names to select
     /// candidate actions.
     /// </summary>
-    public abstract class WebHookEventSelectorConstraint : IActionConstraint
+    public abstract class WebHookEventNamesConstraint : IActionConstraint
     {
         /// <summary>
-        /// Instantiates a new <see cref="WebHookEventSelectorConstraint"/> instance.
+        /// Instantiates a new <see cref="WebHookEventNamesConstraint"/> instance.
         /// </summary>
-        protected WebHookEventSelectorConstraint()
+        protected WebHookEventNamesConstraint()
         {
         }
 
@@ -34,11 +34,16 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
         /// Gets an indication the action is a valid candidate for selection.
         /// </summary>
         /// <param name="context">The <see cref="ActionConstraintContext"/>.</param>
-        /// <param name="eventName">Name of the event this action expects.</param>
-        /// <param name="pingEventName">Name of the ping event for the receiver this action expects, if any.</param>
-        /// <returns></returns>
+        /// <param name="eventName">The event name to match.</param>
+        /// <param name="pingEventName">Name of the ping event this action expects, if any.</param>
+        /// <returns><c>true</c> if the action is valid for selection; <c>false</c> otherwise.</returns>
         protected bool Accept(ActionConstraintContext context, string eventName, string pingEventName)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             if (context.RouteContext.RouteData.TryGetEventNames(out var eventNames))
             {
                 if (eventNames.Any(name => string.Equals(eventName, name, StringComparison.OrdinalIgnoreCase)))
@@ -63,7 +68,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                     {
                         var candidate = context.Candidates[i];
                         if (candidate.Constraints == null ||
-                            !candidate.Constraints.Any(constraint => constraint is WebHookEventSelectorConstraint))
+                            !candidate.Constraints.Any(constraint => constraint is WebHookEventNamesConstraint))
                         {
                             return false;
                         }
@@ -75,7 +80,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                         var candidate = context.Candidates[i];
 
                         // ??? Any better to choose constraints that also have Order==int.MexValue?
-                        var constraints = context.Candidates.OfType<WebHookEventSelectorConstraint>();
+                        var constraints = context.Candidates.OfType<WebHookEventNamesConstraint>();
                         var innerContext = new ActionConstraintContext
                         {
                             Candidates = context.Candidates,

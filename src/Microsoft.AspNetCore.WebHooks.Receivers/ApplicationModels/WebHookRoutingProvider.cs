@@ -209,17 +209,17 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     IActionConstraintMetadata constraint;
                     if (eventMetadata == null)
                     {
-                        constraint = new WebHookSingleEventSelectorConstraint(eventName, pingEventName: null);
+                        constraint = new WebHookSingleEventNamesConstraint(eventName, pingEventName: null);
                     }
                     else if (eventMetadata is IWebHookEventMetadata singleEventMetadata)
                     {
-                        constraint = new WebHookSingleEventSelectorConstraint(
+                        constraint = new WebHookSingleEventNamesConstraint(
                             eventName,
                             singleEventMetadata.PingEventName);
                     }
                     else
                     {
-                        constraint = new WebHookMultipleEventSelectorConstraint(
+                        constraint = new WebHookMultipleEventNamesConstraint(
                             eventName,
                             (IEnumerable<IWebHookEventMetadata>)eventMetadata);
                     }
