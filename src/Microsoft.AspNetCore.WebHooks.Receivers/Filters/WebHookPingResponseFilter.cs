@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     public class WebHookPingResponseFilter : IResourceFilter, IOrderedFilter
     {
         private readonly ILogger _logger;
-        private readonly IEnumerable<IWebHookEventMetadata> _eventMetadata;
+        private readonly IReadOnlyList<IWebHookEventMetadata> _eventMetadata;
 
         /// <summary>
         /// Instantiates a new <see cref="WebHookPingResponseFilter"/> instance.
@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         public WebHookPingResponseFilter(ILoggerFactory loggerFactory, IEnumerable<IWebHookMetadata> metadata)
         {
             _logger = loggerFactory.CreateLogger<WebHookVerifyBodyTypeFilter>();
-            _eventMetadata = metadata.OfType<IWebHookEventMetadata>();
+            _eventMetadata = new List<IWebHookEventMetadata>(metadata.OfType<IWebHookEventMetadata>());
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         /// <summary>
         /// Instantiates a new <see cref="GitHubWebHookMetadata"/>.
         /// </summary>
-        protected GitHubWebHookMetadata()
+        public GitHubWebHookMetadata()
             : base(GitHubWebHookConstants.ReceiverName)
         {
         }

@@ -20,7 +20,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
     public class WebHookMultipleEventMapperConstraint : WebHookEventMapperConstraint
     {
         private readonly Dictionary<string, string[]> _constantValues;
-        private readonly IEnumerable<IWebHookEventMetadata> _eventMetadata;
+        private readonly IReadOnlyList<IWebHookEventMetadata> _eventMetadata;
 
         /// <summary>
         /// Instantiates a new <see cref="WebHookSingleEventMapperConstraint"/> instance with the given
@@ -43,7 +43,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 throw new ArgumentNullException(nameof(metadata));
             }
 
-            _eventMetadata = metadata.OfType<IWebHookEventMetadata>();
+            _eventMetadata = new List<IWebHookEventMetadata>(metadata.OfType<IWebHookEventMetadata>());
             _constantValues = _eventMetadata
                 .Where(item => item.ConstantValue != null)
                 .ToDictionary(
@@ -74,7 +74,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 return true;
             }
 
-            // ??? Should we thrown if this is reached? Should be impossible given the template strings used.
+            // ??? Should we thrown if this is reached? Should be impossible given earlier constraints.
             return false;
         }
     }

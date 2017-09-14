@@ -62,18 +62,26 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         private static void Apply(ParameterModel parameter)
         {
             var bindingInfo = parameter.BindingInfo;
-            if (bindingInfo.BinderModelName != null ||
-                bindingInfo.BinderType != null ||
-                bindingInfo.BindingSource != null)
+            if (bindingInfo?.BinderModelName != null ||
+                bindingInfo?.BinderType != null ||
+                bindingInfo?.BindingSource != null)
             {
                 // User was explicit. Nothing to do.
                 return;
+            }
+
+            if (bindingInfo == null)
+            {
+                bindingInfo = parameter.BindingInfo = new BindingInfo();
             }
 
             var parameterType = parameter.ParameterInfo.ParameterType;
             switch (parameter.ParameterName.ToUpperInvariant())
             {
                 case "ACTION":
+                case "ACTIONS":
+                case "ACTIONNAME":
+                case "ACTIONNAMES":
                     SourceEvent(bindingInfo, parameterType);
                     break;
 
@@ -82,6 +90,9 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     break;
 
                 case "EVENT":
+                case "EVENTS":
+                case "EVENTNAME":
+                case "EVENTNAMES":
                     SourceEvent(bindingInfo, parameterType);
                     break;
 
@@ -90,15 +101,12 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     break;
 
                 case "RECEIVER":
+                case "RECEIVERNAME":
                     SourceReceiver(bindingInfo, parameterType);
                     break;
 
                 case "RECEIVERID":
                     SourceId(bindingInfo, parameterType);
-                    break;
-
-                case "RECEIVERNAME":
-                    SourceReceiver(bindingInfo, parameterType);
                     break;
 
                 case "WEBHOOKRECEIVER":
@@ -119,20 +127,6 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             }
         }
 
-        private static void SourceEvent(BindingInfo bindingInfo, Type parameterType)
-        {
-            if (typeof(string) != parameterType &&
-                !typeof(IEnumerable<string>).IsAssignableFrom(parameterType))
-            {
-                // ??? Do we need logging about these strange cases?
-                // Unexpected / unsupported type. Do nothing.
-                return;
-            }
-
-            bindingInfo.BinderModelName = WebHookReceiverRouteNames.EventKeyName;
-            bindingInfo.BindingSource = BindingSource.Path;
-        }
-
         private static void SourceData(BindingInfo bindingInfo, ActionModel action)
         {
             if (action.Properties.TryGetValue(typeof(IWebHookRequestMetadata), out var metadata))
@@ -151,6 +145,20 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     bindingInfo.BindingSource = BindingSource.Body;
                 }
             }
+        }
+
+        private static void SourceEvent(BindingInfo bindingInfo, Type parameterType)
+        {
+            if (typeof(string) != parameterType &&
+                !typeof(IEnumerable<string>).IsAssignableFrom(parameterType))
+            {
+                // ??? Do we need logging about these strange cases?
+                // Unexpected / unsupported type. Do nothing.
+                return;
+            }
+
+            bindingInfo.BinderModelName = WebHookReceiverRouteNames.EventKeyName;
+            bindingInfo.BindingSource = BindingSource.Path;
         }
 
         private static void SourceId(BindingInfo bindingInfo, Type parameterType)
