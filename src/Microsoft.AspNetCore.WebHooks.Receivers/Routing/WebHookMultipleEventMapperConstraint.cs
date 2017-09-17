@@ -19,7 +19,6 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
     /// </summary>
     public class WebHookMultipleEventMapperConstraint : WebHookEventMapperConstraint
     {
-        private readonly Dictionary<string, string[]> _constantValues;
         private readonly IReadOnlyList<IWebHookEventMetadata> _eventMetadata;
 
         /// <summary>
@@ -44,12 +43,6 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
             }
 
             _eventMetadata = new List<IWebHookEventMetadata>(metadata.OfType<IWebHookEventMetadata>());
-            _constantValues = _eventMetadata
-                .Where(item => item.ConstantValue != null)
-                .ToDictionary(
-                    keySelector: item => item.ReceiverName,
-                    elementSelector: item => new[] { item.ConstantValue },
-                    comparer: StringComparer.OrdinalIgnoreCase);
         }
 
         /// <inheritdoc />
@@ -66,8 +59,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 var eventMetadata = _eventMetadata.FirstOrDefault(metadata => metadata.IsApplicable(receiverName));
                 if (eventMetadata != null)
                 {
-                    _constantValues.TryGetValue(receiverName, out var constantValue);
-                    return Accept(constantValue, eventMetadata, routeContext);
+                    return Accept(eventMetadata, routeContext);
                 }
 
                 // This receiver does not have IWebHookEventMetadata and that's fine.

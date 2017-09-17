@@ -14,7 +14,6 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
     /// </summary>
     public class WebHookSingleEventMapperConstraint : WebHookEventMapperConstraint
     {
-        private readonly string[] _constantValue;
         private readonly IWebHookEventMetadata _eventMetadata;
 
         /// <summary>
@@ -37,10 +36,6 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
             }
 
             _eventMetadata = eventMetadata;
-            if (_eventMetadata.ConstantValue != null)
-            {
-                _constantValue = new[] { _eventMetadata.ConstantValue };
-            }
         }
 
         /// <inheritdoc />
@@ -51,7 +46,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 throw new ArgumentNullException(nameof(context));
             }
 
-            return Accept(_constantValue, _eventMetadata, context.RouteContext);
+            return Accept(_eventMetadata, context.RouteContext);
         }
     }
 }

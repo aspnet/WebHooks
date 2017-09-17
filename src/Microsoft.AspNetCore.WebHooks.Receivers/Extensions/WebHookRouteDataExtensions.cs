@@ -50,10 +50,31 @@ namespace Microsoft.AspNetCore.Routing
                 throw new ArgumentNullException(nameof(routeData));
             }
 
-            if (routeData.Values.TryGetValue(WebHookReceiverRouteNames.EventKeyName, out var names))
+            if (routeData.Values.TryGetValue(WebHookReceiverRouteNames.EventKeyName, out var name))
             {
-                eventNames = (string[])names;
-                return eventNames.Length != 0;
+                var eventName = (string)name;
+                if (!string.IsNullOrEmpty(eventName))
+                {
+                    eventNames = new[] { eventName };
+                    return true;
+                }
+            }
+
+            var count = 0;
+            while (routeData.Values.ContainsKey($"{WebHookReceiverRouteNames.EventKeyName}[{count}]"))
+            {
+                count++;
+            }
+
+            if (count != 0)
+            {
+                eventNames = new string[count];
+
+                // ??? This repeatedly allocates the same strings. Might be good to cache the first 10 or so keys.
+                for (var i = 0; i < count; i++)
+                {
+                    eventNames[i] = (string)routeData.Values[$"{WebHookReceiverRouteNames.EventKeyName}[{count}]"];
+                }
             }
 
             eventNames = null;

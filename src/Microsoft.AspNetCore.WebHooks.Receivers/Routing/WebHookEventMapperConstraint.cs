@@ -47,20 +47,14 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
         /// <inheritdoc />
         public abstract bool Accept(ActionConstraintContext context);
 
-        // ??? Any need to either special-case events.Length==1 or (if not) create a comma-separated string? For now,
-        // ??? consistently adds a string[] to the route values.
         /// <summary>
-        /// Gets an indication whether the expected event names are available in the request.
+        /// Gets an indication whether the expected event names are available in the request. Maps the event names into
+        /// route values.
         /// </summary>
-        /// <param name="constantValue">
-        /// An array containing the fallback constant value for this receiver. <c>null</c> if the
-        /// <paramref name="eventMetadata"/>'s <see cref="IWebHookEventMetadata.ConstantValue"/> is <c>null</c> or
-        /// empty.
-        /// </param>
         /// <param name="eventMetadata">The <see cref="IWebHookEventMetadata"/> for this receiver.</param>
-        /// <param name="routeContext">The <see cref="RouteContext"/> for this constraint.</param>
+        /// <param name="routeContext">The <see cref="RouteContext"/> for this constraint and request.</param>
         /// <returns><c>true</c> if event names are available in the request; <c>false</c> otherwise.</returns>
-        protected bool Accept(string[] constantValue, IWebHookEventMetadata eventMetadata, RouteContext routeContext)
+        protected bool Accept(IWebHookEventMetadata eventMetadata, RouteContext routeContext)
         {
             if (eventMetadata == null)
             {
@@ -83,9 +77,9 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 var events = headers.GetCommaSeparatedValues(eventMetadata.HeaderName);
                 if (events.Length == 0)
                 {
-                    if (constantValue == null)
+                    if (eventMetadata.ConstantValue == null && eventMetadata.QueryParameterKey != null)
                     {
-                        // An error because we have no fallback. HeaderName and QueryParameterKey aren't used together.
+                        // An error because we have no fallback.
                         routeData.TryGetReceiverName(out var receiverName);
                         _logger.LogError(
                             500,
@@ -96,7 +90,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 }
                 else
                 {
-                    routeValues[WebHookReceiverRouteNames.EventKeyName] = events;
+                    MapEventNames(routeValues, events);
                     return true;
                 }
             }
@@ -107,9 +101,9 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 if (!query.TryGetValue(eventMetadata.QueryParameterKey, out var events) ||
                     events.Count == 0)
                 {
-                    if (constantValue == null)
+                    if (eventMetadata.ConstantValue == null)
                     {
-                        // An error because we have no fallback. HeaderName and QueryParameterKey aren't used together.
+                        // An error because we have no fallback.
                         routeData.TryGetReceiverName(out var receiverName);
                         _logger.LogError(
                             501,
@@ -120,18 +114,34 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 }
                 else
                 {
-                    routeValues[WebHookReceiverRouteNames.EventKeyName] = (string[])events;
+                    MapEventNames(routeValues, events);
                     return true;
                 }
             }
 
-            if (constantValue != null)
+            if (eventMetadata.ConstantValue != null)
             {
-                routeValues[WebHookReceiverRouteNames.EventKeyName] = constantValue;
+                routeValues[WebHookReceiverRouteNames.EventKeyName] = eventMetadata.ConstantValue;
                 return true;
             }
 
             return false;
+        }
+
+        private void MapEventNames(RouteValueDictionary routeValues, string[] events)
+        {
+            if (events.Length == 1)
+            {
+                routeValues[WebHookReceiverRouteNames.EventKeyName] = events[0];
+            }
+            else
+            {
+                // ??? This repeatedly allocates the same strings. Might be good to cache the first 10 or so keys.
+                for (var i = 0; i < events.Length; i++)
+                {
+                    routeValues[$"{WebHookReceiverRouteNames.EventKeyName}[{i}]"] = events[i];
+                }
+            }
         }
     }
 }
