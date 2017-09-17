@@ -46,7 +46,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
                     for (var k = 0; k < action.Parameters.Count; k++)
                     {
-                        var parameter = action.Parameters[i];
+                        var parameter = action.Parameters[k];
                         Apply(parameter);
                     }
                 }
@@ -116,9 +116,10 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 default:
                     // ??? Should we support NameValueCollection here and in model binding to ease migration from
                     // ??? current WebHooks?
+                    // ??? Any need to support simple JToken's? JContainer is the base for JArray and JObject.
                     // Regardless of name, treat all IFormCollection, JObject, and XElement parameters as data.
                     if (typeof(IFormCollection).IsAssignableFrom(parameterType) ||
-                        typeof(JObject).IsAssignableFrom(parameterType) ||
+                        typeof(JContainer).IsAssignableFrom(parameterType) ||
                         typeof(XElement).IsAssignableFrom(parameterType))
                     {
                         SourceData(bindingInfo, parameter.Action);

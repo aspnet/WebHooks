@@ -69,8 +69,8 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
 
             if (data == null)
             {
-                var msg = string.Format(CultureInfo.CurrentCulture, Resources.EncodingUtils_InvalidHexValue, content);
-                throw new InvalidOperationException(msg);
+                var message = string.Format(CultureInfo.CurrentCulture, Resources.EncodingUtils_InvalidHexValue, content);
+                throw new InvalidOperationException(message);
             }
 
             return data;

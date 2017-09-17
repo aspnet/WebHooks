@@ -61,10 +61,11 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                         "Unable to find WebHook routing constraints for {ReceiverName}. Please add the required " +
                         "configuration by calling a receiver-specific method that calls " +
                         "'{CoreInterfaceName}.{MethodName}' in the application startup code. For example, call " +
-                        "'{CoreInterfaceName}.{GitHubMethodName}' to configure the GitHub receiver.",
+                        "'{GitHubCoreInterfaceName}.{GitHubMethodName}' to configure the GitHub receiver.",
                         receiverName,
                         nameof(IMvcCoreBuilder),
                         nameof(WebHookMvcCoreBuilderExtensions.AddWebHooks),
+                        nameof(IMvcCoreBuilder),
                         "AddGitHubWebHooks");
 
                     context.Result = new StatusCodeResult(StatusCodes.Status500InternalServerError);
@@ -89,11 +90,12 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                         1,
                         "Unable to find WebHook filters for {ReceiverName}. Please add the required configuration " +
                         "by calling a receiver-specific method that calls '{CoreInterfaceName}.{MethodName}' in the " +
-                        "application startup code. For example, call '{CoreInterfaceName}.{GitHubMethodName}' to " +
-                        "configure the GitHub receiver.",
+                        "application startup code. For example, call '{GitHubCoreInterfaceName}.{GitHubMethodName}' " +
+                        "to configure the GitHub receiver.",
                         receiverName,
                         nameof(IMvcCoreBuilder),
                         nameof(WebHookMvcCoreBuilderExtensions.AddWebHooks),
+                        nameof(IMvcCoreBuilder),
                         "AddGitHubWebHooks");
 
                     context.Result = new StatusCodeResult(StatusCodes.Status500InternalServerError);
@@ -102,16 +104,16 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
             else
             {
-                // ??? Test whether request to /api/webhooks/incoming// i.e. with an empty receiver name routes here.
                 // Routing not configured at all (no template) but the request reached this action.
                 _logger.LogCritical(
                     2,
                     "Unable to find WebHook routing information in the request. Please add the required " +
                     "configuration by calling a receiver-specific method that calls " +
                     "'{CoreInterfaceName}.{MethodName}' in the application startup code. For example, call " +
-                    "'{CoreInterfaceName}.{GitHubMethodName}' to configure the GitHub receiver.",
+                    "'{GitHubCoreInterfaceName}.{GitHubMethodName}' to configure the GitHub receiver.",
                     nameof(IMvcCoreBuilder),
                     nameof(WebHookMvcCoreBuilderExtensions.AddWebHooks),
+                    nameof(IMvcCoreBuilder),
                     "AddGitHubWebHooks");
 
                 context.Result = new StatusCodeResult(StatusCodes.Status500InternalServerError);

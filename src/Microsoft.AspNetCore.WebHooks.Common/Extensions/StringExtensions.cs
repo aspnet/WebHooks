@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace System
 {
+    // TODO: Move this class to a shared source project or use a regular static method, not an extension method.
     /// <summary>
     /// Extension methods for <see cref="string"/>.
     /// </summary>

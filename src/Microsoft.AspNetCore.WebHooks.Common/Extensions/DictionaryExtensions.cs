@@ -5,6 +5,7 @@ using System.ComponentModel;
 
 namespace System.Collections.Generic
 {
+    // TODO: Move this class to a shared source project or use regular static methods, not extension methods.
     /// <summary>
     /// Extension methods for <see cref="IDictionary{TKey,TValue}"/>.
     /// </summary>

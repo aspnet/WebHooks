@@ -30,8 +30,10 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
         /// Converts string values to a <see cref="DateTime"/>. By default the
         /// <see cref="DateTime"/> gets serialized to an integer.
         /// </summary>
-        /// <param name="stringConverter">When <c>true</c> only deserializes string values and serializes to a string value;
-        /// otherwise deserializes string and integer values and serializes to an integer value.</param>
+        /// <param name="stringConverter">
+        /// When <c>true</c> only deserializes string values and serializes to a string value;
+        /// otherwise deserializes string and integer values and serializes to an integer value.
+        /// </param>
         protected UnixTimeConverter(bool stringConverter)
         {
             _stringConverter = stringConverter;
@@ -58,7 +60,11 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
         }
 
         /// <inheritdoc />
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(
+            JsonReader reader,
+            Type objectType,
+            object existingValue,
+            JsonSerializer serializer)
         {
             if (reader == null)
             {
@@ -66,8 +72,11 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
             }
             if (reader.Value == null)
             {
-                var msg = string.Format(CultureInfo.CurrentCulture, Resources.DateTime_NullError, typeof(DateTime).Name);
-                throw new InvalidOperationException(msg);
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.DateTime_NullError,
+                    typeof(DateTime).Name);
+                throw new InvalidOperationException(message);
             }
 
             long time = 0;
@@ -75,8 +84,12 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
             {
                 if (!long.TryParse(reader.Value as string, out time))
                 {
-                    var msg = string.Format(CultureInfo.CurrentCulture, Resources.DateTime_BadFormat, reader.Value, typeof(DateTime).Name);
-                    throw new InvalidOperationException(msg);
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.DateTime_BadFormat,
+                        reader.Value,
+                        typeof(DateTime).Name);
+                    throw new InvalidOperationException(message);
                 }
             }
             else if (reader.TokenType == JsonToken.Integer)
@@ -85,8 +98,12 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
             }
             else
             {
-                var msg = string.Format(CultureInfo.CurrentCulture, Resources.DateTime_BadFormat, reader.Value, typeof(DateTime).Name);
-                throw new InvalidOperationException(msg);
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.DateTime_BadFormat,
+                    reader.Value,
+                    typeof(DateTime).Name);
+                throw new InvalidOperationException(message);
             }
 
             var utc = _Epoch.AddSeconds(time);
