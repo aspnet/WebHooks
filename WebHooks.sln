@@ -170,27 +170,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHoo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitHubCoreReceiver", "samples\GitHubCoreReceiver\GitHubCoreReceiver.csproj", "{BF3CA06F-4610-40E3-9C8F-C450486BB81C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Receivers.Azure", "src\Microsoft.AspNetCore.WebHooks.Receivers.Azure\Microsoft.AspNetCore.WebHooks.Receivers.Azure.csproj", "{FAE4E7F8-7786-4388-802D-69C5C40DD5ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.AzureAlerts", "src\Microsoft.AspNetCore.WebHooks.Receivers.AzureAlerts\Microsoft.AspNetCore.WebHooks.Receivers.AzureAlerts.csproj", "{FAE4E7F8-7786-4388-802D-69C5C40DD5ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Receivers.BitBucket", "src\Microsoft.AspNetCore.WebHooks.Receivers.BitBucket\Microsoft.AspNetCore.WebHooks.Receivers.BitBucket.csproj", "{06B0D9D1-1368-423E-B2F7-5F408423A187}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.BitBucket", "src\Microsoft.AspNetCore.WebHooks.Receivers.BitBucket\Microsoft.AspNetCore.WebHooks.Receivers.BitBucket.csproj", "{06B0D9D1-1368-423E-B2F7-5F408423A187}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Receivers.Dropbox", "src\Microsoft.AspNetCore.WebHooks.Receivers.Dropbox\Microsoft.AspNetCore.WebHooks.Receivers.Dropbox.csproj", "{99046330-F5C1-4994-9EAC-79B2845D46D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.Dropbox", "src\Microsoft.AspNetCore.WebHooks.Receivers.Dropbox\Microsoft.AspNetCore.WebHooks.Receivers.Dropbox.csproj", "{99046330-F5C1-4994-9EAC-79B2845D46D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Receivers.WordPress", "src\Microsoft.AspNetCore.WebHooks.Receivers.WordPress\Microsoft.AspNetCore.WebHooks.Receivers.WordPress.csproj", "{897363CC-EF16-4BA8-9D7E-710F652E416F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.DynamicsCRM", "src\Microsoft.AspNetCore.WebHooks.Receivers.DynamicsCRM\Microsoft.AspNetCore.WebHooks.Receivers.DynamicsCRM.csproj", "{3D6713DD-940C-434E-B8F4-EE31E5F35E50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Receivers.Trello", "src\Microsoft.AspNetCore.WebHooks.Receivers.Trello\Microsoft.AspNetCore.WebHooks.Receivers.Trello.csproj", "{936B15A6-F95C-4D84-AE21-3177E540E2D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.MailChimp", "src\Microsoft.AspNetCore.WebHooks.Receivers.MailChimp\Microsoft.AspNetCore.WebHooks.Receivers.MailChimp.csproj", "{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Receivers.Stripe", "src\Microsoft.AspNetCore.WebHooks.Receivers.Stripe\Microsoft.AspNetCore.WebHooks.Receivers.Stripe.csproj", "{63C91BD3-64A9-4300-B8C6-1CB835E187B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.Pusher", "src\Microsoft.AspNetCore.WebHooks.Receivers.Pusher\Microsoft.AspNetCore.WebHooks.Receivers.Pusher.csproj", "{48BE6B07-1440-4341-A912-D91339CE7D31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Receivers.Slack", "src\Microsoft.AspNetCore.WebHooks.Receivers.Slack\Microsoft.AspNetCore.WebHooks.Receivers.Slack.csproj", "{497C5DDA-E38D-4437-A4B9-EC03349BA444}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.Salesforce", "src\Microsoft.AspNetCore.WebHooks.Receivers.Salesforce\Microsoft.AspNetCore.WebHooks.Receivers.Salesforce.csproj", "{40AA776C-E7BB-4786-8FFF-044C71821EE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Receivers.Salesforce", "src\Microsoft.AspNetCore.WebHooks.Receivers.Salesforce\Microsoft.AspNetCore.WebHooks.Receivers.Salesforce.csproj", "{40AA776C-E7BB-4786-8FFF-044C71821EE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.Slack", "src\Microsoft.AspNetCore.WebHooks.Receivers.Slack\Microsoft.AspNetCore.WebHooks.Receivers.Slack.csproj", "{497C5DDA-E38D-4437-A4B9-EC03349BA444}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Receivers.Pusher", "src\Microsoft.AspNetCore.WebHooks.Receivers.Pusher\Microsoft.AspNetCore.WebHooks.Receivers.Pusher.csproj", "{48BE6B07-1440-4341-A912-D91339CE7D31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.Stripe", "src\Microsoft.AspNetCore.WebHooks.Receivers.Stripe\Microsoft.AspNetCore.WebHooks.Receivers.Stripe.csproj", "{63C91BD3-64A9-4300-B8C6-1CB835E187B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Receivers.MailChimp", "src\Microsoft.AspNetCore.WebHooks.Receivers.MailChimp\Microsoft.AspNetCore.WebHooks.Receivers.MailChimp.csproj", "{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.Trello", "src\Microsoft.AspNetCore.WebHooks.Receivers.Trello\Microsoft.AspNetCore.WebHooks.Receivers.Trello.csproj", "{936B15A6-F95C-4D84-AE21-3177E540E2D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNetCore.WebHooks.Receivers.DynamicsCRM", "src\Microsoft.AspNetCore.WebHooks.Receivers.DynamicsCRM\Microsoft.AspNetCore.WebHooks.Receivers.DynamicsCRM.csproj", "{3D6713DD-940C-434E-B8F4-EE31E5F35E50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.WordPress", "src\Microsoft.AspNetCore.WebHooks.Receivers.WordPress\Microsoft.AspNetCore.WebHooks.Receivers.WordPress.csproj", "{897363CC-EF16-4BA8-9D7E-710F652E416F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.Kudu", "src\Microsoft.AspNetCore.WebHooks.Receivers.Kudu\Microsoft.AspNetCore.WebHooks.Receivers.Kudu.csproj", "{D337952E-4081-43CB-9C98-BAE6F5D72BAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -667,54 +669,60 @@ Global
 		{99046330-F5C1-4994-9EAC-79B2845D46D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99046330-F5C1-4994-9EAC-79B2845D46D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99046330-F5C1-4994-9EAC-79B2845D46D5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{897363CC-EF16-4BA8-9D7E-710F652E416F}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
-		{897363CC-EF16-4BA8-9D7E-710F652E416F}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
-		{897363CC-EF16-4BA8-9D7E-710F652E416F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{897363CC-EF16-4BA8-9D7E-710F652E416F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{897363CC-EF16-4BA8-9D7E-710F652E416F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{897363CC-EF16-4BA8-9D7E-710F652E416F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
-		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
-		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
-		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
-		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
-		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
-		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.Release|Any CPU.Build.0 = Release|Any CPU
-		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
-		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
-		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48BE6B07-1440-4341-A912-D91339CE7D31}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
-		{48BE6B07-1440-4341-A912-D91339CE7D31}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
-		{48BE6B07-1440-4341-A912-D91339CE7D31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48BE6B07-1440-4341-A912-D91339CE7D31}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{48BE6B07-1440-4341-A912-D91339CE7D31}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48BE6B07-1440-4341-A912-D91339CE7D31}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
-		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3D6713DD-940C-434E-B8F4-EE31E5F35E50}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
 		{3D6713DD-940C-434E-B8F4-EE31E5F35E50}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
 		{3D6713DD-940C-434E-B8F4-EE31E5F35E50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3D6713DD-940C-434E-B8F4-EE31E5F35E50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D6713DD-940C-434E-B8F4-EE31E5F35E50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D6713DD-940C-434E-B8F4-EE31E5F35E50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48BE6B07-1440-4341-A912-D91339CE7D31}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{48BE6B07-1440-4341-A912-D91339CE7D31}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{48BE6B07-1440-4341-A912-D91339CE7D31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48BE6B07-1440-4341-A912-D91339CE7D31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48BE6B07-1440-4341-A912-D91339CE7D31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48BE6B07-1440-4341-A912-D91339CE7D31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40AA776C-E7BB-4786-8FFF-044C71821EE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{497C5DDA-E38D-4437-A4B9-EC03349BA444}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63C91BD3-64A9-4300-B8C6-1CB835E187B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{936B15A6-F95C-4D84-AE21-3177E540E2D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{897363CC-EF16-4BA8-9D7E-710F652E416F}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{897363CC-EF16-4BA8-9D7E-710F652E416F}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{897363CC-EF16-4BA8-9D7E-710F652E416F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{897363CC-EF16-4BA8-9D7E-710F652E416F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{897363CC-EF16-4BA8-9D7E-710F652E416F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{897363CC-EF16-4BA8-9D7E-710F652E416F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D337952E-4081-43CB-9C98-BAE6F5D72BAF}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{D337952E-4081-43CB-9C98-BAE6F5D72BAF}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{D337952E-4081-43CB-9C98-BAE6F5D72BAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D337952E-4081-43CB-9C98-BAE6F5D72BAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D337952E-4081-43CB-9C98-BAE6F5D72BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D337952E-4081-43CB-9C98-BAE6F5D72BAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -798,17 +806,18 @@ Global
 		{FAE4E7F8-7786-4388-802D-69C5C40DD5ED} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
 		{06B0D9D1-1368-423E-B2F7-5F408423A187} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
 		{99046330-F5C1-4994-9EAC-79B2845D46D5} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
-		{897363CC-EF16-4BA8-9D7E-710F652E416F} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
-		{936B15A6-F95C-4D84-AE21-3177E540E2D0} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
-		{63C91BD3-64A9-4300-B8C6-1CB835E187B3} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
-		{497C5DDA-E38D-4437-A4B9-EC03349BA444} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
-		{40AA776C-E7BB-4786-8FFF-044C71821EE1} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
-		{48BE6B07-1440-4341-A912-D91339CE7D31} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
-		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
 		{3D6713DD-940C-434E-B8F4-EE31E5F35E50} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
+		{1A7F4322-FCB1-43C7-B997-C818F2ADDE34} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
+		{48BE6B07-1440-4341-A912-D91339CE7D31} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
+		{40AA776C-E7BB-4786-8FFF-044C71821EE1} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
+		{497C5DDA-E38D-4437-A4B9-EC03349BA444} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
+		{63C91BD3-64A9-4300-B8C6-1CB835E187B3} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
+		{936B15A6-F95C-4D84-AE21-3177E540E2D0} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
+		{897363CC-EF16-4BA8-9D7E-710F652E416F} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
+		{D337952E-4081-43CB-9C98-BAE6F5D72BAF} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45
 		SolutionGuid = {12CE6238-F847-4984-8622-1ED46072150A}
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45
 	EndGlobalSection
 EndGlobal
