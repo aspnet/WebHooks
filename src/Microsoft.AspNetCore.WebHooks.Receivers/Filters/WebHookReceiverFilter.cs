@@ -59,6 +59,25 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             ReceiverConfig = receiverConfig;
         }
 
+        /// <summary>
+        /// Gets the <see cref="Mvc.Filters.IOrderedFilter.Order"/> recommended for all
+        /// <see cref="WebHookReceiverFilter"/> instances. The recommended filter sequence is
+        /// <list type="number">
+        /// <item><description>
+        /// Confirm signature e.g. in a subclass of this filter.
+        /// </description></item>
+        /// <item><description>Short-circuit GET or HEAD requests, if receiver supports either.</description></item>
+        /// <item>
+        /// <description>Confirm it's a POST request (<see cref="WebHookVerifyMethodFilter"/>).</description>
+        /// </item>
+        /// <item><description>Confirm body type (<see cref="WebHookVerifyBodyTypeFilter"/>).</description></item>
+        /// <item><description>
+        /// Short-circuit ping requests, if not done in #2 for this receiver (<see cref="WebHookPingResponseFilter"/>).
+        /// </description></item>
+        /// </list>
+        /// </summary>
+        public static int Order => -500;
+
         /// <inheritdoc />
         public abstract string ReceiverName { get; }
 

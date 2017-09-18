@@ -54,7 +54,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// </description></item>
         /// </list>
         /// </summary>
-        public static int Order => -500;
+        public static int Order => WebHookReceiverFilter.Order + 20;
 
         /// <inheritdoc />
         public void OnResourceExecuting(ResourceExecutingContext context)

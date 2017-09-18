@@ -51,7 +51,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(context));
             }
 
-
             if (context.RouteData.TryGetReceiverName(out var receiverName))
             {
                 if (!context.RouteData.GetReceiverExists())
