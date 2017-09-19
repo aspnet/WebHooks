@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.WebHooks
     // ??? Should this also implement IDisableCorsAttribute to disable CORS? Requires a Microsoft.AspNetCore.Cors
     // ??? reference.
     /// <summary>
-    /// Base for <see cref="Attribute"/>s indicating the associated action is a WebHooks endpoint. Specifies the
+    /// Base for <see cref="Attribute"/>s indicating the associated action is a WebHook endpoint. Specifies the
     /// required (in most cases) <see cref="ReceiverName"/> and optional <see cref="Id"/>. Also adds a
     /// <see cref="WebHookReceiverExistsFilter"/> for the action.
     /// </summary>
@@ -26,19 +26,18 @@ namespace Microsoft.AspNetCore.WebHooks
 
         /// <summary>
         /// <para>
-        /// Instantiates a new <see cref="WebHookAttribute"/> indicating the associated action is a WebHooks
+        /// Instantiates a new <see cref="WebHookAttribute"/> indicating the associated action is a WebHook
         /// endpoint for all enabled receivers.
         /// </para>
         /// <para>The signature of the action should be:
         /// <code>
-        /// Task{IActionResult} ActionName(string receiverName, string id, string[] event, TData data)
+        /// Task{IActionResult} ActionName(string receiverName, string id, string[] events, TData data)
         /// </code>
         /// or the subset of parameters required. <c>TData</c> must be compatible with expected requests.
         /// </para>
-        /// <para>This constructor should usually be used at most once in a WebHooks application.</para>
+        /// <para>This constructor should usually be used at most once in a WebHook application.</para>
         /// <para>
-        /// The default route <see cref="IRouteTemplateProvider.Name"/> is
-        /// <see cref="WebHookReceiverRouteNames.ReceiverRouteName"/>.
+        /// The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.
         /// </para>
         /// </summary>
         protected WebHookAttribute()
@@ -47,20 +46,20 @@ namespace Microsoft.AspNetCore.WebHooks
 
         /// <summary>
         /// <para>
-        /// Instantiates a new <see cref="WebHookAttribute"/> indicating the associated action is a WebHooks
+        /// Instantiates a new <see cref="WebHookAttribute"/> indicating the associated action is a WebHook
         /// endpoint for the given <paramref name="receiverName"/>.
         /// </para>
         /// <para>The signature of the action should be:
         /// <code>
-        /// Task{IActionResult} ActionName(string id, string[] event, TData data)
+        /// Task{IActionResult} ActionName(string id, string[] events, TData data)
         /// </code>
         /// or include the subset of parameters required. <c>TData</c> must be compatible with expected requests.
         /// </para>
         /// <para>
-        /// This constructor should usually be used at most once per <paramref name="receiverName"/> name in a WebHooks
+        /// This constructor should usually be used at most once per <paramref name="receiverName"/> name in a WebHook
         /// application.
         /// </para>
-        /// <para>The default route <see cref="IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
+        /// <para>The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
         /// </summary>
         /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
         protected WebHookAttribute(string receiverName)

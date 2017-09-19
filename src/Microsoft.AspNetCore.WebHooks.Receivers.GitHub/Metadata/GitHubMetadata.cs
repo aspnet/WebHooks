@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     public class GitHubMetadata : WebHookMetadata, IWebHookEventMetadata
     {
         /// <summary>
-        /// Instantiates a new <see cref="GitHubMetadata"/>.
+        /// Instantiates a new <see cref="GitHubMetadata"/> instance.
         /// </summary>
         public GitHubMetadata()
             : base(GitHubConstants.ReceiverName)

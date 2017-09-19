@@ -3,8 +3,14 @@
 
 namespace Microsoft.AspNetCore.WebHooks.Metadata
 {
+    /// <summary>
+    /// An <see cref="IWebHookMetadata"/> service containing metadata about the Azure Alert receiver.
+    /// </summary>
     public class AzureAlertMetadata : WebHookMetadata, IWebHookRequestMetadataService, IWebHookSecurityMetadata
     {
+        /// <summary>
+        /// Instantiates a new <see cref="AzureAlertMetadata"/> instance.
+        /// </summary>
         public AzureAlertMetadata()
             : base(AzureAlertConstants.ReceiverName)
         {

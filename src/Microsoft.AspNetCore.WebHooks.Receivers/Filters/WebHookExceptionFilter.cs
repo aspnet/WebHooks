@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Microsoft.AspNetCore.WebHooks.Filters
 {
     /// <summary>
-    /// An <see cref="IExceptionFilter"/> implementation that returns a structured response to WebHooks requests when
+    /// An <see cref="IExceptionFilter"/> implementation that returns a structured response to WebHook requests when
     /// an <see cref="Exception"/> is thrown.
     /// </summary>
     public class WebHookExceptionFilter : IExceptionFilter

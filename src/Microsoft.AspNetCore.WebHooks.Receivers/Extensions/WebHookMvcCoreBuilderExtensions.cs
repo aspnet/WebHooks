@@ -13,14 +13,14 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    // TODO: Add WebHookMvcBuilderExtensions variant of this class.
+    // TODO: Add IMvcBuilder variant of this class.
     /// <summary>
     /// Extension methods for setting up WebHooks in an <see cref="IMvcCoreBuilder" />.
     /// </summary>
     public static class WebHookMvcCoreBuilderExtensions
     {
         /// <summary>
-        /// Add WebHooks configuration and services to the specified <paramref name="builder"/>.
+        /// Add WebHook configuration and services to the specified <paramref name="builder"/>.
         /// </summary>
         /// <param name="builder">The <see cref="IMvcCoreBuilder" /> to configure.</param>
         /// <returns>The <paramref name="builder"/>.</returns>

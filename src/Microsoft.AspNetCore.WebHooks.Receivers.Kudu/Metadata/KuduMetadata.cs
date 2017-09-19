@@ -3,8 +3,14 @@
 
 namespace Microsoft.AspNetCore.WebHooks.Metadata
 {
+    /// <summary>
+    /// An <see cref="IWebHookMetadata"/> service containing metadata about the Kudu receiver.
+    /// </summary>
     public class KuduMetadata : WebHookMetadata, IWebHookRequestMetadataService, IWebHookSecurityMetadata
     {
+        /// <summary>
+        /// Instantiates a new <see cref="KuduMetadata"/> instance.
+        /// </summary>
         public KuduMetadata()
             : base(KuduConstants.ReceiverName)
         {

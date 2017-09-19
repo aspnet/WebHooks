@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    // TODO: Add WebHookMvcBuilderExtensions variant of this class.
+    // TODO: Add IMvcBuilder variant of this class.
     /// <summary>
     /// Extension methods for setting up Azure Alert WebHooks in an <see cref="IMvcCoreBuilder" />.
     /// </summary
@@ -16,7 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class AzureAlertMvcCoreBuilderExtensions
     {
         /// <summary>
-        /// Add Azure Alert WebHooks configuration and services to the specified <paramref name="builder"/>.
+        /// Add Azure Alert WebHook configuration and services to the specified <paramref name="builder"/>.
         /// </summary>
         /// <param name="builder">The <see cref="IMvcCoreBuilder" /> to configure.</param>
         public static IMvcCoreBuilder AddAzureAlertWebHooks(this IMvcCoreBuilder builder)

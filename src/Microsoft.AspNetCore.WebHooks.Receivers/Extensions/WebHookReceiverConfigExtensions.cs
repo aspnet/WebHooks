@@ -23,7 +23,8 @@ namespace Microsoft.AspNetCore.WebHooks
         /// </param>
         /// <param name="id">
         /// A (potentially empty) ID of a particular configuration for this <see cref="IWebHookReceiver"/>. This
-        /// allows an <see cref="IWebHookReceiver"/> to support multiple WebHooks with individual configurations.
+        /// allows an <see cref="IWebHookReceiver"/> to support multiple WebHook endpoints with individual
+        /// configurations.
         /// </param>
         /// <param name="minLength">The minimum length of the key value.</param>
         /// <param name="maxLength">The maximum length of the key value.</param>

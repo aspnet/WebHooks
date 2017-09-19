@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.WebHooks.Properties;
 namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
-    /// An <see cref="Attribute"/> indicating the associated action is a WebHooks endpoint for all enabled
+    /// An <see cref="Attribute"/> indicating the associated action is a WebHook endpoint for all enabled
     /// receivers. Specifies the expected <see cref="BodyType"/>, optional <see cref="EventName"/>, and optional
     /// <see cref="WebHookAttribute.Id"/>. Also adds a <see cref="Filters.WebHookReceiverExistsFilter"/> for
     /// the action.

@@ -8,9 +8,17 @@ using Microsoft.AspNetCore.WebHooks.Properties;
 namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
+    /// <para>
     /// An <see cref="Attribute"/> indicating the associated action is a Bitbucket WebHook endpoint.
     /// Specifies the optional <see cref="WebHookAttribute.Id"/>. Also adds a
     /// <see cref="Filters.WebHookReceiverExistsFilter"/> for the action.
+    /// </para>
+    /// <para>
+    /// An example Bitbucket WebHook URI is
+    /// '<c>https://&lt;host&gt;/api/webhooks/incoming/bitbucket/{id}?code=83699ec7c1d794c0c780e49a5c72972590571fd8</c>'.
+    /// See <c>https://confluence.atlassian.com/bitbucket/manage-webhooks-735643732.html</c> for additional details
+    /// about Bitbucket WebHook requests.
+    /// </para>
     /// </summary>
     public class BitbucketWebHookAttribute : WebHookAttribute, IWebHookEventSelectorMetadata
     {

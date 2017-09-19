@@ -3,10 +3,20 @@
 
 namespace Microsoft.AspNetCore.WebHooks
 {
+    /// <summary>
+    /// Well-known names used in Kudu receivers and handlers.
+    /// </summary>
     public static class KuduConstants
     {
-        public static string ActionParameterName => "status";
+        /// <summary>
+        /// Gets the name of the JSON property in a Kudu WebHook request body containing a value somewhat analogous to
+        /// an event name.
+        /// </summary>
+        public static string EventRequestPropertyName => "status";
 
+        /// <summary>
+        /// Gets the name of the Kudu WebHook receiver.
+        /// </summary>
         public static string ReceiverName => "kudu";
     }
 }

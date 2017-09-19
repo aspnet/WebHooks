@@ -4,16 +4,24 @@
 namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
-    /// An <see cref="System.Attribute"/> indicating the associated action is a Kudu WebHooks endpoint. Specifies the
+    /// <para>
+    /// An <see cref="System.Attribute"/> indicating the associated action is a Kudu WebHook endpoint. Specifies the
     /// optional <see cref="WebHookAttribute.Id"/>. Also adds a <see cref="Filters.WebHookReceiverExistsFilter"/> for
     /// the action.
+    /// </para>
+    /// <para>
+    /// An example Kudu WebHook URI is
+    /// '<c>https://&lt;host&gt;/api/webhooks/incoming/kudu/{id}?code=83699ec7c1d794c0c780e49a5c72972590571fd8</c>'.
+    /// See <c>https://github.com/projectkudu/kudu/wiki/Web-hooks</c> for additional details about Kudu WebHook
+    /// requests.
+    /// </para>
     /// </summary>
     public class KuduWebHookAttribute : WebHookAttribute
     {
         /// <summary>
         /// <para>
         /// Instantiates a new <see cref="KuduWebHookAttribute"/> indicating the associated action is a Kudu
-        /// WebHooks endpoint.
+        /// WebHook endpoint.
         /// </para>
         /// <para>The signature of the action should be:
         /// <code>
@@ -23,7 +31,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <see cref="Newtonsoft.Json.Linq.JObject"/> or <see cref="KuduNotification"/>.
         /// </para>
         /// <para>This constructor should usually be used at most once in a WebHook application.</para>
-        /// <para>The default route <see cref="IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
+        /// <para>The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
         /// </summary>
         public KuduWebHookAttribute()
             : base(KuduConstants.ReceiverName)
