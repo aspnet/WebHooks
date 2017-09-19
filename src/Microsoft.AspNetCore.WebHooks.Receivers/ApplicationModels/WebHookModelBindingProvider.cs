@@ -37,7 +37,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 for (var j = 0; j < controller.Actions.Count; j++)
                 {
                     var action = controller.Actions[j];
-                    var attribute = action.Attributes.OfType<WebHookActionAttributeBase>().FirstOrDefault();
+                    var attribute = action.Attributes.OfType<WebHookAttribute>().FirstOrDefault();
                     if (attribute == null)
                     {
                         // Not a WebHook handler.

@@ -20,13 +20,13 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <see cref="WebHookReceiverExistsFilter"/> for the action.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public abstract class WebHookActionAttributeBase : Attribute, IAllowAnonymous, IFilterFactory
+    public abstract class WebHookAttribute : Attribute, IAllowAnonymous, IFilterFactory
     {
         private string _id;
 
         /// <summary>
         /// <para>
-        /// Instantiates a new <see cref="WebHookActionAttributeBase"/> indicating the associated action is a WebHooks
+        /// Instantiates a new <see cref="WebHookAttribute"/> indicating the associated action is a WebHooks
         /// endpoint for all enabled receivers.
         /// </para>
         /// <para>The signature of the action should be:
@@ -41,13 +41,13 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <see cref="WebHookReceiverRouteNames.ReceiverRouteName"/>.
         /// </para>
         /// </summary>
-        protected WebHookActionAttributeBase()
+        protected WebHookAttribute()
         {
         }
 
         /// <summary>
         /// <para>
-        /// Instantiates a new <see cref="WebHookActionAttributeBase"/> indicating the associated action is a WebHooks
+        /// Instantiates a new <see cref="WebHookAttribute"/> indicating the associated action is a WebHooks
         /// endpoint for the given <paramref name="receiverName"/>.
         /// </para>
         /// <para>The signature of the action should be:
@@ -63,7 +63,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <para>The default route <see cref="IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
         /// </summary>
         /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
-        protected WebHookActionAttributeBase(string receiverName)
+        protected WebHookAttribute(string receiverName)
         {
             if (string.IsNullOrEmpty(receiverName))
             {

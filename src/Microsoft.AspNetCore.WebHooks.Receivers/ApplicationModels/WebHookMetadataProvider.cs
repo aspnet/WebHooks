@@ -108,7 +108,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
         private void Apply(ActionModel action)
         {
-            var attribute = action.Attributes.OfType<WebHookActionAttributeBase>().FirstOrDefault();
+            var attribute = action.Attributes.OfType<WebHookAttribute>().FirstOrDefault();
             if (attribute == null)
             {
                 // Not a WebHook handler.
@@ -149,7 +149,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             {
                 if (receiverName == null)
                 {
-                    // Only the WebHookActionAttribute should have a null ReceiverName and it implements
+                    // Only the GeneralWebHookAttribute should have a null ReceiverName and it implements
                     // IWebHookRequestMetadata.
                     throw new InvalidOperationException();
                 }

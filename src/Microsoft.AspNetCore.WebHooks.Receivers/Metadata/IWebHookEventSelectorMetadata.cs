@@ -5,8 +5,8 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
 {
     /// <summary>
     /// Metadata describing a WebHooks action which accepts only events named <see cref="EventName"/>. Implemented in a
-    /// <see cref="WebHookActionAttributeBase"/> subclass for receivers that support multiple events and do not place
-    /// event information in the request body.
+    /// <see cref="WebHookAttribute"/> subclass for receivers that support multiple events and do not place event
+    /// information in the request body.
     /// </summary>
     public interface IWebHookEventSelectorMetadata : IWebHookMetadata
     {

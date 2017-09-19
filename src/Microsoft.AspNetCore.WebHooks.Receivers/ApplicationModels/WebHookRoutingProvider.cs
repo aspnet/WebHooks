@@ -74,7 +74,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         /// <inheritdoc />
         public void Apply(ActionModel action)
         {
-            var attribute = action.Attributes.OfType<WebHookActionAttributeBase>().FirstOrDefault();
+            var attribute = action.Attributes.OfType<WebHookAttribute>().FirstOrDefault();
             if (attribute == null)
             {
                 // Not a WebHook handler.
@@ -123,10 +123,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
         // Set the template for given SelectorModel. Similar to WebHookActionAttributeBase implementing
         // IRouteTemplateProvider.
-        private static void AddTemplate(
-            WebHookActionAttributeBase attribute,
-            string template,
-            SelectorModel selector)
+        private static void AddTemplate(WebHookAttribute attribute, string template, SelectorModel selector)
         {
             if (selector.AttributeRouteModel?.Template != null)
             {
@@ -155,7 +152,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             }
         }
 
-        private void AddConstraints(WebHookActionAttributeBase attribute, IList<SelectorModel> selectors)
+        private void AddConstraints(WebHookAttribute attribute, IList<SelectorModel> selectors)
         {
             AddConstraint(_existsConstraint, selectors);
 

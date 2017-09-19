@@ -6,25 +6,25 @@ namespace GitHubCoreReceiver.Controllers
 {
     public class GitHubController : ControllerBase
     {
-        [GitHubWebHookAction(EventName = "push")]
+        [GitHubWebHook(EventName = "push")]
         public IActionResult HandlerForPush(string id, JObject data)
         {
             return Ok();
         }
 
-        [GitHubWebHookAction(Id = "It")]
+        [GitHubWebHook(Id = "It")]
         public IActionResult HandlerForIt(string[] events, JObject data)
         {
             return Ok();
         }
 
-        [GitHubWebHookAction]
+        [GitHubWebHook]
         public IActionResult GitHubHandler(string id, string @event, JObject data)
         {
             return Ok();
         }
 
-        [WebHookAction]
+        [GeneralWebHook]
         public IActionResult FallbackHandler(string receiverName, string id, string eventName, JObject data)
         {
             return Ok();
