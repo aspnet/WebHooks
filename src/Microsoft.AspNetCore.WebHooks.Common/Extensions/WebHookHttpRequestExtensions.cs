@@ -12,7 +12,7 @@ namespace Microsoft.AspNetCore.Http
     /// Extension methods for <see cref="HttpRequest"/>.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static class WebHooksHttpRequestExtensions
+    public static class WebHookHttpRequestExtensions
     {
         private static readonly MediaTypeHeaderValue ApplicationJsonMediaType
             = new MediaTypeHeaderValue("application/json");

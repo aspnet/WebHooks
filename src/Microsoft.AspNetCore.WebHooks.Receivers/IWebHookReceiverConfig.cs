@@ -8,7 +8,8 @@ namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
     /// Provides an abstraction for managing <see cref="IWebHookReceiver"/> configuration. This makes it possible
-    /// to manage configuration of secrets in a consistent manner separately of any given <see cref="IWebHookReceiver"/>.
+    /// to manage configuration of secrets in a consistent manner separately of any given
+    /// <see cref="IWebHookReceiver"/>.
     /// </summary>
     public interface IWebHookReceiverConfig
     {

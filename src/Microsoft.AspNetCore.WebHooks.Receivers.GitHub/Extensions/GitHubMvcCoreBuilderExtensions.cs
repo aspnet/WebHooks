@@ -9,15 +9,15 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    // TODO: Add WebHookMvcBuilderExtensions variant of this class.
+    // TODO: Add IMvcBuilder variant of this class.
     /// <summary>
     /// Extension methods for setting up GitHub WebHooks in an <see cref="IMvcCoreBuilder" />.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static class GitHubWebHookMvcCoreBuilderExtensions
+    public static class GitHubMvcCoreBuilderExtensions
     {
         /// <summary>
-        /// Add GitHub WebHooks configuration and services to the specified <paramref name="builder"/>.
+        /// Add GitHub WebHook configuration and services to the specified <paramref name="builder"/>.
         /// </summary>
         /// <param name="builder">The <see cref="IMvcCoreBuilder" /> to configure.</param>
         public static IMvcCoreBuilder AddGitHubWebHooks(this IMvcCoreBuilder builder)
@@ -27,12 +27,12 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IWebHookMetadata, GitHubWebHookMetadata>());
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IWebHookMetadata, GitHubMetadata>());
 
             return builder
                 .AddJsonFormatters()
                 .AddWebHooks()
-                .AddSingletonFilter<GitHubWebHookVerifySignatureFilter>(WebHookVerifySignatureFilter.Order);
+                .AddSingletonFilter<GitHubVerifySignatureFilter>(WebHookVerifySignatureFilter.Order);
         }
     }
 }

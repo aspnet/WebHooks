@@ -20,7 +20,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// An <see cref="IResourceFilter"/> that verifies the GitHub signature header. Confirms the header exists, reads
     /// Body bytes, and compares the hashes.
     /// </summary>
-    public class GitHubWebHookVerifySignatureFilter : WebHookVerifySignatureFilter, IAsyncResourceFilter
+    public class GitHubVerifySignatureFilter : WebHookVerifySignatureFilter, IAsyncResourceFilter
     {
         internal const int SecretMinLength = 16;
         internal const int SecretMaxLength = 128;
@@ -30,7 +30,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         internal const string SignatureHeaderName = "X-Hub-Signature";
 
         /// <summary>
-        /// Instantiates a new <see cref="GitHubWebHookVerifySignatureFilter"/> instance.
+        /// Instantiates a new <see cref="GitHubVerifySignatureFilter"/> instance.
         /// </summary>
         /// <param name="loggerFactory">
         /// The <see cref="ILoggerFactory"/> used to initialize <see cref="WebHookSecurityFilter.Logger"/>.
@@ -39,13 +39,13 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// The <see cref="IWebHookReceiverConfig"/> used to initialize
         /// <see cref="WebHookSecurityFilter.Configuration"/> and <see cref="WebHookSecurityFilter.ReceiverConfig"/>.
         /// </param>
-        public GitHubWebHookVerifySignatureFilter(ILoggerFactory loggerFactory, IWebHookReceiverConfig receiverConfig)
+        public GitHubVerifySignatureFilter(ILoggerFactory loggerFactory, IWebHookReceiverConfig receiverConfig)
             : base(loggerFactory, receiverConfig)
         {
         }
 
         /// <inheritdoc />
-        public override string ReceiverName => GitHubWebHookConstants.ReceiverName;
+        public override string ReceiverName => GitHubConstants.ReceiverName;
 
         /// <inheritdoc />
         public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)

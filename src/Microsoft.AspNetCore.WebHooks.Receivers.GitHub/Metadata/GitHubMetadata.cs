@@ -6,13 +6,13 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     /// <summary>
     /// An <see cref="IWebHookMetadata"/> service containing metadata about the GitHub receiver.
     /// </summary>
-    public class GitHubWebHookMetadata : WebHookMetadata, IWebHookEventMetadata
+    public class GitHubMetadata : WebHookMetadata, IWebHookEventMetadata
     {
         /// <summary>
-        /// Instantiates a new <see cref="GitHubWebHookMetadata"/>.
+        /// Instantiates a new <see cref="GitHubMetadata"/>.
         /// </summary>
-        public GitHubWebHookMetadata()
-            : base(GitHubWebHookConstants.ReceiverName)
+        public GitHubMetadata()
+            : base(GitHubConstants.ReceiverName)
         {
         }
 
@@ -20,10 +20,10 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         public string ConstantValue => null;
 
         /// <inheritdoc />
-        public string HeaderName => GitHubWebHookConstants.EventHeaderName;
+        public string HeaderName => GitHubConstants.EventHeaderName;
 
         /// <inheritdoc />
-        public string PingEventName => GitHubWebHookConstants.PingEventName;
+        public string PingEventName => GitHubConstants.PingEventName;
 
         /// <inheritdoc />
         public string QueryParameterKey => null;

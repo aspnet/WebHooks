@@ -12,11 +12,12 @@ using Microsoft.Extensions.Logging;
 namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
-    /// Provides a default <see cref="IWebHookReceiverConfig"/> implementation which manages <see cref="IWebHookReceiver"/>
-    /// configuration using application settings. The name of the application setting is '<c>MS_WebHookReceiverSecret_&lt;name&gt;</c>'
-    /// where '<c>name</c>' is the name of the receiver, for example <c>github</c>. The value is a comma-separated list of secrets,
-    /// using an ID to differentiate between them. For example, '<c>secret0, id1=secret1, id2=secret2</c>'.
-    /// The corresponding WebHook URI is of the form '<c>https://&lt;host&gt;/api/webhooks/incoming/custom/{id}</c>'.
+    /// Provides a default <see cref="IWebHookReceiverConfig"/> implementation which manages
+    /// <see cref="IWebHookReceiver"/> configuration using application settings. The name of the application setting is
+    /// '<c>MS_WebHookReceiverSecret_&lt;name&gt;</c>' where '<c>name</c>' is the name of the receiver, for example
+    /// <c>github</c>. The value is a comma-separated list of secrets, using an ID to differentiate between them. For
+    /// example, '<c>secret0, id1=secret1, id2=secret2</c>'. The corresponding WebHook URI is of the form
+    /// '<c>https://&lt;host&gt;/api/webhooks/incoming/custom/{id}</c>'.
     /// </summary>
     public class WebHookReceiverConfig : IWebHookReceiverConfig
     {
@@ -27,7 +28,9 @@ namespace Microsoft.AspNetCore.WebHooks
         /// Initializes a new instance of the <see cref="WebHookReceiverConfig"/> which will use the application
         /// settings set in the given <paramref name="settings"/>.
         /// </summary>
-        /// <param name="settings">The <see cref="SettingsDictionary"/> to use for reading <see cref="IWebHookReceiver"/> configuration.</param>
+        /// <param name="settings">
+        /// The <see cref="SettingsDictionary"/> to use for reading <see cref="IWebHookReceiver"/> configuration.
+        /// </param>
         /// <param name="logger">The <see cref="LILogger"/> to use.</param>
         public WebHookReceiverConfig(IConfiguration configuration, ILoggerFactory loggerFactory)
         {

@@ -129,7 +129,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             {
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
-                    Resources.RoutingConvention_MixedRouteWithWebHookAction,
+                    Resources.RoutingConvention_MixedRouteWithWebHookAttribute,
                     attribute.GetType().Name,
                     selector.AttributeRouteModel.Attribute?.GetType().Name);
                 throw new InvalidOperationException(message);

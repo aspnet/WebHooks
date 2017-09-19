@@ -32,7 +32,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <para>The default route <see cref="IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
         /// </summary>
         public GitHubWebHookAttribute()
-            : base(GitHubWebHookConstants.ReceiverName)
+            : base(GitHubConstants.ReceiverName)
         {
         }
 

@@ -156,7 +156,7 @@
   <data name="ResultUtilities_GenericError" xml:space="preserve">
     <value>An error has occurred.</value>
   </data>
-  <data name="RoutingConvention_MixedRouteWithWebHookAction" xml:space="preserve">
+  <data name="RoutingConvention_MixedRouteWithWebHookAttribute" xml:space="preserve">
     <value>{0} and {1} were applied to the same action. {0} must not be combined with another attribute that provides a route template.</value>
   </data>
   <data name="VerifyBody_NoFormData" xml:space="preserve">

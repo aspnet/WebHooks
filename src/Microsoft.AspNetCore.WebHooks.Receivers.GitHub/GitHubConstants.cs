@@ -6,7 +6,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <summary>
     /// Well-known names used in GitHub receivers and handlers.
     /// </summary>
-    public static class GitHubWebHookConstants
+    public static class GitHubConstants
     {
         /// <summary>
         /// Gets the name of the GitHub WebHook receiver.
