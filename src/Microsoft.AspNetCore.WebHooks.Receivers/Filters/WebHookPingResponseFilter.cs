@@ -32,11 +32,11 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         }
 
         /// <summary>
-        /// Gets the <see cref="IOrderedFilter.Order"/> used in all <see cref="WebHookVerifyBodyTypeFilter"/>
+        /// Gets the <see cref="IOrderedFilter.Order"/> used in all <see cref="WebHookPingResponseFilter"/>
         /// instances. The recommended filter sequence is
         /// <list type="number">
         /// <item><description>
-        /// Confirm signature e.g. in a <see cref="WebHookReceiverFilter"/> subclass.
+        /// Confirm signature or <c>code</c> query parameter e.g. in a <see cref="WebHookSecurityFilter"/> subclass.
         /// </description></item>
         /// <item><description>Short-circuit GET or HEAD requests, if receiver supports either.</description></item>
         /// <item>

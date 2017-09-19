@@ -49,6 +49,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder
                 .AddSingletonFilter<WebHookExceptionFilter>()
                 .AddSingletonFilter<WebHookPingResponseFilter>(WebHookPingResponseFilter.Order)
+                .AddSingletonFilter<WebHookVerifyCodeFilter>(WebHookSecurityFilter.Order)
                 .AddSingletonFilter<WebHookVerifyMethodFilter>(WebHookVerifyMethodFilter.Order);
         }
 

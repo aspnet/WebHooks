@@ -26,7 +26,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <summary>
         /// Gets an indication that this <see cref="IWebHookReceiver"/> should execute in the current request.
         /// </summary>
-        /// <param name="receiverName">The name of the <see cref="IWebHookReceiver"/> requested.</param>
+        /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
         /// <returns>
         /// <c>true</c> if this <see cref="IWebHookReceiver"/> should execute; <c>false</c> otherwise.
         /// </returns>

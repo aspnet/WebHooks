@@ -5,8 +5,8 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
 {
     /// <summary>
     /// Metadata describing the request body type an action expects. Must be implemented in a protocol-specific
-    /// <see cref="WebHookActionAttributeBase"/> subclass or a registered <see cref="IWebHookMetadata"/> service, see
-    /// <see cref="IWebHookRequestMetadataService"/>.
+    /// <see cref="WebHookActionAttributeBase"/> subclass or a registered <see cref="IWebHookMetadata"/> service. For
+    /// services, see <see cref="IWebHookRequestMetadataService"/> in particular.
     /// </summary>
     public interface IWebHookRequestMetadata : IWebHookMetadata
     {

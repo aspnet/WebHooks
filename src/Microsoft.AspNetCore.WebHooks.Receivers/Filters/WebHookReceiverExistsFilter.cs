@@ -2,10 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.WebHooks.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -13,22 +16,26 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 {
     /// <summary>
     /// An <see cref="IResourceFilter"/> that confirms the <see cref="Routing.WebHookReceiverExistsConstraint"/> is
-    /// configured and ran successfully for this request. Also confirms at least one <see cref="IWebHookReceiver"/>
-    /// filter is configured to handle this request. The minimal receiver configuration includes a
-    /// <see cref="WebHookReceiverFilter"/> subclass to verify signatures.
+    /// configured and ran successfully for this request. Also confirms either
+    /// <see cref="IWebHookSecurityMetadata.VerifyCodeParameter"/> is <c>true</c> or at least one
+    /// <see cref="IWebHookReceiver"/> filter is configured to handle this request. The minimal configuration for a
+    /// receiver without <see cref="IWebHookSecurityMetadata.VerifyCodeParameter"/> <c>true</c> includes a
+    /// <see cref="WebHookVerifySignatureFilter"/> subclass to verify signatures.
     /// </summary>
     public class WebHookReceiverExistsFilter : IResourceFilter
     {
         private readonly ILogger _logger;
+        private readonly IReadOnlyList<IWebHookSecurityMetadata> _securityMetadata;
 
         /// <summary>
         /// Instantiates a new <see cref="WebHookReceiverExistsFilter"/> with the given
         /// <paramref name="loggerFactory"/>.
         /// </summary>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
-        public WebHookReceiverExistsFilter(ILoggerFactory loggerFactory)
+        public WebHookReceiverExistsFilter(IEnumerable<IWebHookMetadata> metadata, ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<WebHookReceiverExistsFilter>();
+            _securityMetadata = new List<IWebHookSecurityMetadata>(metadata.OfType<IWebHookSecurityMetadata>());
         }
 
         /// <summary>
@@ -71,34 +78,39 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                var found = false;
-                for (var i = 0; i < context.Filters.Count; i++)
+                var securityMetadata = _securityMetadata
+                    .FirstOrDefault(metadata => metadata.IsApplicable(receiverName));
+                if (securityMetadata == null || !securityMetadata.VerifyCodeParameter)
                 {
-                    var filter = context.Filters[i];
-                    if (filter is IWebHookReceiver receiver && receiver.IsApplicable(receiverName))
+                    var found = false;
+                    for (var i = 0; i < context.Filters.Count; i++)
                     {
-                        found = true;
-                        break;
+                        var filter = context.Filters[i];
+                        if (filter is IWebHookReceiver receiver && receiver.IsApplicable(receiverName))
+                        {
+                            found = true;
+                            break;
+                        }
                     }
-                }
 
-                if (!found)
-                {
-                    // This case is actually more likely a gap in the receiver-specific configuration method.
-                    _logger.LogCritical(
-                        1,
-                        "Unable to find WebHook filters for {ReceiverName}. Please add the required configuration " +
-                        "by calling a receiver-specific method that calls '{CoreInterfaceName}.{MethodName}' in the " +
-                        "application startup code. For example, call '{GitHubCoreInterfaceName}.{GitHubMethodName}' " +
-                        "to configure the GitHub receiver.",
-                        receiverName,
-                        nameof(IMvcCoreBuilder),
-                        nameof(WebHookMvcCoreBuilderExtensions.AddWebHooks),
-                        nameof(IMvcCoreBuilder),
-                        "AddGitHubWebHooks");
+                    if (!found)
+                    {
+                        // This case is actually more likely a gap in the receiver-specific configuration method.
+                        _logger.LogCritical(
+                            1,
+                            "Unable to find WebHook filters for {ReceiverName}. Please add the required " +
+                            "configuration by calling a receiver-specific method that calls " +
+                            "'{CoreInterfaceName}.{MethodName}' in the application startup code. For example, call " +
+                            "'{GitHubCoreInterfaceName}.{GitHubMethodName}' to configure the GitHub receiver.",
+                            receiverName,
+                            nameof(IMvcCoreBuilder),
+                            nameof(WebHookMvcCoreBuilderExtensions.AddWebHooks),
+                            nameof(IMvcCoreBuilder),
+                            "AddGitHubWebHooks");
 
-                    context.Result = new StatusCodeResult(StatusCodes.Status500InternalServerError);
-                    return;
+                        context.Result = new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                        return;
+                    }
                 }
             }
             else

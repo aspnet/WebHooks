@@ -42,7 +42,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// instances. The recommended filter sequence is
         /// <list type="number">
         /// <item><description>
-        /// Confirm signature e.g. in a <see cref="WebHookReceiverFilter"/> subclass.
+        /// Confirm signature or <c>code</c> query parameter e.g. in a <see cref="WebHookSecurityFilter"/> subclass.
         /// </description></item>
         /// <item><description>Short-circuit GET or HEAD requests, if receiver supports either.</description></item>
         /// <item>
@@ -54,7 +54,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// </description></item>
         /// </list>
         /// </summary>
-        public static int Order => WebHookReceiverFilter.Order + 20;
+        public static int Order => WebHookVerifySignatureFilter.Order + 20;
 
         /// <inheritdoc />
         public void OnResourceExecuting(ResourceExecutingContext context)

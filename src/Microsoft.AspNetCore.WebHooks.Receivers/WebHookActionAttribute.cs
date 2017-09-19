@@ -11,8 +11,8 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <summary>
     /// An <see cref="Attribute"/> indicating the associated action is a WebHooks endpoint for all enabled
     /// receivers. Specifies the expected <see cref="BodyType"/>, optional <see cref="EventName"/>, and optional
-    /// <see cref="WebHookActionAttributeBase.Id"/>. Also adds a <see cref="Filters.WebHookReceiverExistsFilter"/> for the
-    /// action.
+    /// <see cref="WebHookActionAttributeBase.Id"/>. Also adds a <see cref="Filters.WebHookReceiverExistsFilter"/> for
+    /// the action.
     /// </summary>
     public class WebHookActionAttribute :
         WebHookActionAttributeBase,
@@ -22,9 +22,7 @@ namespace Microsoft.AspNetCore.WebHooks
         private WebHookBodyType _bodyType = WebHookBodyType.Json;
         private string _eventName;
 
-        /// <summary>
-        /// Gets or sets the <see cref="WebHookBodyType"/> this action expects.
-        /// </summary>
+        /// <inheritdoc />
         /// <value>Default value is <see cref="WebHookBodyType.Json"/>.</value>
         public WebHookBodyType BodyType
         {
