@@ -22,6 +22,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
     /// </summary>
     public class WebHookMetadataProvider : IApplicationModelProvider
     {
+        private readonly IReadOnlyList<IWebHookBindingMetadata> _bindingMetadata;
         private readonly IReadOnlyList<IWebHookEventMetadata> _eventMetadata;
         private readonly IReadOnlyList<IWebHookRequestMetadataService> _requestMetadata;
 
@@ -31,10 +32,21 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         /// <param name="metadata">The collection of <see cref="IWebHookMetadata"/> services.</param>
         public WebHookMetadataProvider(IEnumerable<IWebHookMetadata> metadata)
         {
-            _eventMetadata = new List<IWebHookEventMetadata>(
-                metadata.OfType<IWebHookEventMetadata>());
+            _bindingMetadata = new List<IWebHookBindingMetadata>(metadata.OfType<IWebHookBindingMetadata>());
+            _eventMetadata = new List<IWebHookEventMetadata>(metadata.OfType<IWebHookEventMetadata>());
             _requestMetadata = new List<IWebHookRequestMetadataService>(
                 metadata.OfType<IWebHookRequestMetadataService>());
+
+            // Check for duplicate IWebHookBindingMetadata registrations for a receiver.
+            var bindingGroups = _bindingMetadata.GroupBy(item => item.ReceiverName, StringComparer.OrdinalIgnoreCase);
+            foreach (var group in bindingGroups)
+            {
+                if (group.Count() != 1)
+                {
+                    var message = group.Key;
+                    throw new InvalidOperationException(message);
+                }
+            }
 
             // Check for duplicate IWebHookEventMetadata registrations for a receiver. IWebHookEventMetadata is
             // optional in general because some receivers place event information in the request body.
@@ -115,8 +127,17 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 return;
             }
 
-            IWebHookEventMetadata eventMetadata;
             var receiverName = attribute.ReceiverName;
+            if (receiverName != null)
+            {
+                var bindingMMetadata = _bindingMetadata.FirstOrDefault(metadata => metadata.IsApplicable(receiverName));
+                if (bindingMMetadata != null)
+                {
+                    action.Properties[typeof(IWebHookBindingMetadata)] = bindingMMetadata;
+                }
+            }
+
+            IWebHookEventMetadata eventMetadata;
             if (receiverName == null)
             {
                 // Pass along all IWebHookEventMetadata instances.

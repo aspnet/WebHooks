@@ -168,4 +168,10 @@
   <data name="VerifyBody_NoXml" xml:space="preserve">
     <value>The WebHook request must contain an entity body formatted as XML.</value>
   </data>
+  <data name="VerifyRequiredValue_NoHeader" xml:space="preserve">
+    <value>A {0} WebHook request must contain a '{1}' HTTP header.</value>
+  </data>
+  <data name="VerifyRequiredValue_NoQueryParameter" xml:space="preserve">
+    <value>A {0} WebHook request must contain a '{1}' query parameter.</value>
+  </data>
 </root>

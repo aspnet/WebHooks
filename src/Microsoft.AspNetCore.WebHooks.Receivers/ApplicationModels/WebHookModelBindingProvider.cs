@@ -44,10 +44,15 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                         continue;
                     }
 
+                    action.Properties.TryGetValue(typeof(IWebHookBindingMetadata), out var bindingMetadata);
+                    action.Properties.TryGetValue(typeof(IWebHookRequestMetadata), out var requestMetadata);
                     for (var k = 0; k < action.Parameters.Count; k++)
                     {
                         var parameter = action.Parameters[k];
-                        Apply(parameter);
+                        Apply(
+                            (IWebHookBindingMetadata)bindingMetadata,
+                            (IWebHookRequestMetadata)requestMetadata,
+                            parameter);
                     }
                 }
             }
@@ -59,7 +64,10 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             // Nothing to do.
         }
 
-        private static void Apply(ParameterModel parameter)
+        private static void Apply(
+            IWebHookBindingMetadata bindingMetadata,
+            IWebHookRequestMetadata requestMetadata,
+            ParameterModel parameter)
         {
             var bindingInfo = parameter.BindingInfo;
             if (bindingInfo?.BinderModelName != null ||
@@ -75,8 +83,9 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 bindingInfo = parameter.BindingInfo = new BindingInfo();
             }
 
+            var parameterName = parameter.ParameterName;
             var parameterType = parameter.ParameterInfo.ParameterType;
-            switch (parameter.ParameterName.ToUpperInvariant())
+            switch (parameterName.ToUpperInvariant())
             {
                 case "ACTION":
                 case "ACTIONS":
@@ -86,7 +95,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     break;
 
                 case "DATA":
-                    SourceData(bindingInfo, parameter.Action);
+                    SourceData(bindingInfo, requestMetadata);
                     break;
 
                 case "EVENT":
@@ -114,38 +123,41 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     break;
 
                 default:
-                    // ??? Should we support NameValueCollection here and in model binding to ease migration from
-                    // ??? current WebHooks?
-                    // ??? Any need to support simple JToken's? JContainer is the base for JArray and JObject.
-                    // Regardless of name, treat all IFormCollection, JObject, and XElement parameters as data.
-                    if (typeof(IFormCollection).IsAssignableFrom(parameterType) ||
-                        typeof(JContainer).IsAssignableFrom(parameterType) ||
-                        typeof(XElement).IsAssignableFrom(parameterType))
+                    // If additional parameters are configured and match, map them. If not, treat IFormCollection,
+                    // JContainer and XElement parameters as data.
+                    //
+                    // ??? Should fallbacks support NameValueCollection here and in model binding to ease migration
+                    // ??? from current WebHooks?
+                    if (!TrySourceAdditionalParameter(bindingInfo, bindingMetadata, parameterName) &&
+                        (typeof(IFormCollection).IsAssignableFrom(parameterType) ||
+                         // ??? Any need to support simple JToken's? JContainer is the base for JArray and JObject.
+                         typeof(JContainer).IsAssignableFrom(parameterType) ||
+                         typeof(XElement).IsAssignableFrom(parameterType)))
                     {
-                        SourceData(bindingInfo, parameter.Action);
+                        SourceData(bindingInfo, requestMetadata);
                     }
                     break;
             }
         }
 
-        private static void SourceData(BindingInfo bindingInfo, ActionModel action)
+        private static void SourceData(BindingInfo bindingInfo, IWebHookRequestMetadata requestMetadata)
         {
-            if (action.Properties.TryGetValue(typeof(IWebHookRequestMetadata), out var metadata))
+            if (requestMetadata == null)
             {
-                var requestMetadata = (IWebHookRequestMetadata)metadata;
-                if (requestMetadata.BodyType == WebHookBodyType.Form)
-                {
-                    // ??? Should we instead support multiple parameters binding to portions of the form data i.e.
-                    // ??? leave BinderModelName null and let the parameter name bleed through into model binding?
-                    bindingInfo.BinderModelName = string.Empty;
-                    bindingInfo.BindingSource = BindingSource.Form;
-                }
-                else
-                {
-                    bindingInfo.BinderModelName = string.Empty;
-                    bindingInfo.BindingSource = BindingSource.Body;
-                }
+                return;
             }
+
+            if (requestMetadata.BodyType == WebHookBodyType.Form)
+            {
+                // ??? Should we instead support multiple parameters binding to portions of the form data i.e.
+                // ??? leave BinderModelName null and let the parameter name bleed through into model binding?
+                bindingInfo.BinderModelName = string.Empty;
+                bindingInfo.BindingSource = BindingSource.Form;
+                return;
+            }
+
+            bindingInfo.BinderModelName = string.Empty;
+            bindingInfo.BindingSource = BindingSource.Body;
         }
 
         private static void SourceEvent(BindingInfo bindingInfo, Type parameterType)
@@ -184,6 +196,24 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
             bindingInfo.BinderModelName = WebHookReceiverRouteNames.ReceiverKeyName;
             bindingInfo.BindingSource = BindingSource.Path;
+        }
+
+        private static bool TrySourceAdditionalParameter(
+            BindingInfo bindingInfo,
+            IWebHookBindingMetadata bindingMetadata,
+            string parameterName)
+        {
+            var parameter = bindingMetadata?.Parameters
+                .FirstOrDefault(item => string.Equals(parameterName, item.Name, StringComparison.OrdinalIgnoreCase));
+            if (parameter == null)
+            {
+                return false;
+            }
+
+            bindingInfo.BinderModelName = parameter.SourceName;
+            bindingInfo.BindingSource = parameter.IsQueryParameter ? BindingSource.Query : BindingSource.Header;
+
+            return true;
         }
     }
 }

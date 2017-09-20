@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// <summary>
     /// An <see cref="IResourceFilter"/> to short-circuit ping WebHook requests.
     /// </summary>
-    public class WebHookPingResponseFilter : IResourceFilter, IOrderedFilter
+    public class WebHookPingResponseFilter : IResourceFilter
     {
         private readonly ILogger _logger;
         private readonly IReadOnlyList<IWebHookEventMetadata> _eventMetadata;
@@ -27,31 +27,32 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// <param name="metadata">The collection of <see cref="IWebHookMetadata"/> services.</param>
         public WebHookPingResponseFilter(ILoggerFactory loggerFactory, IEnumerable<IWebHookMetadata> metadata)
         {
-            _logger = loggerFactory.CreateLogger<WebHookVerifyBodyTypeFilter>();
+            _logger = loggerFactory.CreateLogger<WebHookPingResponseFilter>();
             _eventMetadata = new List<IWebHookEventMetadata>(metadata.OfType<IWebHookEventMetadata>());
         }
 
         /// <summary>
-        /// Gets the <see cref="IOrderedFilter.Order"/> used in all <see cref="WebHookPingResponseFilter"/>
+        /// Gets the <see cref="IOrderedFilter.Order"/> recommended for all <see cref="WebHookPingResponseFilter"/>
         /// instances. The recommended filter sequence is
         /// <list type="number">
         /// <item><description>
-        /// Confirm signature or <c>code</c> query parameter e.g. in a <see cref="WebHookSecurityFilter"/> subclass.
+        /// Confirm signature or <c>code</c> query parameter (in a <see cref="WebHookSecurityFilter"/> subclass).
+        /// </description></item>
+        /// <item><description>
+        /// Confirm required headers and query parameters are provided (in
+        /// <see cref="WebHookVerifyRequiredValueFilter"/>).
         /// </description></item>
         /// <item><description>Short-circuit GET or HEAD requests, if receiver supports either.</description></item>
-        /// <item>
-        /// <description>Confirm it's a POST request (<see cref="WebHookVerifyMethodFilter"/>).</description>
-        /// </item>
-        /// <item><description>Confirm body type (<see cref="WebHookVerifyBodyTypeFilter"/>).</description></item>
         /// <item><description>
-        /// Short-circuit ping requests, if not done in #2 for this receiver (this filter).
+        /// Confirm it's a POST request (in <see cref="WebHookVerifyMethodFilter"/>).
+        /// </description></item>
+        /// <item><description>Confirm body type (in <see cref="WebHookVerifyBodyTypeFilter"/>).</description></item>
+        /// <item><description>
+        /// Short-circuit ping requests, if not done in #3 for this receiver (in this filter).
         /// </description></item>
         /// </list>
         /// </summary>
         public static int Order => WebHookVerifyBodyTypeFilter.Order + 10;
-
-        /// <inheritdoc />
-        int IOrderedFilter.Order => Order;
 
         /// <inheritdoc />
         public void OnResourceExecuting(ResourceExecutingContext context)

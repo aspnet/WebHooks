@@ -10,6 +10,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     /// </summary>
     public class BitbucketMetadata :
         WebHookMetadata,
+        IWebHookBindingMetadata,
         IWebHookEventMetadata,
         IWebHookRequestMetadataService,
         IWebHookSecurityMetadata
