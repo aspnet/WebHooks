@@ -170,7 +170,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHoo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitHubCoreReceiver", "samples\GitHubCoreReceiver\GitHubCoreReceiver.csproj", "{BF3CA06F-4610-40E3-9C8F-C450486BB81C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.AzureAlerts", "src\Microsoft.AspNetCore.WebHooks.Receivers.AzureAlerts\Microsoft.AspNetCore.WebHooks.Receivers.AzureAlerts.csproj", "{FAE4E7F8-7786-4388-802D-69C5C40DD5ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.AzureAlert", "src\Microsoft.AspNetCore.WebHooks.Receivers.AzureAlert\Microsoft.AspNetCore.WebHooks.Receivers.AzureAlert.csproj", "{FAE4E7F8-7786-4388-802D-69C5C40DD5ED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHooks.Receivers.BitBucket", "src\Microsoft.AspNetCore.WebHooks.Receivers.BitBucket\Microsoft.AspNetCore.WebHooks.Receivers.BitBucket.csproj", "{06B0D9D1-1368-423E-B2F7-5F408423A187}"
 EndProject
