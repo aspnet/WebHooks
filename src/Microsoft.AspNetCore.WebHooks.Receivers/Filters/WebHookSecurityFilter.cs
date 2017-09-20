@@ -134,7 +134,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
-                    Resources.Receiver_NoHttps,
+                    Resources.Security_NoHttps,
                     GetType().Name,
                     Uri.UriSchemeHttps);
                 var noHttps = WebHookResultUtilities.CreateErrorResult(message);
@@ -193,7 +193,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
-                    Resources.Receiver_BadSecret,
+                    Resources.Security_BadSecret,
                     configurationName,
                     id,
                     minLength,

@@ -63,9 +63,9 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         /// <summary>
         ///   Looks up a localized string similar to {0} property must not be set to &apos;{1}&apos;..
         /// </summary>
-        internal static string ActionAttribute_UnsupportedValue {
+        internal static string Attribute_UnsupportedValue {
             get {
-                return ResourceManager.GetString("ActionAttribute_UnsupportedValue", resourceCulture);
+                return ResourceManager.GetString("Attribute_UnsupportedValue", resourceCulture);
             }
         }
         
@@ -106,69 +106,6 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;{0}&apos; query parameter provided in the HTTP request did not match the expected value..
-        /// </summary>
-        internal static string Receiver_BadCode {
-            get {
-                return ResourceManager.GetString("Receiver_BadCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Expecting exactly one &apos;{0}&apos; header field in the WebHook request but found {1}. Please ensure that the request contains exactly one &apos;{0}&apos; header field..
-        /// </summary>
-        internal static string Receiver_BadHeader {
-            get {
-                return ResourceManager.GetString("Receiver_BadHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The HTTP &apos;{0}&apos; method is not supported by the &apos;{1}&apos; WebHook receiver..
-        /// </summary>
-        internal static string Receiver_BadMethod {
-            get {
-                return ResourceManager.GetString("Receiver_BadMethod", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Could not find a valid configuration for WebHook receiver &apos;{0}&apos; and instance &apos;{1}&apos;. The setting must be set to a value between {2} and {3} characters long..
-        /// </summary>
-        internal static string Receiver_BadSecret {
-            get {
-                return ResourceManager.GetString("Receiver_BadSecret", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The WebHook signature provided by the &apos;{0}&apos; header field does not match the value expected by the &apos;{1}&apos; receiver. WebHook request is invalid..
-        /// </summary>
-        internal static string Receiver_BadSignature {
-            get {
-                return ResourceManager.GetString("Receiver_BadSignature", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The WebHook verification request must contain a &apos;{0}&apos; query parameter..
-        /// </summary>
-        internal static string Receiver_NoCode {
-            get {
-                return ResourceManager.GetString("Receiver_NoCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The WebHook receiver &apos;{0}&apos; requires HTTPS in order to be secure. Please register a WebHook URI of type &apos;{1}&apos;..
-        /// </summary>
-        internal static string Receiver_NoHttps {
-            get {
-                return ResourceManager.GetString("Receiver_NoHttps", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An error has occurred..
         /// </summary>
         internal static string ResultUtilities_GenericError {
@@ -183,6 +120,24 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         internal static string RoutingConvention_MixedRouteWithWebHookAttribute {
             get {
                 return ResourceManager.GetString("RoutingConvention_MixedRouteWithWebHookAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find a valid configuration for WebHook receiver &apos;{0}&apos; and instance &apos;{1}&apos;. The setting must be set to a value between {2} and {3} characters long..
+        /// </summary>
+        internal static string Security_BadSecret {
+            get {
+                return ResourceManager.GetString("Security_BadSecret", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The WebHook receiver &apos;{0}&apos; requires HTTPS in order to be secure. Please register a WebHook URI of type &apos;{1}&apos;..
+        /// </summary>
+        internal static string Security_NoHttps {
+            get {
+                return ResourceManager.GetString("Security_NoHttps", resourceCulture);
             }
         }
         
@@ -210,6 +165,69 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         internal static string VerifyBody_NoXml {
             get {
                 return ResourceManager.GetString("VerifyBody_NoXml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;{0}&apos; query parameter provided in the HTTP request did not match the expected value..
+        /// </summary>
+        internal static string VerifyCode_BadCode {
+            get {
+                return ResourceManager.GetString("VerifyCode_BadCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The WebHook verification request must contain a &apos;{0}&apos; query parameter..
+        /// </summary>
+        internal static string VerifyCode_NoCode {
+            get {
+                return ResourceManager.GetString("VerifyCode_NoCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The HTTP &apos;{0}&apos; method is not supported by the &apos;{1}&apos; WebHook receiver..
+        /// </summary>
+        internal static string VerifyMethod_BadMethod {
+            get {
+                return ResourceManager.GetString("VerifyMethod_BadMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A {0} WebHook request must contain a &apos;{1}&apos; HTTP header..
+        /// </summary>
+        internal static string VerifyRequiredValue_NoHeader {
+            get {
+                return ResourceManager.GetString("VerifyRequiredValue_NoHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A {0} WebHook request must contain a &apos;{1}&apos; query parameter..
+        /// </summary>
+        internal static string VerifyRequiredValue_NoQueryParameter {
+            get {
+                return ResourceManager.GetString("VerifyRequiredValue_NoQueryParameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expecting exactly one &apos;{0}&apos; header field in the WebHook request but found {1}. Please ensure that the request contains exactly one &apos;{0}&apos; header field..
+        /// </summary>
+        internal static string VerifySignature_BadHeader {
+            get {
+                return ResourceManager.GetString("VerifySignature_BadHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The WebHook signature provided by the &apos;{0}&apos; header field does not match the value expected by the &apos;{1}&apos; receiver. WebHook request is invalid..
+        /// </summary>
+        internal static string VerifySignature_BadSignature {
+            get {
+                return ResourceManager.GetString("VerifySignature_BadSignature", resourceCulture);
             }
         }
     }

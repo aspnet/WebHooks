@@ -142,7 +142,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
-                    Resources.Receiver_BadHeader,
+                    Resources.VerifySignature_BadHeader,
                     headerName,
                     headersCount);
                 errorResult = WebHookResultUtilities.CreateErrorResult(message);
@@ -182,7 +182,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
             var message = string.Format(
                 CultureInfo.CurrentCulture,
-                Resources.Receiver_BadSignature,
+                Resources.VerifySignature_BadSignature,
                 signatureHeaderName,
                 GetType().Name);
             var badSignature = WebHookResultUtilities.CreateErrorResult(message);

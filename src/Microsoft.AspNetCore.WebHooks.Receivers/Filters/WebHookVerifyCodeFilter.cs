@@ -128,7 +128,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     "The WebHook verification request must contain a '{ParameterName}' query parameter.",
                     CodeQueryParameter);
 
-                var message = string.Format(CultureInfo.CurrentCulture, Resources.Receiver_NoCode, CodeQueryParameter);
+                var message = string.Format(CultureInfo.CurrentCulture, Resources.VerifyCode_NoCode, CodeQueryParameter);
                 var noCode = WebHookResultUtilities.CreateErrorResult(message);
 
                 return noCode;
@@ -142,7 +142,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     "The '{ParameterName}' query parameter provided in the HTTP request did not match the expected value.",
                     CodeQueryParameter);
 
-                var message = string.Format(CultureInfo.CurrentCulture, Resources.Receiver_BadCode, CodeQueryParameter);
+                var message = string.Format(CultureInfo.CurrentCulture, Resources.VerifyCode_BadCode, CodeQueryParameter);
                 var invalidCode = WebHookResultUtilities.CreateErrorResult(message);
 
                 return invalidCode;

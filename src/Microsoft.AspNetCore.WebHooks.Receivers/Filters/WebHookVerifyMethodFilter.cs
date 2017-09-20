@@ -92,7 +92,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
             var message = string.Format(
                 CultureInfo.CurrentCulture,
-                Resources.Receiver_BadMethod,
+                Resources.VerifyMethod_BadMethod,
                 request.Method,
                 GetType().Name);
 

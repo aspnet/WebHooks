@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ActionAttribute_UnsupportedValue" xml:space="preserve">
+  <data name="Attribute_UnsupportedValue" xml:space="preserve">
     <value>{0} property must not be set to '{1}'.</value>
   </data>
   <data name="Config_AddFailure" xml:space="preserve">
@@ -132,32 +132,17 @@
   <data name="General_InvalidEnumValue" xml:space="preserve">
     <value>Enum type {0} has no defined '{1}' value.</value>
   </data>
-  <data name="Receiver_BadCode" xml:space="preserve">
-    <value>The '{0}' query parameter provided in the HTTP request did not match the expected value.</value>
-  </data>
-  <data name="Receiver_BadHeader" xml:space="preserve">
-    <value>Expecting exactly one '{0}' header field in the WebHook request but found {1}. Please ensure that the request contains exactly one '{0}' header field.</value>
-  </data>
-  <data name="Receiver_BadMethod" xml:space="preserve">
-    <value>The HTTP '{0}' method is not supported by the '{1}' WebHook receiver.</value>
-  </data>
-  <data name="Receiver_BadSecret" xml:space="preserve">
-    <value>Could not find a valid configuration for WebHook receiver '{0}' and instance '{1}'. The setting must be set to a value between {2} and {3} characters long.</value>
-  </data>
-  <data name="Receiver_BadSignature" xml:space="preserve">
-    <value>The WebHook signature provided by the '{0}' header field does not match the value expected by the '{1}' receiver. WebHook request is invalid.</value>
-  </data>
-  <data name="Receiver_NoCode" xml:space="preserve">
-    <value>The WebHook verification request must contain a '{0}' query parameter.</value>
-  </data>
-  <data name="Receiver_NoHttps" xml:space="preserve">
-    <value>The WebHook receiver '{0}' requires HTTPS in order to be secure. Please register a WebHook URI of type '{1}'.</value>
-  </data>
   <data name="ResultUtilities_GenericError" xml:space="preserve">
     <value>An error has occurred.</value>
   </data>
   <data name="RoutingConvention_MixedRouteWithWebHookAttribute" xml:space="preserve">
     <value>{0} and {1} were applied to the same action. {0} must not be combined with another attribute that provides a route template.</value>
+  </data>
+  <data name="Security_BadSecret" xml:space="preserve">
+    <value>Could not find a valid configuration for WebHook receiver '{0}' and instance '{1}'. The setting must be set to a value between {2} and {3} characters long.</value>
+  </data>
+  <data name="Security_NoHttps" xml:space="preserve">
+    <value>The WebHook receiver '{0}' requires HTTPS in order to be secure. Please register a WebHook URI of type '{1}'.</value>
   </data>
   <data name="VerifyBody_NoFormData" xml:space="preserve">
     <value>The WebHook request must contain an entity body formatted as HTML Form Data.</value>
@@ -168,10 +153,25 @@
   <data name="VerifyBody_NoXml" xml:space="preserve">
     <value>The WebHook request must contain an entity body formatted as XML.</value>
   </data>
+  <data name="VerifyCode_BadCode" xml:space="preserve">
+    <value>The '{0}' query parameter provided in the HTTP request did not match the expected value.</value>
+  </data>
+  <data name="VerifyCode_NoCode" xml:space="preserve">
+    <value>The WebHook verification request must contain a '{0}' query parameter.</value>
+  </data>
+  <data name="VerifyMethod_BadMethod" xml:space="preserve">
+    <value>The HTTP '{0}' method is not supported by the '{1}' WebHook receiver.</value>
+  </data>
   <data name="VerifyRequiredValue_NoHeader" xml:space="preserve">
     <value>A {0} WebHook request must contain a '{1}' HTTP header.</value>
   </data>
   <data name="VerifyRequiredValue_NoQueryParameter" xml:space="preserve">
     <value>A {0} WebHook request must contain a '{1}' query parameter.</value>
+  </data>
+  <data name="VerifySignature_BadHeader" xml:space="preserve">
+    <value>Expecting exactly one '{0}' header field in the WebHook request but found {1}. Please ensure that the request contains exactly one '{0}' header field.</value>
+  </data>
+  <data name="VerifySignature_BadSignature" xml:space="preserve">
+    <value>The WebHook signature provided by the '{0}' header field does not match the value expected by the '{1}' receiver. WebHook request is invalid.</value>
   </data>
 </root>
