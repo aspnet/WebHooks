@@ -206,6 +206,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNet", "AspNet", "{9E4E6C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNetCore", "AspNetCore", "{554337F5-F56F-4F93-9AE7-78F9EBCECC20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitbucketCoreReceiver", "samples\BitbucketCoreReceiver\BitbucketCoreReceiver.csproj", "{903CC30B-952F-4786-BD7B-688C65ACB8D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAlertCoreReceiver", "samples\AzureAlertCoreReceiver\AzureAlertCoreReceiver.csproj", "{66B213C4-0647-4E6A-9A1A-98653F60FC74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KuduCoreReceiver", "samples\KuduCoreReceiver\KuduCoreReceiver.csproj", "{FB7E7FF1-4DAC-45D6-8128-1A528CE9A4D1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BitbucketStronglyTypedCoreReceiver", "samples\BitbucketStronglyTypedCoreReceiver\BitbucketStronglyTypedCoreReceiver.csproj", "{EA934BCE-6781-40AA-A0F6-0EDC697594BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CodeAnalysis|Any CPU = CodeAnalysis|Any CPU
@@ -735,6 +743,36 @@ Global
 		{D337952E-4081-43CB-9C98-BAE6F5D72BAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D337952E-4081-43CB-9C98-BAE6F5D72BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D337952E-4081-43CB-9C98-BAE6F5D72BAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{903CC30B-952F-4786-BD7B-688C65ACB8D9}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{903CC30B-952F-4786-BD7B-688C65ACB8D9}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{903CC30B-952F-4786-BD7B-688C65ACB8D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{903CC30B-952F-4786-BD7B-688C65ACB8D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{903CC30B-952F-4786-BD7B-688C65ACB8D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{903CC30B-952F-4786-BD7B-688C65ACB8D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66B213C4-0647-4E6A-9A1A-98653F60FC74}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{66B213C4-0647-4E6A-9A1A-98653F60FC74}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{66B213C4-0647-4E6A-9A1A-98653F60FC74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66B213C4-0647-4E6A-9A1A-98653F60FC74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66B213C4-0647-4E6A-9A1A-98653F60FC74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66B213C4-0647-4E6A-9A1A-98653F60FC74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB7E7FF1-4DAC-45D6-8128-1A528CE9A4D1}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB7E7FF1-4DAC-45D6-8128-1A528CE9A4D1}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{FB7E7FF1-4DAC-45D6-8128-1A528CE9A4D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB7E7FF1-4DAC-45D6-8128-1A528CE9A4D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB7E7FF1-4DAC-45D6-8128-1A528CE9A4D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB7E7FF1-4DAC-45D6-8128-1A528CE9A4D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F60AE9EC-E168-4607-B781-B6A464EEAA79}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{F60AE9EC-E168-4607-B781-B6A464EEAA79}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{F60AE9EC-E168-4607-B781-B6A464EEAA79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F60AE9EC-E168-4607-B781-B6A464EEAA79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F60AE9EC-E168-4607-B781-B6A464EEAA79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F60AE9EC-E168-4607-B781-B6A464EEAA79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA934BCE-6781-40AA-A0F6-0EDC697594BF}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA934BCE-6781-40AA-A0F6-0EDC697594BF}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{EA934BCE-6781-40AA-A0F6-0EDC697594BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA934BCE-6781-40AA-A0F6-0EDC697594BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA934BCE-6781-40AA-A0F6-0EDC697594BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA934BCE-6781-40AA-A0F6-0EDC697594BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -833,9 +871,14 @@ Global
 		{D88FB837-A928-417D-B787-2A20C9AAD020} = {929F44D0-A040-4DC3-A22F-4C5829C05D44}
 		{9E4E6C9A-72F4-4656-9AFE-546143507CE3} = {9575CB90-BC4B-43BB-8AEA-82C53FDA4187}
 		{554337F5-F56F-4F93-9AE7-78F9EBCECC20} = {9575CB90-BC4B-43BB-8AEA-82C53FDA4187}
+		{903CC30B-952F-4786-BD7B-688C65ACB8D9} = {5759F48E-0D9E-457F-A93D-40FBC422B0CE}
+		{66B213C4-0647-4E6A-9A1A-98653F60FC74} = {5759F48E-0D9E-457F-A93D-40FBC422B0CE}
+		{FB7E7FF1-4DAC-45D6-8128-1A528CE9A4D1} = {5759F48E-0D9E-457F-A93D-40FBC422B0CE}
+		{F60AE9EC-E168-4607-B781-B6A464EEAA79} = {5759F48E-0D9E-457F-A93D-40FBC422B0CE}
+		{EA934BCE-6781-40AA-A0F6-0EDC697594BF} = {5759F48E-0D9E-457F-A93D-40FBC422B0CE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45
 		SolutionGuid = {12CE6238-F847-4984-8622-1ED46072150A}
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45
 	EndGlobalSection
 EndGlobal
