@@ -57,19 +57,23 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// <see cref="WebHookSecurityFilter"/> instances. The recommended filter sequence is
         /// <list type="number">
         /// <item><description>
-        /// Confirm signature or <c>code</c> query parameter (in a subclass of this class).
+        /// Confirm signature or <c>code</c> query parameter (e.g. in <see cref="WebHookVerifyCodeFilter"/> or a
+        /// <see cref="WebHookVerifySignatureFilter"/> subclass).
         /// </description></item>
         /// <item><description>
         /// Confirm required headers and query parameters are provided (in
         /// <see cref="WebHookVerifyRequiredValueFilter"/>).
         /// </description></item>
-        /// <item><description>Short-circuit GET or HEAD requests, if receiver supports either.</description></item>
+        /// <item><description>
+        /// Short-circuit GET or HEAD requests, if receiver supports either (in
+        /// <see cref="WebHookGetResponseFilter"/>).
+        /// </description></item>
         /// <item><description>
         /// Confirm it's a POST request (in <see cref="WebHookVerifyMethodFilter"/>).
         /// </description></item>
         /// <item><description>Confirm body type (in <see cref="WebHookVerifyBodyTypeFilter"/>).</description></item>
         /// <item><description>
-        /// Short-circuit ping requests, if not done in #3 for this receiver (in
+        /// Short-circuit ping requests, if not done in <see cref="WebHookGetResponseFilter"/> for this receiver (in
         /// <see cref="WebHookPingResponseFilter"/>).
         /// </description></item>
         /// </list>
@@ -97,9 +101,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
         /// <summary>
         /// Some WebHooks rely on HTTPS for sending WebHook requests in a secure manner. A
-        /// <see cref="WebHookVerifySignatureFilter"/> can call this method to ensure that the incoming WebHook request
-        /// is using HTTPS. If the request is not using HTTPS an error will be generated and the request will not be
-        /// further processed.
+        /// <see cref="WebHookSecurityFilter"/> subclass can call this method to ensure that the incoming WebHook
+        /// request is using HTTPS. If the request is not using HTTPS an error will be generated and the request will
+        /// not be further processed.
         /// </summary>
         /// <remarks>This method does allow local HTTP requests using <c>localhost</c>.</remarks>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>

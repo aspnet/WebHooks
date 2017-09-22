@@ -106,6 +106,15 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The WebHook verification request must contain a &apos;{0}&apos; query parameter..
+        /// </summary>
+        internal static string General_MissingQueryParameter {
+            get {
+                return ResourceManager.GetString("General_MissingQueryParameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error has occurred..
         /// </summary>
         internal static string ResultUtilities_GenericError {
@@ -120,6 +129,15 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         internal static string RoutingConvention_MixedRouteWithWebHookAttribute {
             get {
                 return ResourceManager.GetString("RoutingConvention_MixedRouteWithWebHookAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;{0}&apos; header value is invalid. It must be a valid hex-encoded string..
+        /// </summary>
+        internal static string Security_BadHeaderEncoding {
+            get {
+                return ResourceManager.GetString("Security_BadHeaderEncoding", resourceCulture);
             }
         }
         
@@ -174,15 +192,6 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         internal static string VerifyCode_BadCode {
             get {
                 return ResourceManager.GetString("VerifyCode_BadCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The WebHook verification request must contain a &apos;{0}&apos; query parameter..
-        /// </summary>
-        internal static string VerifyCode_NoCode {
-            get {
-                return ResourceManager.GetString("VerifyCode_NoCode", resourceCulture);
             }
         }
         

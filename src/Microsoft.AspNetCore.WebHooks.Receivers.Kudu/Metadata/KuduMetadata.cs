@@ -16,10 +16,20 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         {
         }
 
+        // IWebHookRequestMetadataService...
+
         /// <inheritdoc />
         public WebHookBodyType BodyType => WebHookBodyType.Json;
 
+        // IWebHookSecurityMetadata...
+
         /// <inheritdoc />
         public bool VerifyCodeParameter => true;
+
+        /// <inheritdoc />
+        public bool ShortCircuitGetRequests => false;
+
+        /// <inheritdoc />
+        public WebHookGetRequest WebHookGetRequest => null;
     }
 }

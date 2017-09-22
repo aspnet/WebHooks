@@ -132,11 +132,17 @@
   <data name="General_InvalidEnumValue" xml:space="preserve">
     <value>Enum type {0} has no defined '{1}' value.</value>
   </data>
+  <data name="General_MissingQueryParameter" xml:space="preserve">
+    <value>The WebHook verification request must contain a '{0}' query parameter.</value>
+  </data>
   <data name="ResultUtilities_GenericError" xml:space="preserve">
     <value>An error has occurred.</value>
   </data>
   <data name="RoutingConvention_MixedRouteWithWebHookAttribute" xml:space="preserve">
     <value>{0} and {1} were applied to the same action. {0} must not be combined with another attribute that provides a route template.</value>
+  </data>
+  <data name="Security_BadHeaderEncoding" xml:space="preserve">
+    <value>The '{0}' header value is invalid. It must be a valid hex-encoded string.</value>
   </data>
   <data name="Security_BadSecret" xml:space="preserve">
     <value>Could not find a valid configuration for WebHook receiver '{0}' and instance '{1}'. The setting must be set to a value between {2} and {3} characters long.</value>
@@ -155,9 +161,6 @@
   </data>
   <data name="VerifyCode_BadCode" xml:space="preserve">
     <value>The '{0}' query parameter provided in the HTTP request did not match the expected value.</value>
-  </data>
-  <data name="VerifyCode_NoCode" xml:space="preserve">
-    <value>The WebHook verification request must contain a '{0}' query parameter.</value>
   </data>
   <data name="VerifyMethod_BadMethod" xml:space="preserve">
     <value>The HTTP '{0}' method is not supported by the '{1}' WebHook receiver.</value>

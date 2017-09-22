@@ -63,5 +63,11 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
 
         /// <inheritdoc />
         public bool VerifyCodeParameter => true;
+
+        /// <inheritdoc />
+        public bool ShortCircuitGetRequests => false;
+
+        /// <inheritdoc />
+        public WebHookGetRequest WebHookGetRequest => null;
     }
 }

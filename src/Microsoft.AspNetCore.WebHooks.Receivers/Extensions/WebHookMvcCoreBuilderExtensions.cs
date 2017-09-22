@@ -48,6 +48,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // ??? Does WebHookExceptionFilter need a non-default Order too?
             return builder
                 .AddSingletonFilter<WebHookExceptionFilter>()
+                .AddSingletonFilter<WebHookGetResponseFilter>(WebHookGetResponseFilter.Order)
                 .AddSingletonFilter<WebHookPingResponseFilter>(WebHookPingResponseFilter.Order)
                 .AddSingletonFilter<WebHookVerifyCodeFilter>(WebHookSecurityFilter.Order)
                 .AddSingletonFilter<WebHookVerifyMethodFilter>(WebHookVerifyMethodFilter.Order)

@@ -5,7 +5,8 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
 {
     /// <summary>
     /// Metadata describing the security aspects of a WebHook request. Implemented in a <see cref="IWebHookMetadata"/>
-    /// service for receivers that do not include a specific <see cref="Filters.WebHookSecurityFilter"/> subclass.
+    /// service for receivers that do not include a specific <see cref="Filters.WebHookSecurityFilter"/> subclass or
+    /// that respond to HTTP GET requests.
     /// </summary>
     public interface IWebHookSecurityMetadata : IWebHookMetadata, IWebHookReceiver
     {
@@ -14,5 +15,19 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         /// secret key.
         /// </summary>
         bool VerifyCodeParameter { get; }
+
+        /// <summary>
+        /// Gets an indication the receiver should respond successfully to an HTTP GET request. The response may
+        /// contain the value of the <see cref="ChallengeQueryParameterName"/> query parameter.
+        /// </summary>
+        bool ShortCircuitGetRequests { get; }
+
+        /// <summary>
+        /// Gets additional metadata about how to handle HTTP GET requests. Ignored if
+        /// <see cref="ShortCircuitGetRequests"/> is <c>false</c>. If <see cref="ShortCircuitGetRequests"/> is
+        /// <c>true</c> and this property is <c>null</c>, the receiver does no additional verification before
+        /// responding to an HTTP GET request.
+        /// </summary>
+        WebHookGetRequest WebHookGetRequest { get; }
     }
 }

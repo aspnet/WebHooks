@@ -42,22 +42,26 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// instances. The recommended filter sequence is
         /// <list type="number">
         /// <item><description>
-        /// Confirm signature or <c>code</c> query parameter (in a <see cref="WebHookSecurityFilter"/> subclass).
+        /// Confirm signature or <c>code</c> query parameter (e.g. in <see cref="WebHookVerifyCodeFilter"/> or a
+        /// <see cref="WebHookVerifySignatureFilter"/> subclass).
         /// </description></item>
         /// <item><description>
         /// Confirm required headers and query parameters are provided (in
         /// <see cref="WebHookVerifyRequiredValueFilter"/>).
         /// </description></item>
-        /// <item><description>Short-circuit GET or HEAD requests, if receiver supports either.</description></item>
+        /// <item><description>
+        /// Short-circuit GET or HEAD requests, if receiver supports either (in
+        /// <see cref="WebHookGetResponseFilter"/>).
+        /// </description></item>
         /// <item><description>Confirm it's a POST request (in this filter).</description></item>
         /// <item><description>Confirm body type (in <see cref="WebHookVerifyBodyTypeFilter"/>).</description></item>
         /// <item><description>
-        /// Short-circuit ping requests, if not done in #3 for this receiver (in
+        /// Short-circuit ping requests, if not done in <see cref="WebHookGetResponseFilter"/> for this receiver (in
         /// <see cref="WebHookPingResponseFilter"/>).
         /// </description></item>
         /// </list>
         /// </summary>
-        public static int Order => WebHookVerifyRequiredValueFilter.Order + 10;
+        public static int Order => WebHookGetResponseFilter.Order + 10;
 
         /// <inheritdoc />
         public void OnResourceExecuting(ResourceExecutingContext context)
