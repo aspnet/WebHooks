@@ -26,6 +26,6 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         public string PingEventName => GitHubConstants.PingEventName;
 
         /// <inheritdoc />
-        public string QueryParameterKey => null;
+        public string QueryParameterName => null;
     }
 }

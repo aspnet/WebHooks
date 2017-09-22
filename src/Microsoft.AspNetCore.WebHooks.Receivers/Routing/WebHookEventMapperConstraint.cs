@@ -77,7 +77,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 var events = headers.GetCommaSeparatedValues(eventMetadata.HeaderName);
                 if (events.Length == 0)
                 {
-                    if (eventMetadata.ConstantValue == null && eventMetadata.QueryParameterKey != null)
+                    if (eventMetadata.ConstantValue == null && eventMetadata.QueryParameterName != null)
                     {
                         // An error because we have no fallback.
                         routeData.TryGetReceiverName(out var receiverName);
@@ -95,10 +95,10 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 }
             }
 
-            if (eventMetadata.QueryParameterKey != null)
+            if (eventMetadata.QueryParameterName != null)
             {
                 var query = request.Query;
-                if (!query.TryGetValue(eventMetadata.QueryParameterKey, out var events) ||
+                if (!query.TryGetValue(eventMetadata.QueryParameterName, out var events) ||
                     events.Count == 0)
                 {
                     if (eventMetadata.ConstantValue == null)
@@ -109,7 +109,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                             501,
                             "A {ReceiverName} WebHook request must contain a '{QueryParameterKey}' query parameter indicating the type of event.",
                             receiverName,
-                            eventMetadata.QueryParameterKey);
+                            eventMetadata.QueryParameterName);
                     }
                 }
                 else

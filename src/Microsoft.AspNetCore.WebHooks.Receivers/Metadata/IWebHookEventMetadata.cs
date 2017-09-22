@@ -12,7 +12,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     {
         /// <summary>
         /// Gets the constant event name for this receiver. Used as a fallback when <see cref="HeaderName"/> and
-        /// <see cref="QueryParameterKey"/> are <c>null</c> or do not match the request.
+        /// <see cref="QueryParameterName"/> are <c>null</c> or do not match the request.
         /// </summary>
         /// <value>Must not return an empty string.</value>
         string ConstantValue { get; }
@@ -35,6 +35,6 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         /// Gets the name of the query parameter containing event name(s) for this receiver.
         /// </summary>
         /// <value>Must not return an empty string.</value>
-        string QueryParameterKey { get; }
+        string QueryParameterName { get; }
     }
 }
