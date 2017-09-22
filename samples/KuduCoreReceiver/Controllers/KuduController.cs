@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebHooks;
 
-namespace AzureAlertCoreReceiver.Controllers
+namespace KuduCoreReceiver.Controllers
 {
     public class KuduController : ControllerBase
     {
         [KuduWebHook(Id = "It")]
-        public IActionResult AzureAlertForIt(KuduNotification data)
+        public IActionResult KuduForIt(KuduNotification data)
         {
             if (!ModelState.IsValid)
             {
@@ -23,7 +23,7 @@ namespace AzureAlertCoreReceiver.Controllers
         }
 
         [KuduWebHook]
-        public IActionResult AzureAlert(string id, KuduNotification data)
+        public IActionResult Kudu(string id, KuduNotification data)
         {
             if (!ModelState.IsValid)
             {

@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebHooks;
 using Newtonsoft.Json.Linq;
 
-namespace AzureAlertCoreReceiver.Controllers
+namespace DropboxCoreReceiver.Controllers
 {
     public class DropboxController : ControllerBase
     {
         [DropboxWebHook(Id = "It")]
-        public IActionResult AzureAlertForIt(JObject data)
+        public IActionResult DropboxForIt(JObject data)
         {
             if (!ModelState.IsValid)
             {
@@ -17,7 +18,7 @@ namespace AzureAlertCoreReceiver.Controllers
         }
 
         [DropboxWebHook]
-        public IActionResult AzureAlert(string id, JObject data)
+        public IActionResult Dropbox(string id, JObject data)
         {
             if (!ModelState.IsValid)
             {
