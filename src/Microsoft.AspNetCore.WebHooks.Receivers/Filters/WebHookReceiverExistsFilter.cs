@@ -83,7 +83,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                if (_codeVerifierMetadata.Any(metadata => metadata.IsApplicable(receiverName)))
+                // Check for receiver-specific filters only for receivers that do _not_ use code verification.
+                if (!_codeVerifierMetadata.Any(metadata => metadata.IsApplicable(receiverName)))
                 {
                     var found = false;
                     for (var i = 0; i < context.Filters.Count; i++)

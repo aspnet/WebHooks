@@ -51,10 +51,10 @@ namespace BitbucketCoreReceiver.Controllers
             foreach (var change in data["push"]["changes"])
             {
                 // The previous commit
-                BitbucketTarget oldTarget = change["old"]["target"].ToObject<BitbucketTarget>();
+                var oldTarget = change["old"]["target"].ToObject<BitbucketTarget>();
 
                 // The new commit
-                BitbucketTarget newTarget = change["new"]["target"].ToObject<BitbucketTarget>();
+                var newTarget = change["new"]["target"].ToObject<BitbucketTarget>();
             }
 
             return Ok();
