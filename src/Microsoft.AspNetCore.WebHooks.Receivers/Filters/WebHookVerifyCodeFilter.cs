@@ -93,11 +93,11 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// The 'code' parameter must be between 32 and 128 characters long.
         /// </summary>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
-        /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
-        /// <param name="id">
-        /// A (potentially empty) ID of a particular configuration for this <see cref="WebHookVerifyCodeFilter"/>. This
-        /// allows an <see cref="WebHookVerifyCodeFilter"/> to support multiple senders with individual configurations.
+        /// <param name="routeData">
+        /// The <see cref="RouteData"/> for this request. A (potentially empty) ID value in this data allows a
+        /// <see cref="WebHookVerifyCodeFilter"/> to support multiple senders with individual configurations.
         /// </param>
+        /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
         /// <returns>
         /// A <see cref="Task"/> that on completion provides <c>null</c> in the success case. When a check fails,
         /// provides an <see cref="IActionResult"/> that when executed will produce a response containing details about
@@ -106,12 +106,20 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Response is disposed by Web API.")]
         protected virtual async Task<IActionResult> EnsureValidCode(
             HttpRequest request,
-            string receiverName,
-            string id)
+            RouteData routeData,
+            string receiverName)
         {
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
+            }
+            if (routeData == null)
+            {
+                throw new ArgumentNullException(nameof(routeData));
+            }
+            if (receiverName == null)
+            {
+                throw new ArgumentNullException(nameof(receiverName));
             }
 
             var result = EnsureSecureConnection(request);
@@ -128,13 +136,21 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     "The WebHook verification request must contain a '{ParameterName}' query parameter.",
                     CodeQueryParameter);
 
-                var message = string.Format(CultureInfo.CurrentCulture, Resources.VerifyCode_NoCode, CodeQueryParameter);
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.General_MissingQueryParameter,
+                    CodeQueryParameter);
                 var noCode = WebHookResultUtilities.CreateErrorResult(message);
 
                 return noCode;
             }
 
-            var secretKey = await GetReceiverConfig(request, receiverName, id, CodeMinLength, CodeMaxLength);
+            var secretKey = await GetReceiverConfig(request, routeData, receiverName, CodeMinLength, CodeMaxLength);
+            if (secretKey == null)
+            {
+                return new NotFoundResult();
+            }
+
             if (!SecretEqual(code, secretKey))
             {
                 Logger.LogError(
@@ -142,7 +158,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     "The '{ParameterName}' query parameter provided in the HTTP request did not match the expected value.",
                     CodeQueryParameter);
 
-                var message = string.Format(CultureInfo.CurrentCulture, Resources.VerifyCode_BadCode, CodeQueryParameter);
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.VerifyCode_BadCode,
+                    CodeQueryParameter);
                 var invalidCode = WebHookResultUtilities.CreateErrorResult(message);
 
                 return invalidCode;

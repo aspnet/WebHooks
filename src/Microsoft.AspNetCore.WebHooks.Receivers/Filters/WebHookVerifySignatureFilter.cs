@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;          // ??? Will we run FxCop on the 
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -89,6 +90,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// will be read at least twice in most receivers.
         /// </summary>
         /// <param name="request">The <see cref="HttpRequest"/> to prepare.</param>
+        /// <returns>A <see cref="Task"/> that on completion will have prepared the request body.</returns>
         public async Task PrepareRequestBody(HttpRequest request)
         {
             if (!request.Body.CanSeek)
@@ -135,8 +137,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 var headersCount = headers.Count;
                 Logger.LogInformation(
                     400,
-                    "Expecting exactly one '{HeaderName}' header field in the WebHook request but found {HeaderCount}. " +
-                    "Please ensure that the request contains exactly one '{HeaderName}' header field.",
+                    "Expecting exactly one '{HeaderName}' header field in the WebHook request but found " +
+                    "{HeaderCount}. Please ensure that the request contains exactly one '{HeaderName}' header field.",
                     headerName,
                     headersCount);
 
@@ -153,6 +155,106 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             errorResult = null;
 
             return headers;
+        }
+
+        /// <summary>
+        /// Returns the SHA1 HMAC of the given <paramref name="request"/>'s body.
+        /// </summary>
+        /// <param name="request">The <see cref="HttpRequest"/>.</param>
+        /// <param name="secret">The key data used to initialize the <see cref="HMACSHA1"/>.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA1 HMAC of the
+        /// <paramref name="request"/>'s body.
+        /// </returns>
+        protected virtual async Task<byte[]> GetRequestBodyHash_SHA1(HttpRequest request, byte[] secret)
+        {
+            await PrepareRequestBody(request);
+
+            using (var hasher = new HMACSHA1(secret))
+            {
+                try
+                {
+                    var hash = hasher.ComputeHash(request.Body);
+                    return hash;
+                }
+                finally
+                {
+                    // Reset Position because JsonInputFormatter et cetera always start from current position.
+                    request.Body.Seek(0L, SeekOrigin.Begin);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the SHA256 HMAC of the given <paramref name="request"/>'s body.
+        /// </summary>
+        /// <param name="request">The <see cref="HttpRequest"/>.</param>
+        /// <param name="secret">The key data used to initialize the <see cref="HMACSHA256"/>.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA256 HMAC of
+        /// the <paramref name="request"/>'s body.
+        /// </returns>
+        protected virtual async Task<byte[]> GetRequestBodyHash_SHA256(HttpRequest request, byte[] secret)
+        {
+            await PrepareRequestBody(request);
+
+            using (var hasher = new HMACSHA256(secret))
+            {
+                try
+                {
+                    var hash = hasher.ComputeHash(request.Body);
+                    return hash;
+                }
+                finally
+                {
+                    // Reset Position because JsonInputFormatter et cetera always start from current position.
+                    request.Body.Seek(0L, SeekOrigin.Begin);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Decode the given <paramref name="hexEncodedValue"/>.
+        /// </summary>
+        /// <param name="hexEncodedValue">The hex-encoded <see cref="string"/>.</param>
+        /// <param name="signatureHeaderName">
+        /// The name of the HTTP header that contains the <paramref name="hexEncodedValue"/>.
+        /// </param>
+        /// <param name="errorResult">
+        /// Set to <c>null</c> if decoding is successful. Otherwise, an <see cref="IActionResult"/> that when executed
+        /// will produce a response containing details about the problem.
+        /// </param>
+        /// <returns>
+        /// If successful, the <see cref="byte"/> array containing the decoded hash. <c>null</c> if any issues occur.
+        /// </returns>
+        protected virtual byte[] GetDecodedHash(
+            string hexEncodedValue,
+            string signatureHeaderName,
+            out IActionResult errorResult)
+        {
+            try
+            {
+                var decodedHash = EncodingUtilities.FromHex(hexEncodedValue);
+                errorResult = null;
+
+                return decodedHash;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(
+                    401,
+                    ex,
+                    "The '{HeaderName}' header value is invalid. It must be a valid hex-encoded string.",
+                    signatureHeaderName);
+            }
+
+            var message = string.Format(
+                CultureInfo.CurrentCulture,
+                Resources.Security_BadHeaderEncoding,
+                signatureHeaderName);
+            errorResult = WebHookResultUtilities.CreateErrorResult(message);
+
+            return null;
         }
 
         /// <summary>
@@ -174,9 +276,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
 
             Logger.LogError(
-                401,
-                "The WebHook signature provided by the '{HeaderName}' header field does not match the value expected " +
-                "by the '{ReceiverType}' receiver. WebHook request is invalid.",
+                402,
+                "The WebHook signature provided by the '{HeaderName}' header field does not match the value " +
+                "expected by the '{ReceiverType}' receiver. WebHook request is invalid.",
                 signatureHeaderName,
                 GetType().Name);
 

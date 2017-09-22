@@ -70,15 +70,6 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;{0}&apos; header value is invalid. It must be a valid hex-encoded string..
-        /// </summary>
-        internal static string Receiver_BadHeaderEncoding {
-            get {
-                return ResourceManager.GetString("Receiver_BadHeaderEncoding", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Invalid &apos;{0}&apos; header value. Expecting a value of &apos;{1}={2}&apos;..
         /// </summary>
         internal static string Receiver_BadHeaderValue {

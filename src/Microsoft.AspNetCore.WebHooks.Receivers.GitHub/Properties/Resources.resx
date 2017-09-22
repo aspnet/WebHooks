@@ -120,9 +120,6 @@
   <data name="General_ArgumentCannotBeNullOrEmpty" xml:space="preserve">
     <value>Value cannot be null or empty.</value>
   </data>
-  <data name="Receiver_BadHeaderEncoding" xml:space="preserve">
-    <value>The '{0}' header value is invalid. It must be a valid hex-encoded string.</value>
-  </data>
   <data name="Receiver_BadHeaderValue" xml:space="preserve">
     <value>Invalid '{0}' header value. Expecting a value of '{1}={2}'.</value>
   </data>

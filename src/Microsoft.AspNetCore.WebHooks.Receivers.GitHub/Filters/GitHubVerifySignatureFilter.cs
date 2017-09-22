@@ -3,11 +3,10 @@
 
 using System;
 using System.Globalization;
-using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebHooks.Properties;
@@ -26,7 +25,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         internal const int SecretMaxLength = 128;
 
         internal const string SignatureHeaderKey = "sha1";
-        internal const string SignatureHeaderValueTemplate = SignatureHeaderKey + "={0}";
         internal const string SignatureHeaderName = "X-Hub-Signature";
 
         /// <summary>
@@ -59,16 +57,17 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(next));
             }
 
+            var routeData = context.RouteData;
             var request = context.HttpContext.Request;
-            if (context.RouteData.TryGetReceiverName(out var receiver) &&
-                IsApplicable(receiver) &&
+            if (routeData.TryGetReceiverName(out var receiverName) &&
+                IsApplicable(receiverName) &&
                 HttpMethods.IsPost(request.Method))
             {
                 // 1. Get the expected hash from the signature header.
-                var header = GetRequestHeader(request, SignatureHeaderName, out var error);
-                if (error != null)
+                var header = GetRequestHeader(request, SignatureHeaderName, out var errorResult);
+                if (errorResult != null)
                 {
-                    context.Result = error;
+                    context.Result = errorResult;
                     return;
                 }
 
@@ -90,65 +89,43 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                         SignatureHeaderName,
                         SignatureHeaderKey,
                         "<value>");
-                    var invalidHeader = WebHookResultUtilities.CreateErrorResult(message);
+                    errorResult = WebHookResultUtilities.CreateErrorResult(message);
 
-                    context.Result = invalidHeader;
+                    context.Result = errorResult;
                     return;
                 }
 
-                // TODO: If other FromHex() calls deal with headers, move into Receivers project.
-                byte[] expectedHash;
-                try
+                var expectedHash = GetDecodedHash(values[1], SignatureHeaderName, out errorResult);
+                if (errorResult != null)
                 {
-                    expectedHash = EncodingUtilities.FromHex(values[1]);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(
-                        1,
-                        ex,
-                        "The '{HeaderName}' header value is invalid. It must be a valid hex-encoded string.",
-                        SignatureHeaderName);
-
-                    var message = string.Format(
-                        CultureInfo.CurrentCulture,
-                        Resources.Receiver_BadHeaderEncoding,
-                        SignatureHeaderName);
-                    var invalidEncoding = WebHookResultUtilities.CreateErrorResult(message);
-
-                    context.Result = invalidEncoding;
+                    context.Result = errorResult;
                     return;
                 }
 
                 // 2. Get the configured secret key.
-                context.RouteData.TryGetReceiverId(out var id);
-                var secretKey = await GetReceiverConfig(request, ReceiverName, id, SecretMinLength, SecretMaxLength);
+                var secretKey = await GetReceiverConfig(
+                    request,
+                    routeData,
+                    ReceiverName,
+                    SecretMinLength,
+                    SecretMaxLength);
+                if (secretKey == null)
+                {
+                    context.Result = new NotFoundResult();
+                }
+
                 var secret = Encoding.UTF8.GetBytes(secretKey);
 
                 // 3. Get the actual hash of the request body.
-                await PrepareRequestBody(request);
-
-                byte[] actualHash;
-                using (var hasher = new HMACSHA1(secret))
-                {
-                    try
-                    {
-                        actualHash = hasher.ComputeHash(request.Body);
-                    }
-                    finally
-                    {
-                        // Reset Position because JsonInputFormatter et cetera always start from current position.
-                        request.Body.Seek(0L, SeekOrigin.Begin);
-                    }
-                }
+                var actualHash = await GetRequestBodyHash_SHA1(request, secret);
 
                 // 4. Verify that the actual hash matches the expected hash.
                 if (!SecretEqual(expectedHash, actualHash))
                 {
                     // Log about the issue and short-circuit remainder of the pipeline.
-                    var badSignature = CreateBadSignatureResult(request, SignatureHeaderName);
+                    errorResult = CreateBadSignatureResult(request, SignatureHeaderName);
 
-                    context.Result = badSignature;
+                    context.Result = errorResult;
                     return;
                 }
             }

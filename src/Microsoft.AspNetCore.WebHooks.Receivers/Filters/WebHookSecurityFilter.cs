@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.AspNetCore.WebHooks.Utilities;
 using Microsoft.Extensions.Configuration;
@@ -154,22 +155,21 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// request.
         /// </summary>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
+        /// <param name="routeData">
+        /// The <see cref="RouteData"/> for this request. A (potentially empty) ID value in this data allows a
+        /// <see cref="WebHookSecurityFilter"/> subclass to support multiple senders with individual configurations.
+        /// </param>
         /// <param name="configurationName">
         /// The name of the configuration to obtain. Typically this the name of the receiver, e.g. <c>github</c>.
-        /// </param>
-        /// <param name="id">
-        /// A (potentially empty) ID of a particular configuration for this <see cref="WebHookVerifySignatureFilter"/>.
-        /// This allows an <see cref="WebHookVerifySignatureFilter"/> to support multiple senders with individual
-        /// configurations.
         /// </param>
         /// <param name="minLength">The minimum length of the key value.</param>
         /// <param name="maxLength">The maximum length of the key value.</param>
         /// <returns>A <see cref="Task"/> that on completion provides the configured WebHook secret key.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller")]
-        protected virtual async Task<string> GetReceiverConfig(
+        protected async virtual Task<string> GetReceiverConfig(
             HttpRequest request,
+            RouteData routeData,
             string configurationName,
-            string id,
             int minLength,
             int maxLength)
         {
@@ -177,32 +177,54 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             {
                 throw new ArgumentNullException(nameof(request));
             }
+            if (routeData == null)
+            {
+                throw new ArgumentNullException(nameof(routeData));
+            }
             if (configurationName == null)
             {
                 throw new ArgumentNullException(nameof(configurationName));
             }
 
+            routeData.TryGetReceiverId(out var id);
+
             // Look up configuration for this receiver and instance
             var secret = await ReceiverConfig.GetReceiverConfigAsync(configurationName, id, minLength, maxLength);
             if (secret == null)
             {
-                Logger.LogCritical(
-                    501,
-                    "Could not find a valid configuration for WebHook receiver '{ReceiverName}' and instance '{Id}'. " +
-                    "The setting must be set to a value between {MinLength} and {MaxLength} characters long.",
-                    configurationName,
-                    id,
-                    minLength,
-                    maxLength);
+                if (string.IsNullOrEmpty(id))
+                {
+                    // Either no configuration for this receiver at all or the key length is invalid.
+                    Logger.LogCritical(
+                        501,
+                        "Could not find a valid configuration for WebHook receiver '{ReceiverName}'. The setting " +
+                        "must be set to a value between {MinLength} and {MaxLength} characters long.",
+                        configurationName,
+                        minLength,
+                        maxLength);
 
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.Security_BadSecret,
-                    configurationName,
-                    id,
-                    minLength,
-                    maxLength);
-                throw new InvalidOperationException(message);
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.Security_BadSecret,
+                        configurationName,
+                        id,
+                        minLength,
+                        maxLength);
+                    throw new InvalidOperationException(message);
+                }
+                else
+                {
+                    // ID was not configured. Caller should treat null return value with a Not Found response.
+                    Logger.LogError(
+                        502,
+                        "Could not find a valid configuration for WebHook receiver '{ReceiverName}' and instance " +
+                        "'{Id}'. The setting must be set to a value between {MinLength} and {MaxLength} characters " +
+                        "long.",
+                        configurationName,
+                        id,
+                        minLength,
+                        maxLength);
+                }
             }
 
             return secret;
