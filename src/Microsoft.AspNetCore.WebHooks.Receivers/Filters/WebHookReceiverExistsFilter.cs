@@ -25,7 +25,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     public class WebHookReceiverExistsFilter : IResourceFilter
     {
         private readonly ILogger _logger;
-        private readonly IReadOnlyList<IWebHookSecurityMetadata> _securityMetadata;
+        private readonly IReadOnlyList<IWebHookSecurityMetadata> _codeVerifierMetadata;
 
         /// <summary>
         /// Instantiates a new <see cref="WebHookReceiverExistsFilter"/> with the given
@@ -35,7 +35,12 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         public WebHookReceiverExistsFilter(IEnumerable<IWebHookMetadata> metadata, ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<WebHookReceiverExistsFilter>();
-            _securityMetadata = new List<IWebHookSecurityMetadata>(metadata.OfType<IWebHookSecurityMetadata>());
+
+            // No need to keep track of IWebHookSecurityMetadata instances that do not request code verification.
+            var codeVerifierMetadata = metadata
+                .OfType<IWebHookSecurityMetadata>()
+                .Where(item => item.VerifyCodeParameter);
+            _codeVerifierMetadata = new List<IWebHookSecurityMetadata>(codeVerifierMetadata);
         }
 
         /// <summary>
@@ -78,9 +83,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                var securityMetadata = _securityMetadata
-                    .FirstOrDefault(metadata => metadata.IsApplicable(receiverName));
-                if (securityMetadata == null || !securityMetadata.VerifyCodeParameter)
+                if (_codeVerifierMetadata.Any(metadata => metadata.IsApplicable(receiverName)))
                 {
                     var found = false;
                     for (var i = 0; i < context.Filters.Count; i++)

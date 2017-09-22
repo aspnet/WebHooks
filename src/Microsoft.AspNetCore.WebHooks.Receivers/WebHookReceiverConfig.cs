@@ -57,7 +57,6 @@ namespace Microsoft.AspNetCore.WebHooks
             var key = GetConfigKey(configurationName, id);
             var result = _settings.TryGetValue(key, out var value) ? value : null;
 
-            // ??? Why does this method return a Task?
             return Task.FromResult(result);
         }
 

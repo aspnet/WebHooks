@@ -21,6 +21,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// </remarks>
         IConfiguration Configuration { get; }
 
+        // ??? Why does this method return a Task? Not needed in our implementation. But, ... extensibility?
         /// <summary>
         /// Gets the receiver configuration for a given <paramref name="configurationName"/> and a particular
         /// <paramref name="id"/> or <c>null</c> if not found.

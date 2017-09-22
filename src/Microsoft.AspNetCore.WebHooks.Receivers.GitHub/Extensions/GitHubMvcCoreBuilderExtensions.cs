@@ -32,7 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder
                 .AddJsonFormatters()
                 .AddWebHooks()
-                .AddSingletonFilter<GitHubVerifySignatureFilter>(WebHookVerifySignatureFilter.Order);
+                .AddSingletonFilter<GitHubVerifySignatureFilter>(WebHookSecurityFilter.Order);
         }
     }
 }

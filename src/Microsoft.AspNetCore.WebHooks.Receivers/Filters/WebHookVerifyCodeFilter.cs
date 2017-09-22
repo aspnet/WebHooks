@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         internal const int CodeMaxLength = 128;
         internal const string CodeQueryParameter = "code";
 
-        private readonly IReadOnlyList<IWebHookSecurityMetadata> _securityMetadata;
+        private readonly IReadOnlyList<IWebHookSecurityMetadata> _codeVerifierMetadata;
 
         /// <summary>
         /// Instantiates a new <see cref="WebHookVerifyCodeFilter"/> instance.
@@ -50,7 +50,11 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             IWebHookReceiverConfig receiverConfig)
             : base(loggerFactory, receiverConfig)
         {
-            _securityMetadata = new List<IWebHookSecurityMetadata>(metadata.OfType<IWebHookSecurityMetadata>());
+            // No need to keep track of IWebHookSecurityMetadata instances that do not request code verification.
+            var codeVerifierMetadata = metadata
+                .OfType<IWebHookSecurityMetadata>()
+                .Where(item => item.VerifyCodeParameter);
+            _codeVerifierMetadata = new List<IWebHookSecurityMetadata>(codeVerifierMetadata);
         }
 
         /// <inheritdoc />
@@ -66,19 +70,14 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
 
             var routeData = context.RouteData;
-            if (routeData.TryGetReceiverName(out var receiverName))
+            if (routeData.TryGetReceiverName(out var receiverName) &&
+                _codeVerifierMetadata.Any(metadata => metadata.IsApplicable(receiverName)))
             {
-                var securityMetadata = _securityMetadata
-                    .FirstOrDefault(metadata => metadata.IsApplicable(receiverName));
-                if (securityMetadata != null && securityMetadata.VerifyCodeParameter)
+                var result = await EnsureValidCode(context.HttpContext.Request, routeData, receiverName);
+                if (result != null)
                 {
-                    routeData.TryGetReceiverId(out var id);
-                    var result = await EnsureValidCode(context.HttpContext.Request, receiverName, id);
-                    if (result != null)
-                    {
-                        context.Result = result;
-                        return;
-                    }
+                    context.Result = result;
+                    return;
                 }
             }
 
