@@ -10,9 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("Microsoft Corporation")]
 [assembly: AssemblyCopyright("© Microsoft Corporation. All rights reserved.")]
 #endif
-#if !NETSTANDARD2_0
 [assembly: AssemblyConfiguration("")]
-#endif
 [assembly: AssemblyTrademark("")]
 [assembly: ComVisible(false)]
 #if !NOT_CLS_COMPLIANT
@@ -31,9 +29,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.1.0.0")]
 [assembly: AssemblyFileVersion("1.1.0.0")]
 #endif
-#if !NETSTANDARD2_0
 [assembly: AssemblyProduct("Microsoft ASP.NET WebHooks")]
-#endif
 #else
 #error Runtime projects must define ASPNETWEBHOOKS
 #endif

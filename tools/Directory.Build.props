@@ -1,0 +1,3 @@
+<Project>
+  <!-- Currently empty. But, will stop MsBuild searching parent directories for this file. -->
+</Project>
