@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Microsoft.AspNetCore.WebHooks.Utilities
 {
     /// <summary>
-    /// Provides various <see cref="Type"/> related utilities.
+    /// Provides various <see cref="System.Type"/> related utilities.
     /// </summary>
     public static class TypeUtilities
     {

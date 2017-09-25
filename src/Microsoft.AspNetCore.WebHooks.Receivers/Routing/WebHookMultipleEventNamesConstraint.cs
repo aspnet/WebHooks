@@ -22,7 +22,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
 
         /// <summary>
         /// Instantiates a new <see cref="WebHookEventNamesConstraint"/> instance with the given
-        /// <paramref name="eventName"/> and <paramref name="pingEventName"/>.
+        /// <paramref name="eventName"/> and <paramref name="eventMetadata"/>.
         /// </summary>
         /// <param name="eventName">Name of the event this action expects.</param>
         /// <param name="eventMetadata">The collection of <see cref="IWebHookEventMetadata"/> services.</param>

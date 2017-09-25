@@ -31,6 +31,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// Instantiates a new <see cref="WebHookReceiverExistsFilter"/> with the given
         /// <paramref name="loggerFactory"/>.
         /// </summary>
+        /// <param name="metadata">The collection of <see cref="IWebHookMetadata"/> services.</param>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
         public WebHookReceiverExistsFilter(IEnumerable<IWebHookMetadata> metadata, ILoggerFactory loggerFactory)
         {

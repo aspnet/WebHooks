@@ -26,12 +26,12 @@ namespace Microsoft.AspNetCore.WebHooks
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebHookReceiverConfig"/> which will use the application
-        /// settings set in the given <paramref name="settings"/>.
+        /// settings set in the given <paramref name="configuration"/>.
         /// </summary>
-        /// <param name="settings">
-        /// The <see cref="SettingsDictionary"/> to use for reading <see cref="IWebHookReceiver"/> configuration.
+        /// <param name="configuration">
+        /// The <see cref="IConfiguration"/> to read for <see cref="IWebHookReceiver"/> configuration.
         /// </param>
-        /// <param name="logger">The <see cref="LILogger"/> to use.</param>
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
         public WebHookReceiverConfig(IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             Configuration = configuration;

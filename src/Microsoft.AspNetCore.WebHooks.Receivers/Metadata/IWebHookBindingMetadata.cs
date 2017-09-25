@@ -22,6 +22,9 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     /// </remarks>
     public interface IWebHookBindingMetadata : IWebHookMetadata, IWebHookReceiver
     {
+        /// <summary>
+        /// Gets the collection of <see cref="WebHookParameter"/>s.
+        /// </summary>
         IReadOnlyList<WebHookParameter> Parameters { get; }
     }
 }

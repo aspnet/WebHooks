@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
 
         /// <summary>
         /// Gets an indication the receiver should respond successfully to an HTTP GET request. The response may
-        /// contain the value of the <see cref="ChallengeQueryParameterName"/> query parameter.
+        /// contain the value of the <see cref="WebHookGetRequest.ChallengeQueryParameterName"/> query parameter.
         /// </summary>
         bool ShortCircuitGetRequests { get; }
 

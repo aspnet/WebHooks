@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 {
     /// <summary>
     /// <para>
-    /// An <see cref="IResourceFitler"/> to verify required HTTP headers and query parameters are present in a WebHook
+    /// An <see cref="IResourceFilter"/> to verify required HTTP headers and query parameters are present in a WebHook
     /// request. Uses <see cref="IWebHookBindingMetadata"/> services to determine the requirements for the requested
     /// WebHook receiver.
     /// </para>
@@ -37,6 +37,11 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         private readonly ILogger _logger;
         private readonly IReadOnlyList<IWebHookBindingMetadata> _bindingMetadata;
 
+        /// <summary>
+        /// Instantiates a new <see cref="WebHookVerifyRequiredValueFilter"/> instance.
+        /// </summary>
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
+        /// <param name="metadata">The collection of <see cref="IWebHookMetadata"/> services.</param>
         public WebHookVerifyRequiredValueFilter(ILoggerFactory loggerFactory, IEnumerable<IWebHookMetadata> metadata)
         {
             _logger = loggerFactory.CreateLogger<WebHookVerifyRequiredValueFilter>();

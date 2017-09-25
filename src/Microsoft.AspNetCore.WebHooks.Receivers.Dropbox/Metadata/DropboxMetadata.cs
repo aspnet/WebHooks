@@ -41,10 +41,13 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
 
         // IWebHookSecurityMetadata...
 
+        /// <inheritdoc />
         public bool VerifyCodeParameter => false;
 
+        /// <inheritdoc />
         public bool ShortCircuitGetRequests => true;
 
+        /// <inheritdoc />
         public WebHookGetRequest WebHookGetRequest { get; } = new WebHookGetRequest(
             DropboxConstants.ChallengeQueryParameterName,
             DropboxConstants.SecretMinLength,

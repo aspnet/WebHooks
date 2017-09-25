@@ -5,7 +5,7 @@ namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
     /// <para>
-    /// An <see cref="Attribute"/> indicating the associated action is a Dropbox WebHook endpoint. Specifies the
+    /// An <see cref="System.Attribute"/> indicating the associated action is a Dropbox WebHook endpoint. Specifies the
     /// optional <see cref="WebHookAttribute.Id"/>. Also adds a <see cref="Filters.WebHookReceiverExistsFilter"/> for
     /// the action.
     /// </para>

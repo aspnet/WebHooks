@@ -11,7 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection
     // TODO: Add IMvcBuilder variant of this class.
     /// <summary>
     /// Extension methods for setting up Azure Alert WebHooks in an <see cref="IMvcCoreBuilder" />.
-    /// </summary
+    /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class AzureAlertMvcCoreBuilderExtensions
     {

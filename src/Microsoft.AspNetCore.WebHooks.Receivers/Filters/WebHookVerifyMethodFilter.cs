@@ -31,7 +31,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// Instantiates a new <see cref="WebHookVerifyMethodFilter"/> instance.
         /// </summary>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
-        /// <param name="receiverConfig">The <see cref="IWebHookReceiverConfig"/>.</param>
         public WebHookVerifyMethodFilter(ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<WebHookVerifyMethodFilter>();

@@ -32,6 +32,8 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         /// <paramref name="existsConstraint"/>, <paramref name="eventMapperConstraint"/> and
         /// <paramref name="loggerFactory"/>.
         /// </summary>
+        /// <param name="existsConstraint">The <see cref="WebHookReceiverExistsConstraint"/>.</param>
+        /// <param name="eventMapperConstraint">The <see cref="WebHookMultipleEventMapperConstraint"/>.</param>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
         public WebHookRoutingProvider(
             WebHookReceiverExistsConstraint existsConstraint,

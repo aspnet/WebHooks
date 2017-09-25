@@ -21,7 +21,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// implementations that for example verify request signatures or <c>code</c> query parameters. Subclasses may
     /// also implement <see cref="IWebHookReceiver"/>. Subclasses should have an
     /// <see cref="Mvc.Filters.IOrderedFilter.Order"/> less than <see cref="Order"/>.
-
     /// </summary>
     public abstract class WebHookSecurityFilter
     {

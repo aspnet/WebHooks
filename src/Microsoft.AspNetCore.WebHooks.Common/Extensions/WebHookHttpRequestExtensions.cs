@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.Http
         /// JSON-derived media type.
         /// </summary>
         /// <returns>true if the specified request contains JSON content; otherwise, false.</returns>
-        /// <param name="request">The content to check.</param>
+        /// <param name="request">The <see cref="HttpRequest"/> to check.</param>
         public static bool IsJson(this HttpRequest request)
         {
             var contentType = request?.GetTypedHeaders()?.ContentType;
@@ -59,7 +59,7 @@ namespace Microsoft.AspNetCore.Http
         /// XML-derived media type.
         /// </summary>
         /// <returns>true if the specified request contains XML content; otherwise, false.</returns>
-        /// <param name="request">The request to check.</param>
+        /// <param name="request">The <see cref="HttpRequest"/> to check.</param>
         public static bool IsXml(this HttpRequest request)
         {
             var contentType = request?.GetTypedHeaders()?.ContentType;
@@ -84,6 +84,13 @@ namespace Microsoft.AspNetCore.Http
         }
 
         // ??? Should ASP.NET Core expose a similar HttpRequest, HttpContext or ConnectionInfo (extension) method?
+        /// <summary>
+        /// Determines whether the given <paramref name="request"/> came from a local client.
+        /// </summary>
+        /// <param name="request">The <see cref="HttpRequest"/> to check.</param>
+        /// <returns>
+        /// <c>true</c> if the <paramref name="request"/> came from a local client; <c>false</c> otherwise.
+        /// </returns>
         public static bool IsLocal(this HttpRequest request)
         {
             return IPAddress.IsLoopback(request.HttpContext.Connection.RemoteIpAddress);

@@ -24,7 +24,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
 
         /// <summary>
         /// Initializes a new <see cref="WebHookParameter"/> with the given <paramref name="name"/>,
-        /// <paramref name="headerName"/> and <paramref name="isQueryParameter"/>. <see cref="IsRequired"/> is
+        /// <paramref name="sourceName"/> and <paramref name="isQueryParameter"/>. <see cref="IsRequired"/> is
         /// <c>false</c> when using this constructor.
         /// </summary>
         /// <param name="name">The name of an action parameter.</param>
@@ -42,7 +42,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
 
         /// <summary>
         /// Initializes a new <see cref="WebHookParameter"/> with the given <paramref name="name"/>,
-        /// <paramref name="headerName"/>, <paramref name="isQueryParameter"/>, and <paramref name="isRequired"/>.
+        /// <paramref name="sourceName"/>, <paramref name="isQueryParameter"/>, and <paramref name="isRequired"/>.
         /// </summary>
         /// <param name="name">The name of an action parameter.</param>
         /// <param name="sourceName">

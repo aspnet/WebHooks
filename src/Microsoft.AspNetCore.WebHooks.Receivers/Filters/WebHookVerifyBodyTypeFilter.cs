@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// Instantiates a new <see cref="WebHookVerifyMethodFilter"/> instance.
         /// </summary>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
-        /// <param name="metadata">The collection of <see cref="IWebHookMetadata"/> services.</param>
+        /// <param name="requestMetadata">The collection of <see cref="IWebHookMetadata"/> services.</param>
         public WebHookVerifyBodyTypeFilter(ILoggerFactory loggerFactory, IWebHookRequestMetadata requestMetadata)
         {
             if (loggerFactory == null)

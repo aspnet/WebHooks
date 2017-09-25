@@ -17,6 +17,9 @@ using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.WebHooks.Filters
 {
+    /// <summary>
+    /// An <see cref="IAsyncResourceFilter"/> to short-circuit WebHook GET requests.
+    /// </summary>
     public class WebHookGetResponseFilter : WebHookSecurityFilter, IAsyncResourceFilter
     {
         private readonly IReadOnlyList<IWebHookSecurityMetadata> _getRequestMetadata;
