@@ -1,4 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>ASP.NET Core Bitbucket WebHooks infrastructure. Contains the BitbucketWebHookAttribute class and AddBitbucketWebHooks method.</Description>
+    <PackageTags>aspnetcore;webhook;receiver;bitbucket</PackageTags>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\Microsoft.AspNet.WebHooks.Receivers.BitBucket\WebHooks\BitbucketAuthor.cs">
       <Link>BitbucketAuthor.cs</Link>

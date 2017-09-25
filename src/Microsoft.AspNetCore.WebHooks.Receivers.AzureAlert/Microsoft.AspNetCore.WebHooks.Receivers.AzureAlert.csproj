@@ -1,4 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>ASP.NET Core Azure Alert WebHooks infrastructure. Contains the AzureAlertWebHookAttribute class and AddAzureAlertWebHooks method.</Description>
+    <PackageTags>aspnetcore;webhook;receiver;azurealert</PackageTags>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\Microsoft.AspNet.WebHooks.Receivers.Azure\WebHooks\AzureAlertCondition.cs">
       <Link>AzureAlertCondition.cs</Link>

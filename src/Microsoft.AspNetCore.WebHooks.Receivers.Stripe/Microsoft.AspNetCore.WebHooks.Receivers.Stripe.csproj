@@ -1,4 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>ASP.NET Core Stripe WebHooks infrastructure. Contains the StripeWebHookAttribute class and AddStripeWebHooks method.</Description>
+    <PackageTags>aspnetcore;webhook;receiver;stripe</PackageTags>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.AspNetCore.WebHooks.Receivers\Microsoft.AspNetCore.WebHooks.Receivers.csproj" />
   </ItemGroup>
