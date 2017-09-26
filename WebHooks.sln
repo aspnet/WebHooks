@@ -228,6 +228,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DropboxCoreReceiver", "samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BitbucketStronglyTypedCoreReceiver", "samples\BitbucketStronglyTypedCoreReceiver\BitbucketStronglyTypedCoreReceiver.csproj", "{EA934BCE-6781-40AA-A0F6-0EDC697594BF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DynamicsCRMCoreReceiver", "samples\DynamicsCRMCoreReceiver\DynamicsCRMCoreReceiver.csproj", "{BD13F7E7-B016-478F-AD54-8F875553806B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailChimpCoreReceiver", "samples\MailChimpCoreReceiver\MailChimpCoreReceiver.csproj", "{4563A906-6FAB-46E7-B281-C88A391EE48A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CodeAnalysis|Any CPU = CodeAnalysis|Any CPU
@@ -787,6 +791,18 @@ Global
 		{EA934BCE-6781-40AA-A0F6-0EDC697594BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA934BCE-6781-40AA-A0F6-0EDC697594BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA934BCE-6781-40AA-A0F6-0EDC697594BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD13F7E7-B016-478F-AD54-8F875553806B}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD13F7E7-B016-478F-AD54-8F875553806B}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{BD13F7E7-B016-478F-AD54-8F875553806B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD13F7E7-B016-478F-AD54-8F875553806B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD13F7E7-B016-478F-AD54-8F875553806B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD13F7E7-B016-478F-AD54-8F875553806B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4563A906-6FAB-46E7-B281-C88A391EE48A}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{4563A906-6FAB-46E7-B281-C88A391EE48A}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{4563A906-6FAB-46E7-B281-C88A391EE48A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4563A906-6FAB-46E7-B281-C88A391EE48A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4563A906-6FAB-46E7-B281-C88A391EE48A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4563A906-6FAB-46E7-B281-C88A391EE48A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -890,6 +906,8 @@ Global
 		{FB7E7FF1-4DAC-45D6-8128-1A528CE9A4D1} = {5759F48E-0D9E-457F-A93D-40FBC422B0CE}
 		{F60AE9EC-E168-4607-B781-B6A464EEAA79} = {5759F48E-0D9E-457F-A93D-40FBC422B0CE}
 		{EA934BCE-6781-40AA-A0F6-0EDC697594BF} = {5759F48E-0D9E-457F-A93D-40FBC422B0CE}
+		{BD13F7E7-B016-478F-AD54-8F875553806B} = {5759F48E-0D9E-457F-A93D-40FBC422B0CE}
+		{4563A906-6FAB-46E7-B281-C88A391EE48A} = {5759F48E-0D9E-457F-A93D-40FBC422B0CE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45
