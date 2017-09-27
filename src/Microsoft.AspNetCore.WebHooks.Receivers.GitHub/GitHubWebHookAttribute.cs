@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <para>
     /// An example GitHub WebHook URI is
     /// '<c>https://&lt;host&gt;/api/webhooks/incoming/github/{id}</c>'. See
-    /// <c>https://developer.github.com/webhooks/</c> for additional details about GitHub WebHook requests.
+    /// <see href="https://developer.github.com/webhooks/"/> for additional details about GitHub WebHook requests.
     /// </para>
     /// </summary>
     public class GitHubWebHookAttribute : WebHookAttribute, IWebHookRequestMetadata, IWebHookEventSelectorMetadata
@@ -36,7 +36,9 @@ namespace Microsoft.AspNetCore.WebHooks
         /// or include the subset of parameters required. <c>TData</c> must be compatible with expected requests.
         /// </para>
         /// <para>This constructor should usually be used at most once in a WebHook application.</para>
-        /// <para>The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
+        /// <para>
+        /// The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <see langword="null"/>.
+        /// </para>
         /// </summary>
         public GitHubWebHookAttribute()
             : base(GitHubConstants.ReceiverName)
@@ -46,13 +48,13 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <summary>
         /// Gets or sets an indication this action expects form data.
         /// </summary>
-        /// <value>Defaults to <c>false</c>, indicating this action expects JSON data.</value>
+        /// <value>Defaults to <see langword="false"/>, indicating this action expects JSON data.</value>
         public bool AcceptFormData { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the event the associated controller action accepts.
         /// </summary>
-        /// <value>Default value is <c>null</c>, indicating this action accepts all events.</value>
+        /// <value>Default value is <see langword="null"/>, indicating this action accepts all events.</value>
         public string EventName
         {
             get
@@ -72,5 +74,8 @@ namespace Microsoft.AspNetCore.WebHooks
 
         /// <inheritdoc />
         WebHookBodyType IWebHookRequestMetadata.BodyType => AcceptFormData ? WebHookBodyType.Form : WebHookBodyType.Json;
+
+        /// <inheritdoc />
+        public bool UseHttpContextModelBinder => false;
     }
 }

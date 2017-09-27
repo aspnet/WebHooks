@@ -55,5 +55,23 @@ namespace Microsoft.AspNetCore.WebHooks
 
             return secret;
         }
+
+        /// <summary>
+        /// Returns <see langword="true"/> if the configuration value with given <paramref name="key"/> is set to
+        /// 'true'; otherwise <see langword="false"/>.
+        /// </summary>
+        /// <param name="config">The current <see cref="IWebHookReceiverConfig"/>.</param>
+        /// <param name="key">The key to evaluate the value for.</param>
+        /// <returns><see langword="true"/> if the value is set to 'true'; otherwise <see langword="false"/>.</returns>
+        public static bool IsTrue(this IWebHookReceiverConfig config, string key)
+        {
+            var value = config.Configuration[key];
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+
+            return bool.TryParse(value.Trim(), out var isSet) ? isSet : false;
+        }
     }
 }

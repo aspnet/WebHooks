@@ -89,7 +89,8 @@ namespace Microsoft.AspNetCore.Http
         /// </summary>
         /// <param name="request">The <see cref="HttpRequest"/> to check.</param>
         /// <returns>
-        /// <c>true</c> if the <paramref name="request"/> came from a local client; <c>false</c> otherwise.
+        /// <see langword="true"/> if the <paramref name="request"/> came from a local client; <see langword="false"/>
+        /// otherwise.
         /// </returns>
         public static bool IsLocal(this HttpRequest request)
         {

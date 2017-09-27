@@ -1,3 +1,7 @@
 <Project>
-  <!-- Currently empty. But, will stop MsBuild searching parent directories for this file. -->
+  <!-- Will stop MsBuild searching parent directories for this file. -->
+  <PropertyGroup>
+    <!-- Also, disable actions in parent's Directory.Build.targets. -->
+    <_ImportParentFile>false</_ImportParentFile>
+  </PropertyGroup>
 </Project>

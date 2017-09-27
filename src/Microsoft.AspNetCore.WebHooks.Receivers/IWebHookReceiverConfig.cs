@@ -24,18 +24,18 @@ namespace Microsoft.AspNetCore.WebHooks
         // ??? Why does this method return a Task? Not needed in our implementation. But, ... extensibility?
         /// <summary>
         /// Gets the receiver configuration for a given <paramref name="configurationName"/> and a particular
-        /// <paramref name="id"/> or <c>null</c> if not found.
+        /// <paramref name="id"/> or <see langword="null"/> if not found.
         /// </summary>
         /// <param name="configurationName">
         /// The case-insensitive name of the receiver configuration used by the incoming WebHook. Typically this is the
         /// name of the receiver, e.g. <c>github</c>.
         /// </param>
         /// <param name="id">
-        /// A (possibly <c>null </c> or empty) ID of a particular configuration for the given
+        /// A (possibly <see langword="null"/> or empty) ID of a particular configuration for the given
         /// <paramref name="configurationName"/>. This can be used for one receiver to differentiate between multiple
         /// configurations.
         /// </param>
-        /// <returns>The requested config, or <c>null</c> if not found.</returns>
+        /// <returns>The requested configuration or <see langword="null"/> if not found.</returns>
         Task<string> GetReceiverConfigAsync(string configurationName, string id);
     }
 }

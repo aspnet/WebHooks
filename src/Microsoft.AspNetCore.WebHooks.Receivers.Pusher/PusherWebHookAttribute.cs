@@ -20,7 +20,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// </para>
     /// <para>
     /// An example Pusher WebHook URI is '<c>https://&lt;host&gt;/api/webhooks/incoming/pusher/{id}</c>'. See
-    /// <c>https://pusher.com/docs/webhooks</c> for additional details about Pusher WebHook requests.
+    /// <see href="https://pusher.com/docs/webhooks"/> for additional details about Pusher WebHook requests.
     /// </para>
     /// </summary>
     public class PusherWebHookAttribute : WebHookAttribute
@@ -38,7 +38,9 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <see cref="Newtonsoft.Json.Linq.JObject"/> or <see cref="PusherNotifications"/>.
         /// </para>
         /// <para>This constructor should usually be used at most once in a WebHook application.</para>
-        /// <para>The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
+        /// <para>
+        /// The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <see langword="null"/>.
+        /// </para>
         /// </summary>
         public PusherWebHookAttribute()
             : base(PusherConstants.ReceiverName)

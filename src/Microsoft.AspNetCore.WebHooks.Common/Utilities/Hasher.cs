@@ -7,6 +7,7 @@ using System.Text;
 
 namespace Microsoft.AspNetCore.WebHooks.Utilities
 {
+    // TODO: Remove this class if it remains unused.
     /// <summary>
     /// Provides non-cryptographic hashing functions.
     /// </summary>
@@ -19,7 +20,8 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
         /// Gets a FNV-1a 32-bit hash of the provided <paramref name="content"/>. The FNV-1a algorithm
         /// is used in many context including DNS servers, database indexing hashes, non-cryptographic file
         /// fingerprints to name a few. For more information about FNV, please see the IETF document
-        /// <c>The FNV Non-Cryptographic Hash Algorithm</c> as well as <c>http://isthe.com/chongo/tech/comp/fnv/</c>.
+        /// <c>The FNV Non-Cryptographic Hash Algorithm</c> as well as
+        /// <see href="http://isthe.com/chongo/tech/comp/fnv/"/>.
         /// </summary>
         /// <param name="content">The content to hash.</param>
         /// <returns>The computed hash.</returns>
@@ -44,7 +46,8 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
         /// Gets a string representation of a FNV-1a 32-bit hash of the provided <paramref name="content"/>. The FNV-1a
         /// algorithm is used in many context including DNS servers, database indexing hashes, non-cryptographic file
         /// fingerprints to name a few. For more information about FNV, please see the IETF document
-        /// <c>The FNV Non-Cryptographic Hash Algorithm</c> as well as <c>http://isthe.com/chongo/tech/comp/fnv/</c>.
+        /// <c>The FNV Non-Cryptographic Hash Algorithm</c> as well as
+        /// <see href="http://isthe.com/chongo/tech/comp/fnv/"/>.
         /// </summary>
         /// <param name="content">The content to hash.</param>
         /// <returns>A string representation of the computed hash.</returns>

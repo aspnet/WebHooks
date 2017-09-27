@@ -61,7 +61,7 @@
     <DelaySign>true</DelaySign>
 
     <!--
-      ??? Not grouping all src and test files as rest of WebHooks does. Should we revisit? Note $(Configuration) isn't
+      ??? Not grouping all src and test output as rest of WebHooks does. Should we revisit? Note $(Configuration) isn't
       ??? set yet. Would need to approximate logic to choose default $(Configuration) for this to work somewhat correctly.
     -->
     <!-- OutputPath Condition=" '$(OutputPath)' == '' ">$(RepositoryRoot)bin\$(Configuration)\</OutputPath -->

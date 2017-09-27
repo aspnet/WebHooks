@@ -17,10 +17,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// <summary>
     /// An <see cref="IResourceFilter"/> that confirms the <see cref="Routing.WebHookReceiverExistsConstraint"/> is
     /// configured and ran successfully for this request. Also confirms either
-    /// <see cref="IWebHookSecurityMetadata.VerifyCodeParameter"/> is <c>true</c> or at least one
+    /// <see cref="IWebHookSecurityMetadata.VerifyCodeParameter"/> is <see langword="true"/> or at least one
     /// <see cref="IWebHookReceiver"/> filter is configured to handle this request. The minimal configuration for a
-    /// receiver without <see cref="IWebHookSecurityMetadata.VerifyCodeParameter"/> <c>true</c> includes a
-    /// <see cref="WebHookVerifySignatureFilter"/> subclass to verify signatures.
+    /// receiver without <see cref="IWebHookSecurityMetadata.VerifyCodeParameter"/> <see langword="true"/> includes a
+    /// <see cref="WebHookVerifyBodyContentFilter"/> subclass to verify signatures.
     /// </summary>
     public class WebHookReceiverExistsFilter : IResourceFilter
     {

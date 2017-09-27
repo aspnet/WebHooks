@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebHooks.Properties;
+using Microsoft.AspNetCore.WebHooks.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -21,6 +22,13 @@ namespace Microsoft.AspNetCore.WebHooks
     /// </summary>
     public class WebHookReceiverConfig : IWebHookReceiverConfig
     {
+        // Character that appears between the default configuration value and the first id / value pair and between
+        // later id / value pairs.
+        private static readonly char[] BetweenPairSeparators = new[] { ',' };
+
+        // Character that appears between the receiver id and configuration value in a pair.
+        private static readonly char[] PairSeparators = new[] { '=' };
+
         private readonly IDictionary<string, string> _settings;
 
         /// <summary>
@@ -74,23 +82,31 @@ namespace Microsoft.AspNetCore.WebHooks
                     var configurationName = key.Substring(WebHookConstants.ReceiverConfigurationKeyPrefix.Length);
 
                     // Parse values
-                    var segments = setting.Value.SplitAndTrim(',');
-                    foreach (var segment in segments)
+                    foreach (var segment in new TrimmingTokenizer(setting.Value, BetweenPairSeparators))
                     {
-                        var values = segment.SplitAndTrim('=');
-                        if (values.Length == 1)
+                        var values = new TrimmingTokenizer(segment, PairSeparators);
+                        if (values.Count == 1)
                         {
-                            AddKey(settings, logger, configurationName, string.Empty, values[0]);
+                            var enumerator = values.GetEnumerator();
+                            enumerator.MoveNext();
+                            var value = enumerator.Current.Value;
+                            AddKey(settings, logger, configurationName, string.Empty, value);
                         }
-                        else if (values.Length == 2)
+                        else if (values.Count == 2)
                         {
-                            AddKey(settings, logger, configurationName, values[0], values[1]);
+                            var enumerator = values.GetEnumerator();
+                            enumerator.MoveNext();
+                            var id = enumerator.Current.Value;
+                            enumerator.MoveNext();
+                            var value = enumerator.Current.Value;
+                            AddKey(settings, logger, configurationName, id, value);
                         }
                         else
                         {
                             logger.LogError(
                                 0,
-                                "The '{Key}' application setting must have a comma-separated value of one or more secrets of the form <secret> or <id>=<secret>.",
+                                "The '{Key}' application setting must have a comma-separated value of one or more " +
+                                "secrets of the form <secret> or <id>=<secret>.",
                                 key);
 
                             var message = string.Format(CultureInfo.CurrentCulture, Resources.Config_BadValue, key);
@@ -105,7 +121,8 @@ namespace Microsoft.AspNetCore.WebHooks
                 var format = WebHookConstants.ReceiverConfigurationKeyPrefix + "<receiver>";
                 logger.LogError(
                     1,
-                    "Did not find any applications settings of the form '{Format}'. To receive WebHooks, please add corresponding applications settings.",
+                    "Did not find any applications settings of the form '{Format}'. To receive WebHooks, please add " +
+                    "corresponding applications settings.",
                     format);
             }
 
@@ -143,9 +160,8 @@ namespace Microsoft.AspNetCore.WebHooks
                     CultureInfo.CurrentCulture,
                     Resources.Config_AddFailure,
                     configurationName,
-                    id,
-                    ex.Message);
-                throw new InvalidOperationException(message);
+                    id);
+                throw new InvalidOperationException(message, ex);
             }
         }
 

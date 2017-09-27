@@ -53,7 +53,9 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
         /// </summary>
         /// <param name="eventMetadata">The <see cref="IWebHookEventMetadata"/> for this receiver.</param>
         /// <param name="routeContext">The <see cref="RouteContext"/> for this constraint and request.</param>
-        /// <returns><c>true</c> if event names are available in the request; <c>false</c> otherwise.</returns>
+        /// <returns>
+        /// <see langword="true"/> if event names are available in the request; <see langword="false"/> otherwise.
+        /// </returns>
         protected bool Accept(IWebHookEventMetadata eventMetadata, RouteContext routeContext)
         {
             if (eventMetadata == null)
@@ -136,7 +138,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
             }
             else
             {
-                // ??? This repeatedly allocates the same strings. Might be good to cache the first 10 or so keys.
+                // ??? This repeatedly allocates the same strings. Might be good to cache the first 100 or so keys.
                 for (var i = 0; i < events.Length; i++)
                 {
                     routeValues[$"{WebHookConstants.EventKeyName}[{i}]"] = events[i];

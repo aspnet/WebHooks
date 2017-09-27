@@ -24,6 +24,8 @@ namespace Microsoft.AspNetCore.WebHooks
     {
         private string _id;
 
+        // TODO: Move attribute constructors' comments, especially the recommended action signatures, to class level.
+        // TODO:  Do the same for all subclasses. As-is important information is hard to find.
         /// <summary>
         /// <para>
         /// Instantiates a new <see cref="WebHookAttribute"/> indicating the associated action is a WebHook
@@ -37,7 +39,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// </para>
         /// <para>This constructor should usually be used at most once in a WebHook application.</para>
         /// <para>
-        /// The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.
+        /// The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <see langword="null"/>.
         /// </para>
         /// </summary>
         protected WebHookAttribute()
@@ -59,7 +61,9 @@ namespace Microsoft.AspNetCore.WebHooks
         /// This constructor should usually be used at most once per <paramref name="receiverName"/> name in a WebHook
         /// application.
         /// </para>
-        /// <para>The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
+        /// <para>
+        /// The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <see langword="null"/>.
+        /// </para>
         /// </summary>
         /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
         protected WebHookAttribute(string receiverName)
@@ -81,7 +85,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// Gets or sets the id of the configuration this action accepts.
         /// </summary>
         /// <value>
-        /// Default value is <c>null</c>, indicating this action accepts all requests for this
+        /// Default value is <see langword="null"/>, indicating this action accepts all requests for this
         /// <see cref="ReceiverName"/>.
         /// </value>
         public string Id

@@ -53,26 +53,24 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// Gets the <see cref="Mvc.Filters.IOrderedFilter.Order"/> recommended for all
         /// <see cref="WebHookSecurityFilter"/> instances. The recommended filter sequence is
         /// <list type="number">
-        /// <item><description>
+        /// <item>
         /// Confirm signature or <c>code</c> query parameter (e.g. in <see cref="WebHookVerifyCodeFilter"/> or a
-        /// <see cref="WebHookVerifySignatureFilter"/> subclass).
-        /// </description></item>
-        /// <item><description>
+        /// <see cref="WebHookVerifyBodyContentFilter"/> subclass).
+        /// </item>
+        /// <item>
         /// Confirm required headers and query parameters are provided (in
         /// <see cref="WebHookVerifyRequiredValueFilter"/>).
-        /// </description></item>
-        /// <item><description>
+        /// </item>
+        /// <item>
         /// Short-circuit GET or HEAD requests, if receiver supports either (in
         /// <see cref="WebHookGetResponseFilter"/>).
-        /// </description></item>
-        /// <item><description>
-        /// Confirm it's a POST request (in <see cref="WebHookVerifyMethodFilter"/>).
-        /// </description></item>
-        /// <item><description>Confirm body type (in <see cref="WebHookVerifyBodyTypeFilter"/>).</description></item>
-        /// <item><description>
+        /// </item>
+        /// <item>Confirm it's a POST request (in <see cref="WebHookVerifyMethodFilter"/>).</item>
+        /// <item>Confirm body type (in <see cref="WebHookVerifyBodyTypeFilter"/>).</item>
+        /// <item>
         /// Short-circuit ping requests, if not done in <see cref="WebHookGetResponseFilter"/> for this receiver (in
         /// <see cref="WebHookPingResponseFilter"/>).
-        /// </description></item>
+        /// </item>
         /// </list>
         /// </summary>
         public static int Order => -500;
@@ -96,6 +94,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// </summary>
         protected IWebHookReceiverConfig ReceiverConfig { get; }
 
+        // ??? Why is this called so rarely? See Dropbox, GitHub and Pusher filters and corresponding old receivers.
         /// <summary>
         /// Some WebHooks rely on HTTPS for sending WebHook requests in a secure manner. A
         /// <see cref="WebHookSecurityFilter"/> subclass can call this method to ensure that the incoming WebHook
@@ -103,13 +102,14 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// not be further processed.
         /// </summary>
         /// <remarks>This method does allow local HTTP requests using <c>localhost</c>.</remarks>
+        /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <returns>
-        /// <c>null</c> in the success case. When a check fails, an <see cref="IActionResult"/> that when executed will
-        /// produce a response containing details about the problem.
+        /// <see langword="null"/> in the success case. When a check fails, an <see cref="IActionResult"/> that when
+        /// executed will produce a response containing details about the problem.
         /// </returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller.")]
-        protected virtual IActionResult EnsureSecureConnection(HttpRequest request)
+        protected virtual IActionResult EnsureSecureConnection(string receiverName, HttpRequest request)
         {
             if (request == null)
             {
@@ -117,9 +117,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
 
             // Check to see if we have been configured to ignore this check
-            var disableHttpsCheckValue = Configuration[WebHookConstants.DisableHttpsCheckConfigurationKey];
-            if (bool.TryParse(disableHttpsCheckValue, out var disableHttpsCheck) &&
-                disableHttpsCheck == true)
+            if (ReceiverConfig.IsTrue(WebHookConstants.DisableHttpsCheckConfigurationKey))
             {
                 return null;
             }
@@ -129,15 +127,15 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             {
                 Logger.LogError(
                     500,
-                    "The WebHook receiver '{ReceiverType}' requires HTTPS in order to be secure. " +
+                    "The '{ReceiverName}' WebHook receiver requires HTTPS in order to be secure. " +
                     "Please register a WebHook URI of type '{SchemeName}'.",
-                    GetType().Name,
+                    receiverName,
                     Uri.UriSchemeHttps);
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.Security_NoHttps,
-                    GetType().Name,
+                    receiverName,
                     Uri.UriSchemeHttps);
                 var noHttps = WebHookResultUtilities.CreateErrorResult(message);
 
@@ -232,7 +230,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// </summary>
         /// <param name="inputA">The first secret to compare.</param>
         /// <param name="inputB">The second secret to compare.</param>
-        /// <returns>Returns <c>true</c> if the two secrets are equal; <c>false</c> otherwise.</returns>
+        /// <returns>
+        /// Returns <see langword="true"/> if the two secrets are equal; <see langword="false"/> otherwise.
+        /// </returns>
         [MethodImpl(MethodImplOptions.NoOptimization)]
         protected internal static bool SecretEqual(string inputA, string inputB)
         {

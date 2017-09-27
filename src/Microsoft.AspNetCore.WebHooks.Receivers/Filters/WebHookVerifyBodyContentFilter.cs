@@ -3,7 +3,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;          // ??? Will we run FxCop on the AspNetCore projects?
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -22,14 +22,14 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 {
     /// <summary>
     /// Base class for <see cref="IWebHookReceiver"/> and <see cref="Mvc.Filters.IResourceFilter"/> or
-    /// <see cref="Mvc.Filters.IAsyncResourceFilter"/> implementations that verify request signatures.
-    /// Subclasses should have an <see cref="Mvc.Filters.IOrderedFilter.Order"/> less than
-    /// <see cref="WebHookSecurityFilter.Order"/>.
+    /// <see cref="Mvc.Filters.IAsyncResourceFilter"/> implementations that verify request body content e.g. filters
+    /// that verify signatures of request body content. Subclasses should have an
+    /// <see cref="Mvc.Filters.IOrderedFilter.Order"/> equal to <see cref="WebHookSecurityFilter.Order"/>.
     /// </summary>
-    public abstract class WebHookVerifySignatureFilter : WebHookSecurityFilter, IWebHookReceiver
+    public abstract class WebHookVerifyBodyContentFilter : WebHookSecurityFilter, IWebHookReceiver
     {
         /// <summary>
-        /// Instantiates a new <see cref="WebHookVerifySignatureFilter"/> instance.
+        /// Instantiates a new <see cref="WebHookVerifyBodyContentFilter"/> instance.
         /// </summary>
         /// <param name="loggerFactory">
         /// The <see cref="ILoggerFactory"/> used to initialize <see cref="WebHookSecurityFilter.Logger"/>.
@@ -38,7 +38,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// The <see cref="IWebHookReceiverConfig"/> used to initialize
         /// <see cref="WebHookSecurityFilter.Configuration"/> and <see cref="WebHookSecurityFilter.ReceiverConfig"/>.
         /// </param>
-        protected WebHookVerifySignatureFilter(ILoggerFactory loggerFactory, IWebHookReceiverConfig receiverConfig)
+        protected WebHookVerifyBodyContentFilter(ILoggerFactory loggerFactory, IWebHookReceiverConfig receiverConfig)
             : base(loggerFactory, receiverConfig)
         {
         }
@@ -62,7 +62,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// </summary>
         /// <param name="inputA">The first secret to compare.</param>
         /// <param name="inputB">The second secret to compare.</param>
-        /// <returns>Returns <c>true</c> if the two secrets are equal; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the two secrets are equal; <see langword="false"/> otherwise.</returns>
         [MethodImpl(MethodImplOptions.NoOptimization)]
         protected internal static bool SecretEqual(byte[] inputA, byte[] inputB)
         {
@@ -113,10 +113,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <param name="headerName">The name of the HTTP request header to look up.</param>
         /// <param name="errorResult">
-        /// Set to <c>null</c> in the success case. When a check fails, an <see cref="IActionResult"/> that when
-        /// executed will produce a response containing details about the problem.
+        /// Set to <see langword="null"/> in the success case. When a check fails, an <see cref="IActionResult"/> that
+        /// when executed will produce a response containing details about the problem.
         /// </param>
-        /// <returns>The signature header; <c>null</c> if this cannot be found.</returns>
+        /// <returns>The signature header; <see langword="null"/> if this cannot be found.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller")]
         protected virtual string GetRequestHeader(
             HttpRequest request,
@@ -160,7 +160,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// <summary>
         /// Returns the SHA1 HMAC of the given <paramref name="request"/>'s body.
         /// </summary>
-        /// <param name="request">The <see cref="HttpRequest"/>.</param>
+        /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <param name="secret">The key data used to initialize the <see cref="HMACSHA1"/>.</param>
         /// <returns>
         /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA1 HMAC of the
@@ -188,7 +188,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// <summary>
         /// Returns the SHA256 HMAC of the given <paramref name="request"/>'s body.
         /// </summary>
-        /// <param name="request">The <see cref="HttpRequest"/>.</param>
+        /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <param name="secret">The key data used to initialize the <see cref="HMACSHA256"/>.</param>
         /// <returns>
         /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA256 HMAC of
@@ -221,11 +221,12 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// The name of the HTTP header containing the <paramref name="hexEncodedValue"/>.
         /// </param>
         /// <param name="errorResult">
-        /// Set to <c>null</c> if decoding is successful. Otherwise, an <see cref="IActionResult"/> that when executed
-        /// will produce a response containing details about the problem.
+        /// Set to <see langword="null"/> if decoding is successful. Otherwise, an <see cref="IActionResult"/> that
+        /// when executed will produce a response containing details about the problem.
         /// </param>
         /// <returns>
-        /// If successful, the <see cref="byte"/> array containing the decoded hash. <c>null</c> if any issues occur.
+        /// If successful, the <see cref="byte"/> array containing the decoded hash. <see langword="null"/> if any
+        /// issues occur.
         /// </returns>
         protected virtual byte[] GetDecodedHash(
             string hexEncodedValue,
@@ -261,32 +262,27 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// Returns a new <see cref="IActionResult"/> that when executed produces a response indicating that a
         /// request had an invalid signature and as a result could not be processed.
         /// </summary>
-        /// <param name="request">The current <see cref="HttpRequest"/>.</param>
+        /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
         /// <param name="signatureHeaderName">The name of the HTTP header with invalid contents.</param>
         /// <returns>
         /// An <see cref="IActionResult"/> that when executed will produce a response with status code 400 "Bad
         /// Request" and containing details about the problem.
         /// </returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller")]
-        protected virtual IActionResult CreateBadSignatureResult(HttpRequest request, string signatureHeaderName)
+        protected virtual IActionResult CreateBadSignatureResult(string receiverName, string signatureHeaderName)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-
             Logger.LogError(
                 402,
                 "The WebHook signature provided by the '{HeaderName}' header field does not match the value " +
-                "expected by the '{ReceiverType}' receiver. WebHook request is invalid.",
+                "expected by the '{ReceiverName}' receiver. WebHook request is invalid.",
                 signatureHeaderName,
-                GetType().Name);
+                receiverName);
 
             var message = string.Format(
                 CultureInfo.CurrentCulture,
                 Resources.VerifySignature_BadSignature,
                 signatureHeaderName,
-                GetType().Name);
+                receiverName);
             var badSignature = WebHookResultUtilities.CreateErrorResult(message);
 
             return badSignature;

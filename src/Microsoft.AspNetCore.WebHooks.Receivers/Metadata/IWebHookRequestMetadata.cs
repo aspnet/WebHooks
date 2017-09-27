@@ -14,5 +14,11 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         /// Gets the <see cref="WebHookBodyType"/> this receiver or specific action requires.
         /// </summary>
         WebHookBodyType BodyType { get; }
+
+        /// <summary>
+        /// Gets an indication <c>data</c> action parameters should be bound using
+        /// <see cref="ModelBinding.WebHookHttpContextModelBinder"/>.
+        /// </summary>
+        bool UseHttpContextModelBinder { get; }
     }
 }

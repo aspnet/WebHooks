@@ -12,7 +12,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <para>
     /// An example Kudu WebHook URI is
     /// '<c>https://&lt;host&gt;/api/webhooks/incoming/kudu/{id}?code=83699ec7c1d794c0c780e49a5c72972590571fd8</c>'.
-    /// See <c>https://github.com/projectkudu/kudu/wiki/Web-hooks</c> for additional details about Kudu WebHook
+    /// See <see href="https://github.com/projectkudu/kudu/wiki/Web-hooks"/> for additional details about Kudu WebHook
     /// requests.
     /// </para>
     /// </summary>
@@ -31,7 +31,9 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <see cref="Newtonsoft.Json.Linq.JObject"/> or <see cref="KuduNotification"/>.
         /// </para>
         /// <para>This constructor should usually be used at most once in a WebHook application.</para>
-        /// <para>The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
+        /// <para>
+        /// The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <see langword="null"/>.
+        /// </para>
         /// </summary>
         public KuduWebHookAttribute()
             : base(KuduConstants.ReceiverName)

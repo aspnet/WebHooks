@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// An <see cref="IResourceFilter"/> that verifies the Dropbox signature header. Confirms the header exists, reads
     /// Body bytes, and compares the hashes.
     /// </summary>
-    public class DropboxVerifySignatureFilter : WebHookVerifySignatureFilter, IAsyncResourceFilter
+    public class DropboxVerifySignatureFilter : WebHookVerifyBodyContentFilter, IAsyncResourceFilter
     {
         /// <summary>
         /// Instantiates a new <see cref="DropboxVerifySignatureFilter"/> instance.
@@ -79,6 +79,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 if (secretKey == null)
                 {
                     context.Result = new NotFoundResult();
+                    return;
                 }
 
                 var secret = Encoding.UTF8.GetBytes(secretKey);
@@ -90,7 +91,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 if (!SecretEqual(expectedHash, actualHash))
                 {
                     // Log about the issue and short-circuit remainder of the pipeline.
-                    errorResult = CreateBadSignatureResult(request, DropboxConstants.SignatureHeaderName);
+                    errorResult = CreateBadSignatureResult(receiverName, DropboxConstants.SignatureHeaderName);
 
                     context.Result = errorResult;
                     return;

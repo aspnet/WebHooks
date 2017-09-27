@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebHooks.Properties;
 
 namespace Microsoft.AspNetCore.WebHooks.Utilities
@@ -37,6 +38,27 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
         }
 
         /// <summary>
+        /// Returns a new <see cref="ObjectResult"/> containing the error messages found i
+        /// <paramref name="modelState"/>.
+        /// </summary>
+        /// <param name="modelState">The <see cref="ModelStateEntry"/> to search for error messages.</param>
+        /// <returns>
+        /// A new <see cref="ObjectResult"/> containing the error messages found in <paramref name="modelState"/>.
+        /// </returns>
+        /// <remarks>
+        /// Should not be called if <see cref="ModelStateDictionary.IsValid"/> is <see langword="true"/>.
+        /// </remarks>
+        public static ObjectResult CreateErrorResult(ModelStateDictionary modelState)
+        {
+            if (modelState == null)
+            {
+                throw new ArgumentNullException(nameof(modelState));
+            }
+
+            return new BadRequestObjectResult(modelState);
+        }
+
+        /// <summary>
         /// Returns a new <see cref="ObjectResult"/> for the given <paramref name="exception"/>.
         /// </summary>
         /// <param name="exception">The <see cref="Exception"/> to use for error information.</param>
@@ -53,16 +75,17 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
         /// </summary>
         /// <param name="exception">The <see cref="Exception"/> to use for error information.</param>
         /// <param name="includeErrorDetail">
-        /// <c>true</c> to include the <see cref="Exception"/> information in the error; <c>false</c> otherwise.
+        /// <see langword="true"/> to include the <see cref="Exception"/> information in the error;
+        /// <see langword="false"/> otherwise.
         /// </param>
         /// <returns>
         /// An <see cref="ObjectResult"/> that when executed will produce a response containing a generic error
-        /// message and, if <paramref name="includeErrorDetail"/> is <c>true</c>, details about the
+        /// message and, if <paramref name="includeErrorDetail"/> is <see langword="true"/>, details about the
         /// <paramref name="exception"/>. The response will by default have the Bad Request (400) status code.
         /// </returns>
         /// <remarks>
-        /// <paramref name="exception"/> is ignored when <paramref name="includeErrorDetail"/> is <c>false</c>, but
-        /// useful when debugging even in that case.
+        /// <paramref name="exception"/> is ignored when <paramref name="includeErrorDetail"/> is
+        /// <see langword="false"/>, but useful when debugging even in that case.
         /// </remarks>
         public static ObjectResult CreateErrorResult(Exception exception, bool includeErrorDetail)
         {

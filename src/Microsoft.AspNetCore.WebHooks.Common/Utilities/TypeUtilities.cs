@@ -5,21 +5,23 @@ using System.Reflection;
 
 namespace Microsoft.AspNetCore.WebHooks.Utilities
 {
+    // TODO: Remove this class if it remains unused.
     /// <summary>
-    /// Provides various <see cref="System.Type"/> related utilities.
+    /// Provides various <see cref="System.Type"/>-related utilities.
     /// </summary>
     public static class TypeUtilities
     {
-        // ??? Okay that this is a bit more stringent than Microsoft.AspNet.WebHooks version i.e. this version
-        // ??? disallows nested classes and open generic types?
-        // Modeled after ControllerFeatureProvider.IsController() in ASP.NET Core MVC.
+        // Modeled after ControllerFeatureProvider.IsController() in ASP.NET Core MVC. This is a bit more stringent
+        // than Microsoft.AspNet.WebHooks version i.e. it disallows nested classes and open generic types.
         /// <summary>
         /// Checks whether <paramref name="type"/> is a visible, non-abstract class of type <typeparamref name="T"/> or
         /// derived from type <typeparamref name="T"/>.
         /// </summary>
         /// <typeparam name="T">The type to test against.</typeparam>
         /// <param name="type">The <see cref="TypeInfo"/> to test.</param>
-        /// <returns><c>true</c> if the type is of type <typeparamref name="T"/>.</returns>
+        /// <returns>
+        /// <see langword="true"/>if the type is of type <typeparamref name="T"/>; <see langword="false"/> otherwise.
+        /// </returns>
         public static bool IsType<T>(TypeInfo type)
         {
             if (type == null)

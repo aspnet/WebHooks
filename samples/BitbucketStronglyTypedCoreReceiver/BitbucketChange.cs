@@ -5,7 +5,8 @@ namespace BitbucketStronglyTypedCoreReceiver
 {
     /// <summary>
     /// Contains information sent about an individual change in a Bitbucket <c>repo:push</c> notification. Ignores
-    /// information such as links found at this level in the notification as well as a few <c>bool</c> properties.
+    /// information such as links found at this level in the notification as well as a few <see cref="bool"/>
+    /// properties.
     /// </summary>
     public class BitbucketChange
     {

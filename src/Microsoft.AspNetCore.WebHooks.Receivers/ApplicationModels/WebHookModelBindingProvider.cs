@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebHooks.Metadata;
+using Microsoft.AspNetCore.WebHooks.ModelBinding;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
@@ -19,6 +21,17 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
     /// </summary>
     public class WebHookModelBindingProvider : IApplicationModelProvider
     {
+        private readonly IList<Type> _allowedTypes;
+
+        /// <summary>
+        /// Instantiates a new <see cref="WebHookModelBindingProvider"/> instance.
+        /// </summary>
+        /// <param name="optionsAccessor">The accessor for the <see cref="WebHookOptions"/>.</param>
+        public WebHookModelBindingProvider(IOptions<WebHookOptions> optionsAccessor)
+        {
+            _allowedTypes = optionsAccessor.Value.HttpContextItemsTypes;
+        }
+
         /// <inheritdoc />
         public int Order => WebHookMetadataProvider.Order + 20;
 
@@ -60,10 +73,10 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         /// <inheritdoc />
         public void OnProvidersExecuted(ApplicationModelProviderContext context)
         {
-            // Nothing to do.
+            // No-op
         }
 
-        private static void Apply(
+        private void Apply(
             IWebHookBindingMetadata bindingMetadata,
             IWebHookRequestMetadata requestMetadata,
             ParameterModel parameter)
@@ -94,7 +107,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     break;
 
                 case "DATA":
-                    SourceData(bindingInfo, requestMetadata);
+                    SourceData(bindingInfo, parameterType, requestMetadata);
                     break;
 
                 case "EVENT":
@@ -123,7 +136,8 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
                 default:
                     // If additional parameters are configured and match, map them. If not, treat IFormCollection,
-                    // JContainer and XElement parameters as data.
+                    // JContainer and XElement parameters as data. IsAssignableFrom(...) looks reversed because this
+                    // check is about model binding system support, not an actual assignment to the parameter.
                     //
                     // ??? Should fallbacks support NameValueCollection here and in model binding to ease migration
                     // ??? from current WebHooks?
@@ -133,34 +147,46 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                          typeof(JContainer).IsAssignableFrom(parameterType) ||
                          typeof(XElement).IsAssignableFrom(parameterType)))
                     {
-                        SourceData(bindingInfo, requestMetadata);
+                        SourceData(bindingInfo, parameterType, requestMetadata);
                     }
                     break;
             }
         }
 
-        private static void SourceData(BindingInfo bindingInfo, IWebHookRequestMetadata requestMetadata)
+        private void SourceData(
+            BindingInfo bindingInfo,
+            Type parameterType,
+            IWebHookRequestMetadata requestMetadata)
         {
             if (requestMetadata == null)
             {
                 return;
             }
 
+            if (requestMetadata.UseHttpContextModelBinder &&
+                _allowedTypes.Any(allowedType => parameterType.IsAssignableFrom(allowedType)))
+            {
+                bindingInfo.BinderModelName = WebHookErrorKeys.MessageKey;
+                bindingInfo.BinderType = typeof(WebHookHttpContextModelBinder);
+                bindingInfo.BindingSource = BindingSource.Custom;
+                return;
+            }
+
             if (requestMetadata.BodyType == WebHookBodyType.Form)
             {
-                // ??? Should we instead support multiple parameters binding to portions of the form data i.e.
-                // ??? leave BinderModelName null and let the parameter name bleed through into model binding?
-                bindingInfo.BinderModelName = string.Empty;
+                bindingInfo.BinderModelName = WebHookErrorKeys.MessageKey;
                 bindingInfo.BindingSource = BindingSource.Form;
                 return;
             }
 
-            bindingInfo.BinderModelName = string.Empty;
+            bindingInfo.BinderModelName = WebHookErrorKeys.MessageKey;
             bindingInfo.BindingSource = BindingSource.Body;
         }
 
         private static void SourceEvent(BindingInfo bindingInfo, Type parameterType)
         {
+            // IsAssignableFrom(...) looks reversed because this check is about model binding system support, not an
+            // actual assignment to the parameter.
             if (typeof(string) != parameterType &&
                 !typeof(IEnumerable<string>).IsAssignableFrom(parameterType))
             {

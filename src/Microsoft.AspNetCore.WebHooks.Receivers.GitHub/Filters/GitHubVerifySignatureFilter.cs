@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.AspNetCore.WebHooks.Utilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.WebHooks.Filters
 {
@@ -19,8 +20,11 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// An <see cref="IResourceFilter"/> that verifies the GitHub signature header. Confirms the header exists, reads
     /// Body bytes, and compares the hashes.
     /// </summary>
-    public class GitHubVerifySignatureFilter : WebHookVerifySignatureFilter, IAsyncResourceFilter
+    public class GitHubVerifySignatureFilter : WebHookVerifyBodyContentFilter, IAsyncResourceFilter
     {
+        // Character that appears between the key and value in the signature header.
+        private static readonly char[] PairSeparators = new[] { '=' };
+
         /// <summary>
         /// Instantiates a new <see cref="GitHubVerifySignatureFilter"/> instance.
         /// </summary>
@@ -65,10 +69,15 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                // ??? Do we have efficient name / value parsers that can be used here e.g. in HttpAbstractions?
-                var values = header.SplitAndTrim('=');
-                if (values.Length != 2 ||
-                    !string.Equals(values[0], GitHubConstants.SignatureHeaderKey, StringComparison.OrdinalIgnoreCase))
+                var values = new TrimmingTokenizer(header, PairSeparators);
+                var enumerator = values.GetEnumerator();
+                enumerator.MoveNext();
+                var headerKey = enumerator.Current;
+                if (values.Count != 2 ||
+                    !StringSegment.Equals(
+                        headerKey,
+                        GitHubConstants.SignatureHeaderKey,
+                        StringComparison.OrdinalIgnoreCase))
                 {
                     Logger.LogError(
                         1,
@@ -89,7 +98,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                var expectedHash = GetDecodedHash(values[1], GitHubConstants.SignatureHeaderName, out errorResult);
+                enumerator.MoveNext();
+                var headerValue = enumerator.Current.Value;
+                var expectedHash = GetDecodedHash(headerValue, GitHubConstants.SignatureHeaderName, out errorResult);
                 if (errorResult != null)
                 {
                     context.Result = errorResult;
@@ -106,6 +117,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 if (secretKey == null)
                 {
                     context.Result = new NotFoundResult();
+                    return;
                 }
 
                 var secret = Encoding.UTF8.GetBytes(secretKey);
@@ -117,7 +129,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 if (!SecretEqual(expectedHash, actualHash))
                 {
                     // Log about the issue and short-circuit remainder of the pipeline.
-                    errorResult = CreateBadSignatureResult(request, GitHubConstants.SignatureHeaderName);
+                    errorResult = CreateBadSignatureResult(receiverName, GitHubConstants.SignatureHeaderName);
 
                     context.Result = errorResult;
                     return;

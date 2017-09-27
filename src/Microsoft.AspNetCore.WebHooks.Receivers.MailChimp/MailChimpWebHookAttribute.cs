@@ -12,8 +12,8 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <para>
     /// An example MailChimp WebHook URI is
     /// '<c>https://&lt;host&gt;/api/webhooks/incoming/mailchimp/{id}?code=83699ec7c1d794c0c780e49a5c72972590571fd8</c>'.
-    /// See <c>http://developer.mailchimp.com/documentation/mailchimp/guides/about-webhooks/</c> for additional details
-    /// about MailChimp WebHook requests.
+    /// See <see href="http://developer.mailchimp.com/documentation/mailchimp/guides/about-webhooks/"/> for additional
+    /// details about MailChimp WebHook requests.
     /// </para>
     /// </summary>
     public class MailChimpWebHookAttribute : WebHookAttribute
@@ -31,7 +31,9 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <see cref="Http.IFormCollection"/>.
         /// </para>
         /// <para>This constructor should usually be used at most once in a WebHook application.</para>
-        /// <para>The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
+        /// <para>
+        /// The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <see langword="null"/>.
+        /// </para>
         /// </summary>
         public MailChimpWebHookAttribute()
             : base(MailChimpConstants.ReceiverName)

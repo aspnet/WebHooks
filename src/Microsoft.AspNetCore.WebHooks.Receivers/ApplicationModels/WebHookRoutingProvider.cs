@@ -70,7 +70,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         /// <inheritdoc />
         public void OnProvidersExecuted(ApplicationModelProviderContext context)
         {
-            // Nothing to do.
+            // No-op
         }
 
         /// <inheritdoc />

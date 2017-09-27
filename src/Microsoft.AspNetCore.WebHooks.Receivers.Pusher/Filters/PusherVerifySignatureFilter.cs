@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +14,6 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.AspNetCore.WebHooks.Utilities;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.WebHooks.Filters
 {
@@ -23,7 +21,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// An <see cref="IResourceFilter"/> that verifies the Pusher signature header. Confirms the header exists, reads
     /// Body bytes, and compares the hashes.
     /// </summary>
-    public class PusherVerifySignatureFilter : WebHookVerifySignatureFilter, IAsyncResourceFilter
+    public class PusherVerifySignatureFilter : WebHookVerifyBodyContentFilter, IAsyncResourceFilter
     {
         // Character that appears between key pairs.
         private static readonly char[] BetweenPairSeparators = new[] { ';' };
@@ -131,7 +129,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 if (!SecretEqual(expectedHash, actualHash))
                 {
                     // Log about the issue and short-circuit remainder of the pipeline.
-                    errorResult = CreateBadSignatureResult(request, PusherConstants.SignatureHeaderName);
+                    errorResult = CreateBadSignatureResult(receiverName, PusherConstants.SignatureHeaderName);
 
                     context.Result = errorResult;
                     return;
@@ -184,11 +182,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
             // 3. Parse the configuration value as application key / secret key pairs.;
             lookupTable = new Dictionary<string, string>(StringComparer.Ordinal);
-            foreach (var secretKeyPair in new StringTokenizer(secretKeyPairs, BetweenPairSeparators))
+            foreach (var secretKeyPair in new TrimmingTokenizer(secretKeyPairs, BetweenPairSeparators))
             {
-                var partTokenizer = new StringTokenizer(secretKeyPair.Trim(), PairSeparators);
-                var partCount = partTokenizer.Count();
-                if (partCount != 2)
+                var partTokenizer = new TrimmingTokenizer(secretKeyPair, PairSeparators);
+                if (partTokenizer.Count != 2)
                 {
                     // Corrupted configuration value.
                     Logger.LogCritical(
@@ -211,11 +208,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 // the table (keeping the last value).
                 var enumerator = partTokenizer.GetEnumerator();
                 enumerator.MoveNext();
-                var firstPart = enumerator.Current;
+                var applicationKey = enumerator.Current.Value;
                 enumerator.MoveNext();
-                var secondPart = enumerator.Current;
-
-                lookupTable[firstPart.Trim().Value] = secondPart.Trim().Value;
+                var secretKey = enumerator.Current.Value;
+                lookupTable[applicationKey] = secretKey;
             }
 
             if (lookupTable.Count == 0)

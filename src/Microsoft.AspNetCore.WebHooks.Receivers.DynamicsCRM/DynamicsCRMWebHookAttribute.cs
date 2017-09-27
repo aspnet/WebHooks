@@ -12,8 +12,8 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <para>
     /// An example Dynamics CRM WebHook URI is
     /// '<c>https://&lt;host&gt;/api/webhooks/incoming/dynamicscrm/{id}?code=83699ec7c1d794c0c780e49a5c72972590571fd8</c>'.
-    /// See <c>http://go.microsoft.com/fwlink/?LinkId=722218</c> for additional details about Dynamics CRM WebHook
-    /// requests.
+    /// See <see href="http://go.microsoft.com/fwlink/?LinkId=722218"/> for additional details about Dynamics CRM
+    /// WebHook requests.
     /// </para>
     /// </summary>
     public class DynamicsCRMWebHookAttribute : WebHookAttribute
@@ -31,7 +31,9 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <see cref="Newtonsoft.Json.Linq.JObject"/>.
         /// </para>
         /// <para>This constructor should usually be used at most once in a WebHook application.</para>
-        /// <para>The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
+        /// <para>
+        /// The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <see langword="null"/>.
+        /// </para>
         /// </summary>
         public DynamicsCRMWebHookAttribute()
             : base(DynamicsCRMConstants.ReceiverName)

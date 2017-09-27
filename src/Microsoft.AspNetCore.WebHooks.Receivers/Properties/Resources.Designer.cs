@@ -61,7 +61,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Could not add configuration for the &apos;{0}&apos; WebHook receiver and instance &apos;{1}&apos;: {2}.
+        ///   Looks up a localized string similar to Could not add configuration for the &apos;{0}&apos; WebHook receiver and instance &apos;{1}&apos;..
         /// </summary>
         internal static string Config_AddFailure {
             get {
@@ -102,6 +102,51 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         internal static string General_MissingQueryParameter {
             get {
                 return ResourceManager.GetString("General_MissingQueryParameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; associated with model of unsupported type &apos;{1}&apos;..
+        /// </summary>
+        internal static string HttpContextModelBinder_UnsupportedType {
+            get {
+                return ResourceManager.GetString("HttpContextModelBinder_UnsupportedType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate &apos;{0}&apos; registrations found..
+        /// </summary>
+        internal static string MetadataProvider_DuplicateMetadata {
+            get {
+                return ResourceManager.GetString("MetadataProvider_DuplicateMetadata", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; has a null {1} property but does not implement &apos;{2}&apos;..
+        /// </summary>
+        internal static string MetadataProvider_MissingAttributeMetadata {
+            get {
+                return ResourceManager.GetString("MetadataProvider_MissingAttributeMetadata", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No &apos;{0}&apos; implementation found for the &apos;{1}&apos; receiver..
+        /// </summary>
+        internal static string MetadataProvider_MissingMetadata {
+            get {
+                return ResourceManager.GetString("MetadataProvider_MissingMetadata", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid metadata services found. Metadata services implementing &apos;{0}&apos; must implement &apos;{1}&apos;..
+        /// </summary>
+        internal static string MetadataProvider_WrongInterface {
+            get {
+                return ResourceManager.GetString("MetadataProvider_WrongInterface", resourceCulture);
             }
         }
         
@@ -151,7 +196,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The WebHook request must contain an entity body formatted as HTML Form Data..
+        ///   Looks up a localized string similar to The WebHook request must contain an entity body formatted as HTTP Post Form Data..
         /// </summary>
         internal static string VerifyBody_NoFormData {
             get {

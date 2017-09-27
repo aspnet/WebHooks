@@ -28,7 +28,8 @@ namespace Microsoft.AspNetCore.WebHooks
         /// </summary>
         /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
         /// <returns>
-        /// <c>true</c> if this <see cref="IWebHookReceiver"/> should execute; <c>false</c> otherwise.
+        /// <see langword="true"/> if this <see cref="IWebHookReceiver"/> should execute; <see langword="false"/>
+        /// otherwise.
         /// </returns>
         bool IsApplicable(string receiverName);
     }

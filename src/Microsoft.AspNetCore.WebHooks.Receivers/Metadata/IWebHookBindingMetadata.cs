@@ -11,8 +11,8 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     /// <see cref="IWebHookMetadata"/> service for receivers that support additional action parameters.
     /// </para>
     /// <para>
-    /// Metadata is used for model binding and, if <see cref="WebHookParameter.IsRequired"/> is <c>true</c>, incoming
-    /// request validation.
+    /// Metadata is used for model binding and, if <see cref="WebHookParameter.IsRequired"/> is <see langword="true"/>,
+    /// incoming request validation.
     /// </para>
     /// </summary>
     /// <remarks>

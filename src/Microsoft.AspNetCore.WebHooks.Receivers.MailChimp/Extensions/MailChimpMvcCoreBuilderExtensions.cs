@@ -3,12 +3,12 @@
 
 using System;
 using System.ComponentModel;
+using Microsoft.AspNetCore.WebHooks;
 using Microsoft.AspNetCore.WebHooks.Metadata;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    // TODO: Add IMvcBuilder variant of this class.
     /// <summary>
     /// Extension methods for setting up MailChimp WebHooks in an <see cref="IMvcCoreBuilder" />.
     /// </summary>
@@ -19,6 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Add MailChimp WebHook configuration and services to the specified <paramref name="builder"/>.
         /// </summary>
         /// <param name="builder">The <see cref="IMvcCoreBuilder" /> to configure.</param>
+        /// <returns>The <paramref name="builder"/>.</returns>
         public static IMvcCoreBuilder AddMailChimpWebHooks(this IMvcCoreBuilder builder)
         {
             if (builder == null)
@@ -29,6 +30,33 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IWebHookMetadata, MailChimpMetadata>());
 
             return builder.AddWebHooks();
+        }
+
+        /// <summary>
+        /// Add MailChimp WebHook configuration and services to the specified <paramref name="builder"/>.
+        /// </summary>
+        /// <param name="builder">The <see cref="IMvcCoreBuilder" /> to configure.</param>
+        /// <param name="setupAction">
+        /// An <see cref="Action{WebHookOptions}"/> to configure the provided <see cref="WebHookOptions"/>.
+        /// </param>
+        /// <returns>The <paramref name="builder"/>.</returns>
+        public static IMvcCoreBuilder AddMailChimpWebHooks(
+            this IMvcCoreBuilder builder,
+            Action<WebHookOptions> setupAction)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+            if (setupAction == null)
+            {
+                throw new ArgumentNullException(nameof(setupAction));
+            }
+
+            builder.AddMailChimpWebHooks();
+            builder.Services.Configure(setupAction);
+
+            return builder;
         }
     }
 }

@@ -14,9 +14,9 @@ using Microsoft.Extensions.Logging;
 namespace Microsoft.AspNetCore.WebHooks.Filters
 {
     /// <summary>
-    /// An <see cref="IResourceFilter"/> to allow only POST WebHook requests. To support GET or HEAD requests the
-    /// receiver project should register an earlier <see cref="IResourceFilter"/> which always short-circuits such
-    /// requests.
+    /// An <see cref="IResourceFilter"/> to allow only POST WebHook requests with a non-empty request body. To support
+    /// GET or HEAD requests the receiver project should set
+    /// <see cref="Metadata.IWebHookSecurityMetadata.ShortCircuitGetRequests"/> in its metadata service.
     /// </summary>
     /// <remarks>
     /// Done as an <see cref="IResourceFilter"/> implementation and not an
@@ -40,24 +40,24 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// Gets the <see cref="IOrderedFilter.Order"/> recommended for all <see cref="WebHookVerifyMethodFilter"/>
         /// instances. The recommended filter sequence is
         /// <list type="number">
-        /// <item><description>
+        /// <item>
         /// Confirm signature or <c>code</c> query parameter (e.g. in <see cref="WebHookVerifyCodeFilter"/> or a
-        /// <see cref="WebHookVerifySignatureFilter"/> subclass).
-        /// </description></item>
-        /// <item><description>
+        /// <see cref="WebHookVerifyBodyContentFilter"/> subclass).
+        /// </item>
+        /// <item>
         /// Confirm required headers and query parameters are provided (in
         /// <see cref="WebHookVerifyRequiredValueFilter"/>).
-        /// </description></item>
-        /// <item><description>
+        /// </item>
+        /// <item>
         /// Short-circuit GET or HEAD requests, if receiver supports either (in
         /// <see cref="WebHookGetResponseFilter"/>).
-        /// </description></item>
-        /// <item><description>Confirm it's a POST request (in this filter).</description></item>
-        /// <item><description>Confirm body type (in <see cref="WebHookVerifyBodyTypeFilter"/>).</description></item>
-        /// <item><description>
+        /// </item>
+        /// <item>Confirm it's a POST request (in this filter).</item>
+        /// <item>Confirm body type (in <see cref="WebHookVerifyBodyTypeFilter"/>).</item>
+        /// <item>
         /// Short-circuit ping requests, if not done in <see cref="WebHookGetResponseFilter"/> for this receiver (in
         /// <see cref="WebHookPingResponseFilter"/>).
-        /// </description></item>
+        /// </item>
         /// </list>
         /// </summary>
         public static int Order => WebHookGetResponseFilter.Order + 10;
@@ -72,10 +72,13 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
             var request = context.HttpContext.Request;
             if (context.RouteData.TryGetReceiverName(out var receiverName) &&
-                !HttpMethods.IsPost(request.Method))
+                (request.Body == null ||
+                 !request.ContentLength.HasValue ||
+                 request.ContentLength.Value == 0L ||
+                 !HttpMethods.IsPost(request.Method)))
             {
                 // Log about the issue and short-circuit remainder of the pipeline.
-                context.Result = CreateBadMethodResult(request);
+                context.Result = CreateBadMethodResult(request.Method, receiverName);
             }
         }
 
@@ -85,19 +88,19 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             // No-op
         }
 
-        private IActionResult CreateBadMethodResult(HttpRequest request)
+        private IActionResult CreateBadMethodResult(string methodName, string receiverName)
         {
             _logger.LogError(
                 0,
-                "The HTTP '{RequestMethod}' method is not supported by the '{ReceiverType}' WebHook receiver.",
-                request.Method,
-                GetType().Name);
+                "The HTTP '{RequestMethod}' method is not supported by the '{ReceiverName}' WebHook receiver.",
+                methodName,
+                receiverName);
 
             var message = string.Format(
                 CultureInfo.CurrentCulture,
                 Resources.VerifyMethod_BadMethod,
-                request.Method,
-                GetType().Name);
+                methodName,
+                receiverName);
 
             // ??? Should we instead provide CreateErrorResult(...) overloads with `int statusCode` parameters?
             var badMethod = WebHookResultUtilities.CreateErrorResult(message);

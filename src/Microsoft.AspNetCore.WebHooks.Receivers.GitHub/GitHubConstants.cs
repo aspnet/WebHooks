@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.WebHooks
         public static string ReceiverName => "github";
 
         /// <summary>
-        /// Gets the name of the header containing the GitHub action e.g. <c>ping</c> or <c>push</c>.
+        /// Gets the name of the header containing the GitHub event name e.g. <c>ping</c> or <c>push</c>.
         /// </summary>
         public static string EventHeaderName => "X-Github-Event";
 

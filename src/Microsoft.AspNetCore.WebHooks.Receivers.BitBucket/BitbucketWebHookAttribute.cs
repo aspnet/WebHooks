@@ -16,8 +16,8 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <para>
     /// An example Bitbucket WebHook URI is
     /// '<c>https://&lt;host&gt;/api/webhooks/incoming/bitbucket/{id}?code=83699ec7c1d794c0c780e49a5c72972590571fd8</c>'.
-    /// See <c>https://confluence.atlassian.com/bitbucket/manage-webhooks-735643732.html</c> for additional details
-    /// about Bitbucket WebHook requests.
+    /// See <see href="https://confluence.atlassian.com/bitbucket/manage-webhooks-735643732.html"/> for additional
+    /// details about Bitbucket WebHook requests.
     /// </para>
     /// </summary>
     public class BitbucketWebHookAttribute : WebHookAttribute, IWebHookEventSelectorMetadata
@@ -37,7 +37,9 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <see cref="Newtonsoft.Json.Linq.JObject"/>.
         /// </para>
         /// <para>This constructor should usually be used at most once in a WebHook application.</para>
-        /// <para>The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
+        /// <para>
+        /// The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <see langword="null"/>.
+        /// </para>
         /// </summary>
         public BitbucketWebHookAttribute()
             : base(BitbucketConstants.ReceiverName)
@@ -47,7 +49,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// <summary>
         /// Gets or sets the name of the event the associated controller action accepts.
         /// </summary>
-        /// <value>Default value is <c>null</c>, indicating this action accepts all events.</value>
+        /// <value>Default value is <see langword="null"/>, indicating this action accepts all events.</value>
         public string EventName
         {
             get

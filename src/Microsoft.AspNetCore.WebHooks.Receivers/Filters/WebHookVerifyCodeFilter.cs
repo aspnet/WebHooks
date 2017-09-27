@@ -93,9 +93,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// </param>
         /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
         /// <returns>
-        /// A <see cref="Task"/> that on completion provides <c>null</c> in the success case. When a check fails,
-        /// provides an <see cref="IActionResult"/> that when executed will produce a response containing details about
-        /// the problem.
+        /// A <see cref="Task"/> that on completion provides <see langword="null"/> in the success case. When a check
+        /// fails, provides an <see cref="IActionResult"/> that when executed will produce a response containing
+        /// details about the problem.
         /// </returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Response is disposed by Web API.")]
         protected virtual async Task<IActionResult> EnsureValidCode(
@@ -116,7 +116,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(receiverName));
             }
 
-            var result = EnsureSecureConnection(request);
+            var result = EnsureSecureConnection(receiverName, request);
             if (result != null)
             {
                 return result;
@@ -154,7 +154,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             {
                 Logger.LogError(
                     401,
-                    "The '{ParameterName}' query parameter provided in the HTTP request did not match the expected value.",
+                    "The '{ParameterName}' query parameter provided in the HTTP request did not match the " +
+                    "expected value.",
                     WebHookConstants.CodeQueryParameterName);
 
                 var message = string.Format(

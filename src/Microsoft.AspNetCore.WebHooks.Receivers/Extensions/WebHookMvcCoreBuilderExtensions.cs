@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    // TODO: Add IMvcBuilder variant of this class.
+    // TODO: Add IMvcBuilder variant of this class. Do the same for all receiver-specific extension methods too.
     /// <summary>
     /// Extension methods for setting up WebHooks in an <see cref="IMvcCoreBuilder" />.
     /// </summary>
@@ -53,6 +53,31 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingletonFilter<WebHookVerifyCodeFilter>(WebHookSecurityFilter.Order)
                 .AddSingletonFilter<WebHookVerifyMethodFilter>(WebHookVerifyMethodFilter.Order)
                 .AddSingletonFilter<WebHookVerifyRequiredValueFilter>(WebHookVerifyRequiredValueFilter.Order);
+        }
+
+        /// <summary>
+        /// Add WebHook configuration and services to the specified <paramref name="builder"/>.
+        /// </summary>
+        /// <param name="builder">The <see cref="IMvcCoreBuilder" /> to configure.</param>
+        /// <param name="setupAction">
+        /// An <see cref="Action{WebHookOptions}"/> to configure the provided <see cref="WebHookOptions"/>.
+        /// </param>
+        /// <returns>The <paramref name="builder"/>.</returns>
+        public static IMvcCoreBuilder AddWebHooks(this IMvcCoreBuilder builder, Action<WebHookOptions> setupAction)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+            if (setupAction == null)
+            {
+                throw new ArgumentNullException(nameof(setupAction));
+            }
+
+            builder.AddWebHooks();
+            builder.Services.Configure(setupAction);
+
+            return builder;
         }
 
         /// <summary>

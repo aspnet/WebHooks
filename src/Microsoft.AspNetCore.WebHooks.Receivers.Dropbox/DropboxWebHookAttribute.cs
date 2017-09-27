@@ -11,7 +11,8 @@ namespace Microsoft.AspNetCore.WebHooks
     /// </para>
     /// <para>
     /// An example Dropbox WebHook URI is '<c>https://&lt;host&gt;/api/webhooks/incoming/dropbox/{id}</c>'. See
-    /// <c>https://www.dropbox.com/developers/webhooks/docs</c> for additional details about Dropbox WebHook requests.
+    /// <see href="https://www.dropbox.com/developers/webhooks/docs"/> for additional details about Dropbox WebHook
+    /// requests.
     /// </para>
     /// </summary>
     public class DropboxWebHookAttribute : WebHookAttribute
@@ -23,13 +24,15 @@ namespace Microsoft.AspNetCore.WebHooks
         /// </para>
         /// <para>The signature of the action should be:
         /// <code>
-        /// Task{IActionResult} ActionName(string id, TData data)
+        /// Task{IActionResult} ActionName(string id, string @event, TData data)
         /// </code>
-        /// or include the subset of parameters required. <c>TData</c> must be compatible with expected requests e.g.
-        /// <see cref="Newtonsoft.Json.Linq.JObject"/>.
+        /// or include the subset of parameters required. <c>@event</c> will always contain the value <c>"change"</c>.
+        /// <c>TData</c> must be compatible with expected requests e.g. <see cref="Newtonsoft.Json.Linq.JObject"/>.
         /// </para>
         /// <para>This constructor should usually be used at most once in a WebHook application.</para>
-        /// <para>The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <c>null</c>.</para>
+        /// <para>
+        /// The default route <see cref="Mvc.Routing.IRouteTemplateProvider.Name"/> is <see langword="null"/>.
+        /// </para>
         /// </summary>
         public DropboxWebHookAttribute()
             : base(DropboxConstants.ReceiverName)

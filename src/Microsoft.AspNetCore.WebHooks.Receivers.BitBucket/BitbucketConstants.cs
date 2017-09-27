@@ -9,7 +9,8 @@ namespace Microsoft.AspNetCore.WebHooks
     public static class BitbucketConstants
     {
         /// <summary>
-        /// Gets the name of the header containing the Bitbucket action e.g. <c>repo:push</c> or <c>issue:created</c>.
+        /// Gets the name of the header containing the Bitbucket event name e.g. <c>repo:push</c> or
+        /// <c>issue:created</c>.
         /// </summary>
         public static string EventHeaderName => "X-Event-Key";
 

@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
         /// <see cref="DateTime"/> gets serialized to an integer.
         /// </summary>
         /// <param name="stringConverter">
-        /// When <c>true</c> only deserializes string values and serializes to a string value;
+        /// When <see langword="true"/> only deserializes string values and serializes to a string value;
         /// otherwise deserializes string and integer values and serializes to an integer value.
         /// </param>
         protected UnixTimeConverter(bool stringConverter)
@@ -75,7 +75,7 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.DateTime_NullError,
-                    typeof(DateTime).Name);
+                    nameof(DateTime));
                 throw new InvalidOperationException(message);
             }
 
@@ -88,7 +88,7 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
                         CultureInfo.CurrentCulture,
                         Resources.DateTime_BadFormat,
                         reader.Value,
-                        typeof(DateTime).Name);
+                        nameof(DateTime));
                     throw new InvalidOperationException(message);
                 }
             }
@@ -102,7 +102,7 @@ namespace Microsoft.AspNetCore.WebHooks.Serialization
                     CultureInfo.CurrentCulture,
                     Resources.DateTime_BadFormat,
                     reader.Value,
-                    typeof(DateTime).Name);
+                    nameof(DateTime));
                 throw new InvalidOperationException(message);
             }
 

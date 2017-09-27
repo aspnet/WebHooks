@@ -3,13 +3,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.WebHooks.Metadata;
+using Microsoft.AspNetCore.WebHooks.Properties;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 {
-    // TODO: Add resources for exceptions thrown here.
     /// <summary>
     /// <para>
     /// An <see cref="IApplicationModelProvider"/> implementation that adds <see cref="IWebHookMetadata"/>
@@ -25,59 +27,56 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         private readonly IReadOnlyList<IWebHookBindingMetadata> _bindingMetadata;
         private readonly IReadOnlyList<IWebHookEventMetadata> _eventMetadata;
         private readonly IReadOnlyList<IWebHookRequestMetadataService> _requestMetadata;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Instantiates a new <see cref="WebHookMetadataProvider"/> with the given <paramref name="metadata"/>.
         /// </summary>
         /// <param name="metadata">The collection of <see cref="IWebHookMetadata"/> services.</param>
-        public WebHookMetadataProvider(IEnumerable<IWebHookMetadata> metadata)
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
+        public WebHookMetadataProvider(
+            IEnumerable<IWebHookMetadata> metadata,
+            ILoggerFactory loggerFactory)
         {
-            _bindingMetadata = new List<IWebHookBindingMetadata>(metadata.OfType<IWebHookBindingMetadata>());
-            _eventMetadata = new List<IWebHookEventMetadata>(metadata.OfType<IWebHookEventMetadata>());
-            _requestMetadata = new List<IWebHookRequestMetadataService>(
-                metadata.OfType<IWebHookRequestMetadataService>());
+            _bindingMetadata = metadata.OfType<IWebHookBindingMetadata>().ToArray();
+            _eventMetadata = metadata.OfType<IWebHookEventMetadata>().ToArray();
+            _requestMetadata = metadata.OfType<IWebHookRequestMetadataService>().ToArray();
 
-            // Check for duplicate IWebHookBindingMetadata registrations for a receiver.
-            var bindingGroups = _bindingMetadata.GroupBy(item => item.ReceiverName, StringComparer.OrdinalIgnoreCase);
-            foreach (var group in bindingGroups)
-            {
-                if (group.Count() != 1)
-                {
-                    var message = group.Key;
-                    throw new InvalidOperationException(message);
-                }
-            }
+            _logger = loggerFactory.CreateLogger<WebHookMetadataProvider>();
 
-            // Check for duplicate IWebHookEventMetadata registrations for a receiver. IWebHookEventMetadata is
-            // optional in general because some receivers place event information in the request body.
-            var eventGroups = _eventMetadata.GroupBy(item => item.ReceiverName, StringComparer.OrdinalIgnoreCase);
-            foreach (var group in eventGroups)
-            {
-                if (group.Count() != 1)
-                {
-                    var message = group.Key;
-                    throw new InvalidOperationException(message);
-                }
-            }
+            // Check for duplicate registrations for the collections tracked here.
+            EnsureUniqueRegistrations(_bindingMetadata);
+            EnsureUniqueRegistrations(_eventMetadata);
+            EnsureUniqueRegistrations(_requestMetadata);
+
+            // Check for duplicate IWebHookSecurityMetadata registrations.
+            EnsureUniqueRegistrations(metadata.OfType<IWebHookSecurityMetadata>().ToArray());
 
             // Check for IWebHookRequestMetadata services that do not also implement IWebHookReceiver.
-            var nonReceivers = metadata
-                .Where(item => item is IWebHookRequestMetadata && !(item is IWebHookRequestMetadataService));
-            if (nonReceivers.Any())
+            var invalidRegistrations = false;
+            var nonServiceTypeNames = metadata
+                .Where(item => item is IWebHookRequestMetadata && !(item is IWebHookRequestMetadataService))
+                .Select(item => item.GetType().Name)
+                .Distinct();
+            foreach (var typeName in nonServiceTypeNames)
             {
-                var message = string.Join(", ", nonReceivers.Select(item => item.GetType().Name));
-                throw new InvalidOperationException(message);
+                invalidRegistrations = true;
+                _logger.LogCritical(
+                    0,
+                    "'{ConcreteType}' implements '{MetadataType}' but not '{ServiceType}'.",
+                    typeName,
+                    typeof(IWebHookRequestMetadata),
+                    typeof(IWebHookRequestMetadataService));
             }
 
-            // Check for duplicate IWebHookRequestMetadataService registrations for a receiver.
-            var requestGroups = _requestMetadata.GroupBy(item => item.ReceiverName, StringComparer.OrdinalIgnoreCase);
-            foreach (var group in requestGroups)
+            if (invalidRegistrations)
             {
-                if (group.Count() != 1)
-                {
-                    var message = group.Key;
-                    throw new InvalidOperationException(message);
-                }
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.MetadataProvider_WrongInterface,
+                    typeof(IWebHookRequestMetadata),
+                    typeof(IWebHookRequestMetadataService));
+                throw new InvalidOperationException(message);
             }
         }
 
@@ -115,7 +114,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         /// <inheritdoc />
         public void OnProvidersExecuted(ApplicationModelProviderContext context)
         {
-            // Nothing to do.
+            // No-op
         }
 
         private void Apply(ActionModel action)
@@ -159,7 +158,19 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 if (eventMetadata == null && receiverName != null)
                 {
                     // IWebHookEventMetadata is mandatory when performing action selection using event names.
-                    throw new InvalidOperationException();
+                    _logger.LogCritical(
+                        1,
+                        "No '{MetadataType}' implementation found for the '{ReceiverName}' receiver. Event " +
+                        "selection is impossible in this case.",
+                        typeof(IWebHookEventMetadata),
+                        receiverName);
+
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.MetadataProvider_MissingMetadata,
+                        typeof(IWebHookEventMetadata),
+                        receiverName);
+                    throw new InvalidOperationException(message);
                 }
 
                 action.Properties[typeof(IWebHookEventSelectorMetadata)] = eventSelector;
@@ -172,17 +183,88 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 {
                     // Only the GeneralWebHookAttribute should have a null ReceiverName and it implements
                     // IWebHookRequestMetadata.
-                    throw new InvalidOperationException();
+                    var attributeTypeName = attribute.GetType().Name;
+                    _logger.LogCritical(
+                        2,
+                        "'{ConcreteType}' has a null {PropertyName} property but does not implement '{MetadataType}'.",
+                        attributeTypeName,
+                        nameof(attribute.ReceiverName),
+                        typeof(IWebHookRequestMetadata));
+
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.MetadataProvider_MissingAttributeMetadata,
+                        attributeTypeName,
+                        nameof(attribute.ReceiverName),
+                        typeof(IWebHookRequestMetadata));
+                    throw new InvalidOperationException(message);
                 }
 
                 requestMetadata = _requestMetadata.FirstOrDefault(metadata => metadata.IsApplicable(receiverName));
                 if (requestMetadata == null)
                 {
-                    throw new InvalidOperationException();
+                    _logger.LogCritical(
+                        3,
+                        "No '{MetadataType}' implementation found for the '{ReceiverName}' receiver. Each receiver " +
+                        "must register a '{ServiceMetadataType}' or provide a '{AttributeType}' subclass that " +
+                        "implements '{MetadataType}'.",
+                        typeof(IWebHookRequestMetadata),
+                        receiverName,
+                        typeof(IWebHookRequestMetadataService),
+                        typeof(WebHookAttribute),
+                        typeof(IWebHookRequestMetadata));
+
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.MetadataProvider_MissingMetadata,
+                        typeof(IWebHookRequestMetadata),
+                        receiverName);
+                    throw new InvalidOperationException(message);
                 }
             }
 
             action.Properties[typeof(IWebHookRequestMetadata)] = requestMetadata;
+        }
+
+        /// <summary>
+        /// Ensures given <paramref name="services"/> collection does not contain duplicate registrations. That is,
+        /// confirms the <typeparamref name="TService"/> registration for each
+        /// <see cref="IWebHookReceiver.ReceiverName"/> is unique.
+        /// </summary>
+        /// <typeparam name="TService">
+        /// The <see cref="IWebHookReceiver"/> interface of the <paramref name="services"/> to check.
+        /// </typeparam>
+        /// <param name="services">The collection of <typeparamref name="TService"/> services to check.</param>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if duplicates exist in <paramref name="services"/>.
+        /// </exception>
+        protected void EnsureUniqueRegistrations<TService>(IReadOnlyList<TService> services)
+            where TService : IWebHookReceiver
+        {
+            var hasDuplicates = false;
+            var duplicateReceiverNames = services
+                .GroupBy(item => item.ReceiverName, StringComparer.OrdinalIgnoreCase)
+                .Where(group => group.Count() != 1)
+                .Select(group => group.Key);
+
+            foreach (var receiverName in duplicateReceiverNames)
+            {
+                hasDuplicates = true;
+                _logger.LogCritical(
+                    4,
+                    "Duplicate '{MetadataType}' registrations found for the '{ReceiverName}' receiver.",
+                    typeof(TService),
+                    receiverName);
+            }
+
+            if (hasDuplicates)
+            {
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.MetadataProvider_DuplicateMetadata,
+                    typeof(TService));
+                throw new InvalidOperationException(message);
+            }
         }
     }
 }

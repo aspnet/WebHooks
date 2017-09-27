@@ -66,7 +66,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 return true;
             }
 
-            // ??? Should we thrown if this is reached? Should be impossible given earlier constraints.
+            // ??? Should we throw if this is reached? Should be impossible given WebHookReceiverExistsConstraint.
             return false;
         }
     }

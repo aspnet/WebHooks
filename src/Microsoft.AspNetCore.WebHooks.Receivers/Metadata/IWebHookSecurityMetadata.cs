@@ -24,9 +24,9 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
 
         /// <summary>
         /// Gets additional metadata about how to handle HTTP GET requests. Ignored if
-        /// <see cref="ShortCircuitGetRequests"/> is <c>false</c>. If <see cref="ShortCircuitGetRequests"/> is
-        /// <c>true</c> and this property is <c>null</c>, the receiver does no additional verification before
-        /// responding to an HTTP GET request.
+        /// <see cref="ShortCircuitGetRequests"/> is <see langword="true"/>. If <see cref="ShortCircuitGetRequests"/>
+        /// is <see langword="true"/> and this property is <see langword="null"/>, the receiver does no additional
+        /// verification before responding to an HTTP GET request.
         /// </summary>
         WebHookGetRequest WebHookGetRequest { get; }
     }

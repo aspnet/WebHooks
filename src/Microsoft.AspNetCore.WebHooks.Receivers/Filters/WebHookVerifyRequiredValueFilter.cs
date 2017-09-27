@@ -52,25 +52,21 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// Gets the <see cref="IOrderedFilter.Order"/> recommended for all
         /// <see cref="WebHookVerifyRequiredValueFilter"/> instances. The recommended filter sequence is
         /// <list type="number">
-        /// <item><description>
+        /// <item>
         /// Confirm signature or <c>code</c> query parameter (e.g. in <see cref="WebHookVerifyCodeFilter"/> or a
-        /// <see cref="WebHookVerifySignatureFilter"/> subclass).
-        /// </description></item>
-        /// <item><description>
-        /// Confirm required headers and query parameters are provided (in this filter).
-        /// </description></item>
-        /// <item><description>
+        /// <see cref="WebHookVerifyBodyContentFilter"/> subclass).
+        /// </item>
+        /// <item>Confirm required headers and query parameters are provided (in this filter).</item>
+        /// <item>
         /// Short-circuit GET or HEAD requests, if receiver supports either (in
         /// <see cref="WebHookGetResponseFilter"/>).
-        /// </description></item>
-        /// <item><description>
-        /// Confirm it's a POST request (in <see cref="WebHookVerifyMethodFilter"/>).
-        /// </description></item>
-        /// <item><description>Confirm body type (in <see cref="WebHookVerifyBodyTypeFilter"/>).</description></item>
-        /// <item><description>
+        /// </item>
+        /// <item>Confirm it's a POST request (in <see cref="WebHookVerifyMethodFilter"/>).</item>
+        /// <item>Confirm body type (in <see cref="WebHookVerifyBodyTypeFilter"/>).</item>
+        /// <item>
         /// Short-circuit ping requests, if not done in <see cref="WebHookGetResponseFilter"/> for this receiver (in
         /// <see cref="WebHookPingResponseFilter"/>).
-        /// </description></item>
+        /// </item>
         /// </list>
         /// </summary>
         public static int Order => WebHookSecurityFilter.Order + 10;
@@ -110,6 +106,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                         VerifyHeader(headers, sourceName, receiverName, out message);
                     if (!found)
                     {
+                        // Do not return after first error. Instead log about all issues.
                         context.Result = WebHookResultUtilities.CreateErrorResult(message);
                     }
                 }
