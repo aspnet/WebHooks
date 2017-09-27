@@ -79,7 +79,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
                     var message = string.Format(
                         CultureInfo.CurrentCulture,
-                        Resources.Receiver_BadHeaderValue,
+                        Resources.SignatureFilter_BadHeaderValue,
                         GitHubConstants.SignatureHeaderName,
                         GitHubConstants.SignatureHeaderKey,
                         "<value>");

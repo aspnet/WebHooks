@@ -68,14 +68,5 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
                 return ResourceManager.GetString("General_ArgumentCannotBeNullOrEmpty", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The WebHook request must contain a &apos;{0}&apos; HTTP header indicating the ID of the WebHook..
-        /// </summary>
-        internal static string Receiver_NoWebHookId {
-            get {
-                return ResourceManager.GetString("Receiver_NoWebHookId", resourceCulture);
-            }
-        }
     }
 }

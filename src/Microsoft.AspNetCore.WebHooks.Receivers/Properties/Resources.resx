@@ -117,14 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Attribute_UnsupportedValue" xml:space="preserve">
-    <value>{0} property must not be set to '{1}'.</value>
-  </data>
   <data name="Config_AddFailure" xml:space="preserve">
-    <value>Could not add configuration for receiver '{0}' and id '{1}': {2}</value>
+    <value>Could not add configuration for the '{0}' WebHook receiver and instance '{1}': {2}</value>
   </data>
   <data name="Config_BadValue" xml:space="preserve">
-    <value>The '{0}' application setting must have a comma-separated value of one or more secrets of the form &amp;lt;secret&amp;gt; or &amp;lt;id&amp;gt;=&amp;lt;secret&amp;gt;.</value>
+    <value>The '{0}' configuration value must have a comma-separated value of one or more secrets of the form &amp;lt;secret&amp;gt; or &amp;lt;id&amp;gt;=&amp;lt;secret&amp;gt;.</value>
   </data>
   <data name="General_ArgumentCannotBeNullOrEmpty" xml:space="preserve">
     <value>Value cannot be null or empty.</value>
@@ -145,10 +142,10 @@
     <value>The '{0}' header value is invalid. It must be a valid hex-encoded string.</value>
   </data>
   <data name="Security_BadSecret" xml:space="preserve">
-    <value>Could not find a valid configuration for WebHook receiver '{0}' and instance '{1}'. The setting must be set to a value between {2} and {3} characters long.</value>
+    <value>Could not find a valid configuration for the '{0}' WebHook receiver and instance '{1}'. The setting must be set to a value between {2} and {3} characters long.</value>
   </data>
   <data name="Security_NoHttps" xml:space="preserve">
-    <value>The WebHook receiver '{0}' requires HTTPS in order to be secure. Please register a WebHook URI of type '{1}'.</value>
+    <value>The '{0}' WebHook receiver requires HTTPS in order to be secure. Please register a WebHook URI of type '{1}'.</value>
   </data>
   <data name="VerifyBody_NoFormData" xml:space="preserve">
     <value>The WebHook request must contain an entity body formatted as HTML Form Data.</value>
@@ -166,15 +163,15 @@
     <value>The HTTP '{0}' method is not supported by the '{1}' WebHook receiver.</value>
   </data>
   <data name="VerifyRequiredValue_NoHeader" xml:space="preserve">
-    <value>A {0} WebHook request must contain a '{1}' HTTP header.</value>
+    <value>A '{0}' WebHook request must contain a '{1}' HTTP header.</value>
   </data>
   <data name="VerifyRequiredValue_NoQueryParameter" xml:space="preserve">
-    <value>A {0} WebHook request must contain a '{1}' query parameter.</value>
+    <value>A '{0}' WebHook request must contain a '{1}' query parameter.</value>
   </data>
   <data name="VerifySignature_BadHeader" xml:space="preserve">
     <value>Expecting exactly one '{0}' header field in the WebHook request but found {1}. Please ensure the request contains exactly one '{0}' header field.</value>
   </data>
   <data name="VerifySignature_BadSignature" xml:space="preserve">
-    <value>The WebHook signature provided by the '{0}' header field does not match the value expected by the '{1}' receiver. WebHook request is invalid.</value>
+    <value>The signature provided by the '{0}' header field does not match the value expected by the '{1}' WebHook receiver. WebHook request is invalid.</value>
   </data>
 </root>

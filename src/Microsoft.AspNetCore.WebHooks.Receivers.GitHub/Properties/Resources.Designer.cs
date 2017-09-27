@@ -72,27 +72,9 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Invalid &apos;{0}&apos; header value. Expecting a value of &apos;{1}={2}&apos;..
         /// </summary>
-        internal static string Receiver_BadHeaderValue {
+        internal static string SignatureFilter_BadHeaderValue {
             get {
-                return ResourceManager.GetString("Receiver_BadHeaderValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The WebHook request must contain a &apos;{0}&apos; HTTP header indicating the type of event..
-        /// </summary>
-        internal static string Receiver_NoEvent {
-            get {
-                return ResourceManager.GetString("Receiver_NoEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Received a GitHub Ping Event -- ignoring..
-        /// </summary>
-        internal static string Receiver_PingEvent {
-            get {
-                return ResourceManager.GetString("Receiver_PingEvent", resourceCulture);
+                return ResourceManager.GetString("SignatureFilter_BadHeaderValue", resourceCulture);
             }
         }
     }

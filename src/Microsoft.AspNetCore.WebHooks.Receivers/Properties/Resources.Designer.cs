@@ -61,16 +61,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} property must not be set to &apos;{1}&apos;..
-        /// </summary>
-        internal static string Attribute_UnsupportedValue {
-            get {
-                return ResourceManager.GetString("Attribute_UnsupportedValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Could not add configuration for receiver &apos;{0}&apos; and id &apos;{1}&apos;: {2}.
+        ///   Looks up a localized string similar to Could not add configuration for the &apos;{0}&apos; WebHook receiver and instance &apos;{1}&apos;: {2}.
         /// </summary>
         internal static string Config_AddFailure {
             get {
@@ -79,7 +70,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;{0}&apos; application setting must have a comma-separated value of one or more secrets of the form &amp;lt;secret&amp;gt; or &amp;lt;id&amp;gt;=&amp;lt;secret&amp;gt;..
+        ///   Looks up a localized string similar to The &apos;{0}&apos; configuration value must have a comma-separated value of one or more secrets of the form &amp;lt;secret&amp;gt; or &amp;lt;id&amp;gt;=&amp;lt;secret&amp;gt;..
         /// </summary>
         internal static string Config_BadValue {
             get {
@@ -142,7 +133,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Could not find a valid configuration for WebHook receiver &apos;{0}&apos; and instance &apos;{1}&apos;. The setting must be set to a value between {2} and {3} characters long..
+        ///   Looks up a localized string similar to Could not find a valid configuration for the &apos;{0}&apos; WebHook receiver and instance &apos;{1}&apos;. The setting must be set to a value between {2} and {3} characters long..
         /// </summary>
         internal static string Security_BadSecret {
             get {
@@ -151,7 +142,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The WebHook receiver &apos;{0}&apos; requires HTTPS in order to be secure. Please register a WebHook URI of type &apos;{1}&apos;..
+        ///   Looks up a localized string similar to The &apos;{0}&apos; WebHook receiver requires HTTPS in order to be secure. Please register a WebHook URI of type &apos;{1}&apos;..
         /// </summary>
         internal static string Security_NoHttps {
             get {
@@ -205,7 +196,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A {0} WebHook request must contain a &apos;{1}&apos; HTTP header..
+        ///   Looks up a localized string similar to A &apos;{0}&apos; WebHook request must contain a &apos;{1}&apos; HTTP header..
         /// </summary>
         internal static string VerifyRequiredValue_NoHeader {
             get {
@@ -214,7 +205,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A {0} WebHook request must contain a &apos;{1}&apos; query parameter..
+        ///   Looks up a localized string similar to A &apos;{0}&apos; WebHook request must contain a &apos;{1}&apos; query parameter..
         /// </summary>
         internal static string VerifyRequiredValue_NoQueryParameter {
             get {
@@ -232,7 +223,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The WebHook signature provided by the &apos;{0}&apos; header field does not match the value expected by the &apos;{1}&apos; receiver. WebHook request is invalid..
+        ///   Looks up a localized string similar to The signature provided by the &apos;{0}&apos; header field does not match the value expected by the &apos;{1}&apos; WebHook receiver. WebHook request is invalid..
         /// </summary>
         internal static string VerifySignature_BadSignature {
             get {

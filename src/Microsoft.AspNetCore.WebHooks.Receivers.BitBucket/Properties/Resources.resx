@@ -120,7 +120,4 @@
   <data name="General_ArgumentCannotBeNullOrEmpty" xml:space="preserve">
     <value>Value cannot be null or empty.</value>
   </data>
-  <data name="Receiver_NoWebHookId" xml:space="preserve">
-    <value>The WebHook request must contain a '{0}' HTTP header indicating the ID of the WebHook.</value>
-  </data>
 </root>

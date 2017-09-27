@@ -120,13 +120,7 @@
   <data name="General_ArgumentCannotBeNullOrEmpty" xml:space="preserve">
     <value>Value cannot be null or empty.</value>
   </data>
-  <data name="Receiver_BadHeaderValue" xml:space="preserve">
+  <data name="SignatureFilter_BadHeaderValue" xml:space="preserve">
     <value>Invalid '{0}' header value. Expecting a value of '{1}={2}'.</value>
-  </data>
-  <data name="Receiver_NoEvent" xml:space="preserve">
-    <value>The WebHook request must contain a '{0}' HTTP header indicating the type of event.</value>
-  </data>
-  <data name="Receiver_PingEvent" xml:space="preserve">
-    <value>Received a GitHub Ping Event -- ignoring.</value>
   </data>
 </root>
