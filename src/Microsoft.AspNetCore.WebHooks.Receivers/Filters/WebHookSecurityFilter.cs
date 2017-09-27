@@ -24,9 +24,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// </summary>
     public abstract class WebHookSecurityFilter
     {
-        // Application setting for disabling HTTPS check
-        internal const string DisableHttpsCheckKey = "MS_WebHookDisableHttpsCheck";
-
         /// <summary>
         /// Instantiates a new <see cref="WebHookSecurityFilter"/> instance.
         /// </summary>
@@ -120,8 +117,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
 
             // Check to see if we have been configured to ignore this check
-            var disableHttpsCheckValue = Configuration[DisableHttpsCheckKey];
-            if (bool.TryParse(disableHttpsCheckValue, out var disableHttpsCheck) && disableHttpsCheck == true)
+            var disableHttpsCheckValue = Configuration[WebHookConstants.DisableHttpsCheckConfigurationKey];
+            if (bool.TryParse(disableHttpsCheckValue, out var disableHttpsCheck) &&
+                disableHttpsCheck == true)
             {
                 return null;
             }

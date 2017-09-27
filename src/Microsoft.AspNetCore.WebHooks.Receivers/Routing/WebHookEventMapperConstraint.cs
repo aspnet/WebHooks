@@ -121,7 +121,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
 
             if (eventMetadata.ConstantValue != null)
             {
-                routeValues[WebHookReceiverRouteNames.EventKeyName] = eventMetadata.ConstantValue;
+                routeValues[WebHookConstants.EventKeyName] = eventMetadata.ConstantValue;
                 return true;
             }
 
@@ -132,14 +132,14 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
         {
             if (events.Length == 1)
             {
-                routeValues[WebHookReceiverRouteNames.EventKeyName] = events[0];
+                routeValues[WebHookConstants.EventKeyName] = events[0];
             }
             else
             {
                 // ??? This repeatedly allocates the same strings. Might be good to cache the first 10 or so keys.
                 for (var i = 0; i < events.Length; i++)
                 {
-                    routeValues[$"{WebHookReceiverRouteNames.EventKeyName}[{i}]"] = events[i];
+                    routeValues[$"{WebHookConstants.EventKeyName}[{i}]"] = events[i];
                 }
             }
         }

@@ -74,8 +74,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     request,
                     routeData,
                     ReceiverName,
-                    DropboxConstants.SecretMinLength,
-                    DropboxConstants.SecretMaxLength);
+                    DropboxConstants.SecretKeyMinLength,
+                    DropboxConstants.SecretKeyMaxLength);
                 if (secretKey == null)
                 {
                     context.Result = new NotFoundResult();

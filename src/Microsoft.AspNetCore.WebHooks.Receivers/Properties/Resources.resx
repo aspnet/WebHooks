@@ -172,7 +172,7 @@
     <value>A {0} WebHook request must contain a '{1}' query parameter.</value>
   </data>
   <data name="VerifySignature_BadHeader" xml:space="preserve">
-    <value>Expecting exactly one '{0}' header field in the WebHook request but found {1}. Please ensure that the request contains exactly one '{0}' header field.</value>
+    <value>Expecting exactly one '{0}' header field in the WebHook request but found {1}. Please ensure the request contains exactly one '{0}' header field.</value>
   </data>
   <data name="VerifySignature_BadSignature" xml:space="preserve">
     <value>The WebHook signature provided by the '{0}' header field does not match the value expected by the '{1}' receiver. WebHook request is invalid.</value>

@@ -21,7 +21,6 @@ namespace Microsoft.AspNetCore.WebHooks
     /// </summary>
     public class WebHookReceiverConfig : IWebHookReceiverConfig
     {
-        internal const string ConfigKeyPrefix = "MS_WebHookReceiverSecret_";
         private readonly IDictionary<string, string> _settings;
 
         /// <summary>
@@ -68,11 +67,11 @@ namespace Microsoft.AspNetCore.WebHooks
             foreach (var setting in configuration.AsEnumerable())
             {
                 var key = setting.Key;
-                if (key.Length > ConfigKeyPrefix.Length &&
-                    key.StartsWith(ConfigKeyPrefix, StringComparison.OrdinalIgnoreCase))
+                if (key.Length > WebHookConstants.ReceiverConfigurationKeyPrefix.Length &&
+                    key.StartsWith(WebHookConstants.ReceiverConfigurationKeyPrefix, StringComparison.OrdinalIgnoreCase))
                 {
                     // Extract configuration (again, likely receiver) name
-                    var configurationName = key.Substring(ConfigKeyPrefix.Length);
+                    var configurationName = key.Substring(WebHookConstants.ReceiverConfigurationKeyPrefix.Length);
 
                     // Parse values
                     var segments = setting.Value.SplitAndTrim(',');
@@ -103,7 +102,7 @@ namespace Microsoft.AspNetCore.WebHooks
 
             if (settings.Count == 0)
             {
-                var format = ConfigKeyPrefix + "<receiver>";
+                var format = WebHookConstants.ReceiverConfigurationKeyPrefix + "<receiver>";
                 logger.LogError(
                     1,
                     "Did not find any applications settings of the form '{Format}'. To receive WebHooks, please add corresponding applications settings.",

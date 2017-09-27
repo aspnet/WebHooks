@@ -124,8 +124,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 request,
                 routeData,
                 receiverName,
-                getMetadata.SecretMinLength,
-                getMetadata.SecretMaxLength);
+                getMetadata.SecretKeyMinLength,
+                getMetadata.SecretKeyMaxLength);
             if (secretKey == null)
             {
                 return new NotFoundResult();

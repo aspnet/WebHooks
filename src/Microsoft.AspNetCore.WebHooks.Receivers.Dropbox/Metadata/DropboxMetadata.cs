@@ -50,7 +50,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         /// <inheritdoc />
         public WebHookGetRequest WebHookGetRequest { get; } = new WebHookGetRequest(
             DropboxConstants.ChallengeQueryParameterName,
-            DropboxConstants.SecretMinLength,
-            DropboxConstants.SecretMaxLength);
+            DropboxConstants.SecretKeyMinLength,
+            DropboxConstants.SecretKeyMaxLength);
     }
 }

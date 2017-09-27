@@ -26,11 +26,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// </summary>
     public class WebHookVerifyCodeFilter : WebHookSecurityFilter, IAsyncResourceFilter
     {
-        // Information about the 'code' URI parameter
-        internal const int CodeMinLength = 32;
-        internal const int CodeMaxLength = 128;
-        internal const string CodeQueryParameter = "code";
-
         private readonly IReadOnlyList<IWebHookSecurityMetadata> _codeVerifierMetadata;
 
         /// <summary>
@@ -127,24 +122,29 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return result;
             }
 
-            var code = request.Query[CodeQueryParameter];
+            var code = request.Query[WebHookConstants.CodeQueryParameterName];
             if (StringValues.IsNullOrEmpty(code))
             {
                 Logger.LogError(
                     400,
                     "The WebHook verification request must contain a '{ParameterName}' query parameter.",
-                    CodeQueryParameter);
+                    WebHookConstants.CodeQueryParameterName);
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.General_MissingQueryParameter,
-                    CodeQueryParameter);
+                    WebHookConstants.CodeQueryParameterName);
                 var noCode = WebHookResultUtilities.CreateErrorResult(message);
 
                 return noCode;
             }
 
-            var secretKey = await GetReceiverConfig(request, routeData, receiverName, CodeMinLength, CodeMaxLength);
+            var secretKey = await GetReceiverConfig(
+                request,
+                routeData,
+                receiverName,
+                WebHookConstants.CodeParameterMinLength,
+                WebHookConstants.CodeParameterMaxLength);
             if (secretKey == null)
             {
                 return new NotFoundResult();
@@ -155,12 +155,12 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 Logger.LogError(
                     401,
                     "The '{ParameterName}' query parameter provided in the HTTP request did not match the expected value.",
-                    CodeQueryParameter);
+                    WebHookConstants.CodeQueryParameterName);
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.VerifyCode_BadCode,
-                    CodeQueryParameter);
+                    WebHookConstants.CodeQueryParameterName);
                 var invalidCode = WebHookResultUtilities.CreateErrorResult(message);
 
                 return invalidCode;

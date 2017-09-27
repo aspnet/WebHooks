@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.AspNetCore.WebHooks;
 using Microsoft.AspNetCore.WebHooks.Routing;
 
 namespace Microsoft.AspNetCore.Routing
@@ -26,7 +27,7 @@ namespace Microsoft.AspNetCore.Routing
                 throw new ArgumentNullException(nameof(routeData));
             }
 
-            if (routeData.Values.TryGetValue(WebHookReceiverRouteNames.ReceiverExistsKeyName, out var exists))
+            if (routeData.Values.TryGetValue(WebHookConstants.ReceiverExistsKeyName, out var exists))
             {
                 var receiverExists = (bool)exists;
                 return receiverExists == true;
@@ -50,7 +51,7 @@ namespace Microsoft.AspNetCore.Routing
                 throw new ArgumentNullException(nameof(routeData));
             }
 
-            if (routeData.Values.TryGetValue(WebHookReceiverRouteNames.EventKeyName, out var name))
+            if (routeData.Values.TryGetValue(WebHookConstants.EventKeyName, out var name))
             {
                 var eventName = (string)name;
                 if (!string.IsNullOrEmpty(eventName))
@@ -61,7 +62,7 @@ namespace Microsoft.AspNetCore.Routing
             }
 
             var count = 0;
-            while (routeData.Values.ContainsKey($"{WebHookReceiverRouteNames.EventKeyName}[{count}]"))
+            while (routeData.Values.ContainsKey($"{WebHookConstants.EventKeyName}[{count}]"))
             {
                 count++;
             }
@@ -73,7 +74,7 @@ namespace Microsoft.AspNetCore.Routing
                 // ??? This repeatedly allocates the same strings. Might be good to cache the first 10 or so keys.
                 for (var i = 0; i < count; i++)
                 {
-                    eventNames[i] = (string)routeData.Values[$"{WebHookReceiverRouteNames.EventKeyName}[{count}]"];
+                    eventNames[i] = (string)routeData.Values[$"{WebHookConstants.EventKeyName}[{count}]"];
                 }
             }
 
@@ -96,7 +97,7 @@ namespace Microsoft.AspNetCore.Routing
                 throw new ArgumentNullException(nameof(routeData));
             }
 
-            if (routeData.Values.TryGetValue(WebHookReceiverRouteNames.IdKeyName, out var identifier))
+            if (routeData.Values.TryGetValue(WebHookConstants.IdKeyName, out var identifier))
             {
                 id = (string)identifier;
                 return !string.IsNullOrEmpty(id);
@@ -121,7 +122,7 @@ namespace Microsoft.AspNetCore.Routing
                 throw new ArgumentNullException(nameof(routeData));
             }
 
-            if (routeData.Values.TryGetValue(WebHookReceiverRouteNames.ReceiverKeyName, out var receiver))
+            if (routeData.Values.TryGetValue(WebHookConstants.ReceiverKeyName, out var receiver))
             {
                 receiverName = (string)receiver;
                 return !string.IsNullOrEmpty(receiverName);

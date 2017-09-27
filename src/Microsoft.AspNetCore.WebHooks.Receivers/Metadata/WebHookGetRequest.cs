@@ -29,8 +29,8 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
             }
 
             ChallengeQueryParameterName = challengeQueryParameterName;
-            SecretMinLength = secretKeyMinLength;
-            SecretMaxLength = secretKeyMaxLength;
+            SecretKeyMinLength = secretKeyMinLength;
+            SecretKeyMaxLength = secretKeyMaxLength;
         }
 
         /// <summary>
@@ -42,12 +42,12 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         /// Gets the minimum length of the secret key configured for this receiver. Used to confirm the secret key is
         /// property configured before responding to an HTTP GET request.
         /// </summary>
-        public int SecretMinLength { get; }
+        public int SecretKeyMinLength { get; }
 
         /// <summary>
         /// Gets the maximum length of the secret key configured for this receiver. Used to confirm the secret key is
         /// property configured before responding to an HTTP GET request.
         /// </summary>
-        public int SecretMaxLength { get; }
+        public int SecretKeyMaxLength { get; }
     }
 }

@@ -117,8 +117,8 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         private static string ChooseTemplate(IDictionary<string, string> routeValues)
         {
             var template = "/api/webhooks/incoming/"
-                + $"{{{WebHookReceiverRouteNames.ReceiverKeyName}}}/"
-                + $"{{{WebHookReceiverRouteNames.IdKeyName}?}}";
+                + $"{{{WebHookConstants.ReceiverKeyName}}}/"
+                + $"{{{WebHookConstants.IdKeyName}?}}";
 
             return template;
         }

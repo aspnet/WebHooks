@@ -21,12 +21,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// </summary>
     public class GitHubVerifySignatureFilter : WebHookVerifySignatureFilter, IAsyncResourceFilter
     {
-        internal const int SecretMinLength = 16;
-        internal const int SecretMaxLength = 128;
-
-        internal const string SignatureHeaderKey = "sha1";
-        internal const string SignatureHeaderName = "X-Hub-Signature";
-
         /// <summary>
         /// Instantiates a new <see cref="GitHubVerifySignatureFilter"/> instance.
         /// </summary>
@@ -64,7 +58,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 HttpMethods.IsPost(request.Method))
             {
                 // 1. Get the expected hash from the signature header.
-                var header = GetRequestHeader(request, SignatureHeaderName, out var errorResult);
+                var header = GetRequestHeader(request, GitHubConstants.SignatureHeaderName, out var errorResult);
                 if (errorResult != null)
                 {
                     context.Result = errorResult;
@@ -74,20 +68,20 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 // ??? Do we have efficient name / value parsers that can be used here e.g. in HttpAbstractions?
                 var values = header.SplitAndTrim('=');
                 if (values.Length != 2 ||
-                    !string.Equals(values[0], SignatureHeaderKey, StringComparison.OrdinalIgnoreCase))
+                    !string.Equals(values[0], GitHubConstants.SignatureHeaderKey, StringComparison.OrdinalIgnoreCase))
                 {
                     Logger.LogError(
                         1,
                         "Invalid '{HeaderName}' header value. Expecting a value of '{Key}={Value}'.",
-                        SignatureHeaderName,
-                        SignatureHeaderKey,
+                        GitHubConstants.SignatureHeaderName,
+                        GitHubConstants.SignatureHeaderKey,
                         "<value>");
 
                     var message = string.Format(
                         CultureInfo.CurrentCulture,
                         Resources.Receiver_BadHeaderValue,
-                        SignatureHeaderName,
-                        SignatureHeaderKey,
+                        GitHubConstants.SignatureHeaderName,
+                        GitHubConstants.SignatureHeaderKey,
                         "<value>");
                     errorResult = WebHookResultUtilities.CreateErrorResult(message);
 
@@ -95,7 +89,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                var expectedHash = GetDecodedHash(values[1], SignatureHeaderName, out errorResult);
+                var expectedHash = GetDecodedHash(values[1], GitHubConstants.SignatureHeaderName, out errorResult);
                 if (errorResult != null)
                 {
                     context.Result = errorResult;
@@ -107,8 +101,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     request,
                     routeData,
                     ReceiverName,
-                    SecretMinLength,
-                    SecretMaxLength);
+                    GitHubConstants.SecretKeyMinLength,
+                    GitHubConstants.SecretKeyMaxLength);
                 if (secretKey == null)
                 {
                     context.Result = new NotFoundResult();
@@ -123,7 +117,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 if (!SecretEqual(expectedHash, actualHash))
                 {
                     // Log about the issue and short-circuit remainder of the pipeline.
-                    errorResult = CreateBadSignatureResult(request, SignatureHeaderName);
+                    errorResult = CreateBadSignatureResult(request, GitHubConstants.SignatureHeaderName);
 
                     context.Result = errorResult;
                     return;

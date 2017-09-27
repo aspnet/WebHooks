@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebHooks.Metadata;
-using Microsoft.AspNetCore.WebHooks.Routing;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
@@ -170,7 +169,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 return;
             }
 
-            bindingInfo.BinderModelName = WebHookReceiverRouteNames.EventKeyName;
+            bindingInfo.BinderModelName = WebHookConstants.EventKeyName;
             bindingInfo.BindingSource = BindingSource.Path;
         }
 
@@ -182,7 +181,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 return;
             }
 
-            bindingInfo.BinderModelName = WebHookReceiverRouteNames.IdKeyName;
+            bindingInfo.BinderModelName = WebHookConstants.IdKeyName;
             bindingInfo.BindingSource = BindingSource.Path;
         }
 
@@ -194,7 +193,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 return;
             }
 
-            bindingInfo.BinderModelName = WebHookReceiverRouteNames.ReceiverKeyName;
+            bindingInfo.BinderModelName = WebHookConstants.ReceiverKeyName;
             bindingInfo.BindingSource = BindingSource.Path;
         }
 

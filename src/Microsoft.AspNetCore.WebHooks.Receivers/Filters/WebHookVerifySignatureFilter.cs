@@ -138,7 +138,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 Logger.LogInformation(
                     400,
                     "Expecting exactly one '{HeaderName}' header field in the WebHook request but found " +
-                    "{HeaderCount}. Please ensure that the request contains exactly one '{HeaderName}' header field.",
+                    "{HeaderCount}. Please ensure the request contains exactly one '{HeaderName}' header field.",
                     headerName,
                     headersCount);
 
@@ -218,7 +218,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// </summary>
         /// <param name="hexEncodedValue">The hex-encoded <see cref="string"/>.</param>
         /// <param name="signatureHeaderName">
-        /// The name of the HTTP header that contains the <paramref name="hexEncodedValue"/>.
+        /// The name of the HTTP header containing the <paramref name="hexEncodedValue"/>.
         /// </param>
         /// <param name="errorResult">
         /// Set to <c>null</c> if decoding is successful. Otherwise, an <see cref="IActionResult"/> that when executed

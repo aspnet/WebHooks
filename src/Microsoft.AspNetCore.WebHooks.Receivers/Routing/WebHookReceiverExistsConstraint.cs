@@ -55,7 +55,7 @@ namespace Microsoft.AspNetCore.WebHooks.Routing
                 return false;
             }
 
-            context.RouteContext.RouteData.Values[WebHookReceiverRouteNames.ReceiverExistsKeyName] = true;
+            context.RouteContext.RouteData.Values[WebHookConstants.ReceiverExistsKeyName] = true;
 
             return true;
         }

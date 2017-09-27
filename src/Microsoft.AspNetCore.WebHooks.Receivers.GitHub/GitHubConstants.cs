@@ -4,7 +4,7 @@
 namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
-    /// Well-known names used in GitHub receivers and handlers.
+    /// Well-known names and values used in GitHub receivers and handlers.
     /// </summary>
     public static class GitHubConstants
     {
@@ -22,5 +22,26 @@ namespace Microsoft.AspNetCore.WebHooks
         /// Gets the name of the GitHub ping event.
         /// </summary>
         public static string PingEventName => "ping";
+
+        /// <summary>
+        /// Gets the minimum length of the secret key configured for this receiver.
+        /// </summary>
+        public static int SecretKeyMinLength => 16;
+
+        /// <summary>
+        /// Gets the maximum length of the secret key configured for this receiver.
+        /// </summary>
+        public static int SecretKeyMaxLength => 128;
+
+        /// <summary>
+        /// Gets the key of the hex-encoded signature in the <see cref="SignatureHeaderName"/> value.
+        /// </summary>
+        public static string SignatureHeaderKey => "sha1";
+
+        /// <summary>
+        /// Gets the name of the HTTP header containing key / value pairs, including the (hex-encoded) signature of the
+        /// request.
+        /// </summary>
+        public static string SignatureHeaderName => "X-Hub-Signature";
     }
 }

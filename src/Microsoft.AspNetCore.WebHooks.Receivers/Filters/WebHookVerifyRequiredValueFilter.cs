@@ -162,7 +162,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
             _logger.LogError(
                 501,
-                "A {ReceiverName} WebHook request must contain a '{QueryParameterKey}' query parameter.",
+                "A {ReceiverName} WebHook request must contain a '{QueryParameterName}' query parameter.",
                 receiverName,
                 parameterName);
             message = string.Format(

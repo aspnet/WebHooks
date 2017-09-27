@@ -4,7 +4,7 @@
 namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
-    /// Well-known names used in Dropbox receivers and handlers.
+    /// Well-known names and values used in Dropbox receivers and handlers.
     /// </summary>
     public static class DropboxConstants
     {
@@ -28,16 +28,16 @@ namespace Microsoft.AspNetCore.WebHooks
         /// Gets the minimum length of the secret key configured for this receiver. Used to confirm the secret key is
         /// property configured before responding to an HTTP GET request.
         /// </summary>
-        public static int SecretMinLength => 15;
+        public static int SecretKeyMinLength => 15;
 
         /// <summary>
         /// Gets the maximum length of the secret key configured for this receiver. Used to confirm the secret key is
         /// property configured before responding to an HTTP GET request.
         /// </summary>
-        public static int SecretMaxLength => 128;
+        public static int SecretKeyMaxLength => 128;
 
         /// <summary>
-        /// The name of the HTTP header that contains the (usually hex-encoded) signature of the request.
+        /// Gets the name of the HTTP header that contains the (hex-encoded) signature of the request.
         /// </summary>
         public static string SignatureHeaderName => "X-Dropbox-Signature";
     }
