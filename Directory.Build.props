@@ -39,22 +39,21 @@
 
     <!-- TeamCity CI sets the $BUILD_NUMBER environment variable. But, fall back when building locally. -->
     <!-- Use constant value to work around https://github.com/NuGet/Home/issues/5500 -->
-    <BuildNumber Condition=" '$(BUILDNUMBER)' == '' AND '$(BUILD_NUMBER)' != '' ">$(BUILD_NUMBER)</BuildNumber>
-    <BuildNumber Condition=" '$(BUILDNUMBER)' == '' ">t000</BuildNumber>
+    <BuildNumber Condition=" '$(BuildNumber)' == '' AND '$(BUILD_NUMBER)' != '' ">$(BUILD_NUMBER)</BuildNumber>
+    <BuildNumber Condition=" '$(BuildNumber)' == '' ">t000</BuildNumber>
 
     <VersionSuffix Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)-$(BuildNumber)</VersionSuffix>
   </PropertyGroup>
 
   <!-- Additional specifics of this repository. -->
   <PropertyGroup>
-    <GenerateNuspecDependsOn>_SetPackageOutputPath;$(GenerateNuspecDependsOn)</GenerateNuspecDependsOn>
     <Product>Microsoft ASP.NET Core WebHooks</Product>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/aspnet/WebHooks</RepositoryUrl>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     <AssemblyOriginatorKeyFile>$(RepositoryRoot)tools\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
-    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <SignAssembly>true</SignAssembly>
 
     <!-- Must delay-sign the assemblies because 35MSSharedLib1024.snk contains no private key. -->

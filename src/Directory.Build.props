@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <_ImportParentFile>false</_ImportParentFile>
-    <_ImportParentFile Condition=" $(MSBuildProjectName.StartsWith( 'Microsoft.AspNetCore.' ))">true</_ImportParentFile>
+    <_ImportParentFile Condition="$(MSBuildProjectName.StartsWith( 'Microsoft.AspNetCore.' ))">true</_ImportParentFile>
   </PropertyGroup>
 
   <Import Project="..\Directory.Build.props" Condition="$(_ImportParentFile)" />
@@ -24,18 +24,5 @@
       <_Parameter1>Serviceable</_Parameter1>
       <_Parameter2>True</_Parameter2>
     </AssemblyAttribute>
-  </ItemGroup>
-
-  <ItemGroup Condition="$(_ImportParentFile) AND Exists( '$(MSBuildProjectDirectory)Properties\Resources.resx' )">
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
 </Project>
