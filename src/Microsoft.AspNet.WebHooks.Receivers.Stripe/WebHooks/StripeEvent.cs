@@ -62,8 +62,8 @@ namespace Microsoft.AspNet.WebHooks
         /// Gets the ID of the API request that caused the event.
         /// If null, the event was automatic (e.g. Stripe’s automatic subscription handling).
         /// Request logs are available in the dashboard but currently not in the API.
-        /// Note: this property is populated for events on or after April 23, 2013.
         /// </summary>
+        [JsonIgnore]
         public string Request => RequestData?.Id;
 
         /// <summary>
