@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.AspNet.WebHooks</RootNamespace>
     <AssemblyName>Microsoft.AspNet.WebHooks.Receivers.Stripe.Test</AssemblyName>
-    <OutputPath>..\..\bin\$(Configuration)\Test\</OutputPath>
+    <OutputPath>..\..\bin\Test\$(Configuration)\</OutputPath>
     <RunCodeAnalysis>$(CodeAnalysis)</RunCodeAnalysis>
     <CodeAnalysisAdditionalOptions>/assemblyCompareMode:StrongNameIgnoringVersion</CodeAnalysisAdditionalOptions>
     <CodeAnalysisRuleSet>..\..\FxCopTest.ruleset</CodeAnalysisRuleSet>
