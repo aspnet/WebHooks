@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.AspNet.WebHooks</RootNamespace>
     <AssemblyName>Microsoft.AspNet.WebHooks.Custom.SqlStorage.Test</AssemblyName>
-    <OutputPath>..\..\bin\$(Configuration)\Test\</OutputPath>
+    <OutputPath>..\..\bin\Test\$(Configuration)\</OutputPath>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <RunCodeAnalysis>$(CodeAnalysis)</RunCodeAnalysis>
     <CodeAnalysisAdditionalOptions>/assemblyCompareMode:StrongNameIgnoringVersion</CodeAnalysisAdditionalOptions>
