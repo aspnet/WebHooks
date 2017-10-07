@@ -53,14 +53,14 @@ namespace Microsoft.AspNet.WebHooks
 
         /// <summary>
         /// Gets or sets the number of WebHooks yet to be delivered successfully
-        /// (return a 20x response) to the URLs you’ve specified.
+        /// (return a 20x response) to the URLs you've specified.
         /// </summary>
         [JsonProperty("pending_webhooks")]
         public int PendingWebHooks { get; set; }
 
         /// <summary>
         /// Gets the ID of the API request that caused the event.
-        /// If null, the event was automatic (e.g. Stripe’s automatic subscription handling).
+        /// If null, the event was automatic (e.g. Stripe's automatic subscription handling).
         /// Request logs are available in the dashboard but currently not in the API.
         /// </summary>
         [JsonIgnore]
