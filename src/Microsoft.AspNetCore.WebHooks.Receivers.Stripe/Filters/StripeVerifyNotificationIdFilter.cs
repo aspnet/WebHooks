@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.Internal; // ??? IHttpRequestStreamReaderFactory is pub-internal.
+using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Routing;
@@ -43,8 +43,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         private readonly IModelBinder _bodyModelBinder;
         private readonly HttpClient _httpClient;
         private readonly ModelMetadata _jObjectMetadata;
-        private readonly bool _passThroughTestEvents;
-        private readonly bool _useDirectWebHook;
 
         /// <summary>
         /// Instantiates a new <see cref="StripeVerifyNotificationIdFilter"/> instance.
@@ -97,9 +95,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             _bodyModelBinder = new BodyModelBinder(options.InputFormatters, readerFactory, loggerFactory, options);
             _httpClient = httpClient ?? new HttpClient();
             _jObjectMetadata = metadataProvider.GetMetadataForType(typeof(JObject));
-
-            _passThroughTestEvents = Configuration.IsTrue(StripeConstants.PassThroughTestEventsConfigurationKey);
-            _useDirectWebHook = Configuration.IsTrue(StripeConstants.DirectWebHookConfigurationKey);
         }
 
         /// <summary>
@@ -188,16 +183,17 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
 
             // 5. Handle test events or get confirmed data.
-            // `WebHookVerifyCodeFilter` has already handled the _useDirectWebHook verification.
+            // `WebHookVerifyCodeFilter` has already handled the direct WebHook verification.
             if (IsTestEvent(notificationId))
             {
-                // Will short-circuit test events if !_passThroughTestEvents later, in StripeTestEventResponseFilter.
-                if (_passThroughTestEvents)
+                // Will short-circuit test events if PassThroughTestEventsConfigurationKey is not set later, in
+                // StripeTestEventResponseFilter.
+                if (Configuration.IsTrue(StripeConstants.PassThroughTestEventsConfigurationKey))
                 {
                     Logger.LogInformation(2, "Received a Stripe Test Event.");
                 }
             }
-            else if (!_useDirectWebHook)
+            else if (!Configuration.IsTrue(StripeConstants.DirectWebHookConfigurationKey))
             {
                 // Callback to get the real data.
                 data = await GetEventDataAsync(context.HttpContext.Request, routeData, notificationId);
