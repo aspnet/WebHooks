@@ -35,7 +35,10 @@ namespace System.Web.Http
         /// </summary>
         /// <param name="config">The current <see cref="HttpConfiguration"/>config.</param>
         /// <param name="encryptData">Indicates whether the data should be encrypted using <see cref="IDataProtector"/> while persisted.</param>
-        public static void InitializeCustomWebHooksSqlStorage(this HttpConfiguration config, bool encryptData)
+        /// <param name="connectionStringName">Sets custom name of connection string <see cref="WebHookStoreContext"/></param>
+        /// <param name="schemaName">Sets custom name of schema <see cref="WebHookStoreContext"/></param>
+        /// <param name="tableName">Sets custom name of table <see cref="WebHookStoreContext"/></param>
+        public static void InitializeCustomWebHooksSqlStorage(this HttpConfiguration config, bool encryptData, string connectionStringName = "", string schemaName = "", string tableName = "")
         {
             if (config == null)
             {
@@ -46,6 +49,10 @@ namespace System.Web.Http
 
             ILogger logger = config.DependencyResolver.GetLogger();
             SettingsDictionary settings = config.DependencyResolver.GetSettings();
+
+            WebHookStoreContext.ConnectionStringName = connectionStringName;
+            WebHookStoreContext.SchemaName = schemaName;
+            WebHookStoreContext.TableName = tableName;
 
             // We explicitly set the DB initializer to null to avoid that an existing DB is initialized wrongly.
             Database.SetInitializer<WebHookStoreContext>(null);

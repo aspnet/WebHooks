@@ -3,6 +3,7 @@
 
 using System;
 using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration;
 using Microsoft.AspNet.WebHooks.Storage;
 
 namespace Microsoft.AspNet.WebHooks
@@ -12,14 +13,69 @@ namespace Microsoft.AspNet.WebHooks
     /// </summary>
     public class WebHookStoreContext : DbContext
     {
-        internal const string ConnectionStringName = "MS_SqlStoreConnectionString";
-        private const string ConnectionStringNameParameter = "name=" + ConnectionStringName;
+        private static string _connectionStringName = "MS_SqlStoreConnectionString";
+        private static string _schemaName = "WebHooks";
+        private static string _tableName = "WebHooks";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebHookStoreContext"/> class.
         /// </summary>
-        public WebHookStoreContext() : base(ConnectionStringNameParameter)
+        public WebHookStoreContext() : base(ConnectionStringName)
         {
+        }
+
+        /// <summary>
+        /// Gets or sets the name of connection string. Default value is MS_SqlStoreConnectionString
+        /// </summary>
+        public static string ConnectionStringName
+        {
+            get
+            {
+                return _connectionStringName;
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _connectionStringName = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of schema. Default value is WebHooks
+        /// </summary>
+        public static string SchemaName
+        {
+            get
+            {
+                return _schemaName;
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _schemaName = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of table. Default value is WebHooks
+        /// </summary>
+        public static string TableName
+        {
+            get
+            {
+                return _tableName;
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _tableName = value;
+                }
+            }
         }
 
         /// <summary>
@@ -35,7 +91,9 @@ namespace Microsoft.AspNet.WebHooks
                 throw new ArgumentNullException(nameof(modelBuilder));
             }
 
-            modelBuilder.HasDefaultSchema("WebHooks");
+            modelBuilder.HasDefaultSchema(SchemaName);
+            EntityTypeConfiguration<Registration> registrationConfiguration = modelBuilder.Entity<Registration>();
+            registrationConfiguration.ToTable(TableName);
         }
     }
 }
