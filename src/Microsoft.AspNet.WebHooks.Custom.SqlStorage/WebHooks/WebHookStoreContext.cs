@@ -4,6 +4,8 @@
 using System;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
+using System.Globalization;
+using Microsoft.AspNet.WebHooks.Properties;
 using Microsoft.AspNet.WebHooks.Storage;
 
 namespace Microsoft.AspNet.WebHooks
@@ -13,69 +15,60 @@ namespace Microsoft.AspNet.WebHooks
     /// </summary>
     public class WebHookStoreContext : DbContext
     {
-        private static string _connectionStringName = "MS_SqlStoreConnectionString";
-        private static string _schemaName = "WebHooks";
-        private static string _tableName = "WebHooks";
+        private readonly string _tableName;
+        private readonly string _schemaName = "WebHooks";
+        internal static string ConnectionStringName = "MS_SqlStoreConnectionString";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebHookStoreContext"/> class.
         /// </summary>
-        public WebHookStoreContext() : base(ConnectionStringName)
+        public WebHookStoreContext()
+            : base(GetConnectionStringNameParameter(ConnectionStringName))
         {
         }
 
         /// <summary>
-        /// Gets or sets the name of connection string. Default value is MS_SqlStoreConnectionString
+        /// Initializes a new instance of the <see cref="WebHookStoreContext"/> class using the given string
+        /// as the name or connection string for the database to which a connection will be made.
         /// </summary>
-        public static string ConnectionStringName
+        /// <param name="nameOrConnectionString">Either the database name or a connection string.</param>
+        public WebHookStoreContext(string nameOrConnectionString)
+            : base(GetConnectionStringNameParameter(nameOrConnectionString))
         {
-            get
+            if (string.IsNullOrEmpty(nameOrConnectionString))
             {
-                return _connectionStringName;
+                string msg = string.Format(CultureInfo.CurrentCulture, SqlStorageResources.SqlStore_EmptyString, nameof(nameOrConnectionString));
+                throw new ArgumentException(msg);
             }
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    _connectionStringName = value;
-                }
-            }
+
+            ConnectionStringName = nameOrConnectionString;
         }
 
         /// <summary>
-        /// Gets or sets the name of schema. Default value is WebHooks
+        /// Initializes a new instance of the <see cref="WebHookStoreContext"/> class using the given parameters
+        /// as the name or connection string for the database to which a connection will be made.
+        /// And configures the database schema name and table name.
         /// </summary>
-        public static string SchemaName
+        /// <param name="nameOrConnectionString">Either the database name or a connection string.</param>
+        /// <param name="schemaName">Either the schema name.</param>
+        /// <param name="tableName">Either the table name.</param>
+        public WebHookStoreContext(string nameOrConnectionString, string schemaName, string tableName)
+            : this(nameOrConnectionString)
         {
-            get
+            if (string.IsNullOrEmpty(schemaName))
             {
-                return _schemaName;
+                string msg = string.Format(CultureInfo.CurrentCulture, SqlStorageResources.SqlStore_EmptyString, nameof(schemaName));
+                throw new ArgumentException(msg);
             }
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    _schemaName = value;
-                }
-            }
-        }
 
-        /// <summary>
-        /// Gets or sets the name of table. Default value is WebHooks
-        /// </summary>
-        public static string TableName
-        {
-            get
+            if (string.IsNullOrEmpty(tableName))
             {
-                return _tableName;
+                string msg = string.Format(CultureInfo.CurrentCulture, SqlStorageResources.SqlStore_EmptyString, nameof(tableName));
+                throw new ArgumentException(msg);
             }
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    _tableName = value;
-                }
-            }
+
+            _schemaName = schemaName;
+            _tableName = tableName;
         }
 
         /// <summary>
@@ -91,9 +84,18 @@ namespace Microsoft.AspNet.WebHooks
                 throw new ArgumentNullException(nameof(modelBuilder));
             }
 
-            modelBuilder.HasDefaultSchema(SchemaName);
-            EntityTypeConfiguration<Registration> registrationConfiguration = modelBuilder.Entity<Registration>();
-            registrationConfiguration.ToTable(TableName);
+            modelBuilder.HasDefaultSchema(_schemaName);
+
+            if (!string.IsNullOrEmpty(_tableName))
+            {
+                EntityTypeConfiguration<Registration> registrationConfiguration = modelBuilder.Entity<Registration>();
+                registrationConfiguration.ToTable(_tableName);
+            }
+        }
+
+        private static string GetConnectionStringNameParameter(string connectionStringName)
+        {
+            return "name=" + connectionStringName;
         }
     }
 }
