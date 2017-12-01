@@ -36,7 +36,7 @@ namespace System.Web.Http
         /// <param name="encryptData">Indicates whether the data should be encrypted using <see cref="IDataProtector"/> while persisted.</param>
         public static void InitializeCustomWebHooksSqlStorage(this HttpConfiguration config, bool encryptData)
         {
-            InitializeCustomWebHooksSqlStorage(config, encryptData: encryptData, nameOrConnectionString: "");
+            InitializeCustomWebHooksSqlStorage(config, encryptData: encryptData, nameOrConnectionString: string.Empty);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace System.Web.Http
                 throw new ArgumentNullException(nameof(nameOrConnectionString));
             }
 
-            InitializeCustomWebHooksSqlStorage(config, encryptData: encryptData, nameOrConnectionString: nameOrConnectionString, schemaName: "", tableName: "");
+            InitializeCustomWebHooksSqlStorage(config, encryptData: encryptData, nameOrConnectionString: nameOrConnectionString, schemaName: null, tableName: null);
         }
 
         /// <summary>
@@ -72,14 +72,9 @@ namespace System.Web.Http
                 throw new ArgumentNullException(nameof(config));
             }
 
-            if (schemaName == null)
+            if (nameOrConnectionString == null)
             {
-                throw new ArgumentNullException(nameof(schemaName));
-            }
-
-            if (tableName == null)
-            {
-                throw new ArgumentNullException(nameof(tableName));
+                throw new ArgumentNullException(nameof(nameOrConnectionString));
             }
 
             WebHooksConfig.Initialize(config);

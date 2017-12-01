@@ -38,11 +38,11 @@ namespace Microsoft.AspNet.WebHooks
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlWebHookStore"/> class with the given <paramref name="settings"/>,
-        /// <paramref name="logger"/> and <paramref name="nameOrConnectionString"/>. 
+        /// Initializes a new instance of the <see cref="SqlWebHookStore"/> class with the given <paramref name="settings"/>
+        /// <paramref name="logger"/>, <paramref name="nameOrConnectionString"/>, <paramref name="schemaName"/> and <paramref name="tableName"/>. 
         /// Using this constructor, the data will not be encrypted while persisted to the database.
         /// </summary>
-        public SqlWebHookStore(SettingsDictionary settings, ILogger logger, string nameOrConnectionString)
+        public SqlWebHookStore(SettingsDictionary settings, ILogger logger, string nameOrConnectionString, string schemaName, string tableName)
             : base(logger)
         {
             if (settings == null)
@@ -50,37 +50,7 @@ namespace Microsoft.AspNet.WebHooks
                 throw new ArgumentNullException(nameof(settings));
             }
 
-            if (nameOrConnectionString == null)
-            {
-                throw new ArgumentNullException(nameof(nameOrConnectionString));
-            }
-
             _nameOrConnectionString = nameOrConnectionString;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SqlWebHookStore"/> class with the given <paramref name="settings"/>
-        /// <paramref name="logger"/>, <paramref name="nameOrConnectionString"/>, <paramref name="schemaName"/> and <paramref name="tableName"/>. 
-        /// Using this constructor, the data will not be encrypted while persisted to the database.
-        /// </summary>
-        public SqlWebHookStore(SettingsDictionary settings, ILogger logger, string nameOrConnectionString, string schemaName, string tableName)
-            : this(settings, logger, nameOrConnectionString)
-        {
-            if (settings == null)
-            {
-                throw new ArgumentNullException(nameof(settings));
-            }
-
-            if (schemaName == null)
-            {
-                throw new ArgumentNullException(nameof(schemaName));
-            }
-
-            if (tableName == null)
-            {
-                throw new ArgumentNullException(nameof(tableName));
-            }
-
             _schemaName = schemaName;
             _tableName = tableName;
         }
@@ -102,10 +72,10 @@ namespace Microsoft.AspNet.WebHooks
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlWebHookStore"/> class with the given <paramref name="settings"/>,
-        /// <paramref name="protector"/>, <paramref name="logger"/> and <paramref name="nameOrConnectionString"/>. 
+        /// <paramref name="protector"/>, <paramref name="logger"/>, <paramref name="nameOrConnectionString"/>, <paramref name="schemaName"/> and <paramref name="tableName"/>. 
         /// Using this constructor, the data will be encrypted using the provided <paramref name="protector"/>.
         /// </summary>
-        public SqlWebHookStore(SettingsDictionary settings, IDataProtector protector, ILogger logger, string nameOrConnectionString)
+        public SqlWebHookStore(SettingsDictionary settings, IDataProtector protector, ILogger logger, string nameOrConnectionString, string schemaName, string tableName)
             : base(protector, logger)
         {
             if (settings == null)
@@ -113,37 +83,7 @@ namespace Microsoft.AspNet.WebHooks
                 throw new ArgumentNullException(nameof(settings));
             }
 
-            if (nameOrConnectionString == null)
-            {
-                throw new ArgumentNullException(nameof(nameOrConnectionString));
-            }
-
             _nameOrConnectionString = nameOrConnectionString;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SqlWebHookStore"/> class with the given <paramref name="settings"/>,
-        /// <paramref name="protector"/>, <paramref name="logger"/>, <paramref name="nameOrConnectionString"/>, <paramref name="schemaName"/> and <paramref name="tableName"/>. 
-        /// Using this constructor, the data will be encrypted using the provided <paramref name="protector"/>.
-        /// </summary>
-        public SqlWebHookStore(SettingsDictionary settings, IDataProtector protector, ILogger logger, string nameOrConnectionString, string schemaName, string tableName)
-            : this(settings, protector, logger, nameOrConnectionString)
-        {
-            if (settings == null)
-            {
-                throw new ArgumentNullException(nameof(settings));
-            }
-
-            if (schemaName == null)
-            {
-                throw new ArgumentNullException(nameof(schemaName));
-            }
-
-            if (tableName == null)
-            {
-                throw new ArgumentNullException(nameof(tableName));
-            }
-
             _schemaName = schemaName;
             _tableName = tableName;
         }
@@ -184,11 +124,11 @@ namespace Microsoft.AspNet.WebHooks
         /// <inheritdoc />
         protected override WebHookStoreContext GetContext()
         {
-            if (_nameOrConnectionString == "")
+            if (string.IsNullOrEmpty(_nameOrConnectionString))
             {
                 return new WebHookStoreContext();
             }
-            if (_schemaName == "" && _tableName == "")
+            if (string.IsNullOrEmpty(_schemaName) && string.IsNullOrEmpty(_tableName))
             {
                 return new WebHookStoreContext(_nameOrConnectionString);
             }

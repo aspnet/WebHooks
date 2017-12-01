@@ -22,8 +22,7 @@ namespace Microsoft.AspNet.WebHooks
         /// <summary>
         /// Initializes a new instance of the <see cref="WebHookStoreContext"/> class.
         /// </summary>
-        public WebHookStoreContext()
-            : base(GetConnectionStringNameParameter(ConnectionStringName))
+        public WebHookStoreContext() : base("name=" + ConnectionStringName)
         {
         }
 
@@ -32,15 +31,8 @@ namespace Microsoft.AspNet.WebHooks
         /// as the name or connection string for the database to which a connection will be made.
         /// </summary>
         /// <param name="nameOrConnectionString">Either the database name or a connection string.</param>
-        public WebHookStoreContext(string nameOrConnectionString)
-            : base(GetConnectionStringNameParameter(nameOrConnectionString))
+        public WebHookStoreContext(string nameOrConnectionString) : base(nameOrConnectionString)
         {
-            if (string.IsNullOrEmpty(nameOrConnectionString))
-            {
-                string msg = string.Format(CultureInfo.CurrentCulture, SqlStorageResources.SqlStore_EmptyString, nameof(nameOrConnectionString));
-                throw new ArgumentException(msg);
-            }
-
             ConnectionStringName = nameOrConnectionString;
         }
 
@@ -91,11 +83,6 @@ namespace Microsoft.AspNet.WebHooks
                 EntityTypeConfiguration<Registration> registrationConfiguration = modelBuilder.Entity<Registration>();
                 registrationConfiguration.ToTable(_tableName);
             }
-        }
-
-        private static string GetConnectionStringNameParameter(string connectionStringName)
-        {
-            return "name=" + connectionStringName;
         }
     }
 }
