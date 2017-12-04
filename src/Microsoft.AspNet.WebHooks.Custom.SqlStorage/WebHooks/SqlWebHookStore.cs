@@ -112,16 +112,35 @@ namespace Microsoft.AspNet.WebHooks
         /// <returns>An initialized <see cref="SqlWebHookStore"/> instance.</returns>
         public static IWebHookStore CreateStore(ILogger logger, bool encryptData)
         {
+            return CreateStore(logger, encryptData, nameOrConnectionString: null, schemaName: null, tableName: null);
+        }
+
+        /// <summary>
+        /// Provides a static method for creating a standalone <see cref="SqlWebHookStore"/> instance.
+        /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> instance to use.</param>
+        /// <param name="encryptData">Indicates whether the data should be encrypted using <see cref="IDataProtector"/> while persisted.</param>
+        /// <param name="nameOrConnectionString">The custom connection string or name of the connection string application setting. Used to initialize <see cref="WebHookStoreContext"/>.</param>
+        /// <param name="schemaName">The custom name of database schema. Used to initialize <see cref="WebHookStoreContext"/>.</param>
+        /// <param name="tableName">The custom name of database table. Used to initialize <see cref="WebHookStoreContext"/>.</param>
+        /// <returns></returns>
+        public static IWebHookStore CreateStore(
+            ILogger logger,
+            bool encryptData,
+            string nameOrConnectionString,
+            string schemaName,
+            string tableName)
+        {
             SettingsDictionary settings = CommonServices.GetSettings();
             IWebHookStore store;
             if (encryptData)
             {
                 IDataProtector protector = DataSecurity.GetDataProtector();
-                store = new SqlWebHookStore(settings, protector, logger);
+                store = new SqlWebHookStore(settings, protector, logger, nameOrConnectionString, schemaName, tableName);
             }
             else
             {
-                store = new SqlWebHookStore(settings, logger);
+                store = new SqlWebHookStore(settings, logger, nameOrConnectionString, schemaName, tableName);
             }
             return store;
         }
