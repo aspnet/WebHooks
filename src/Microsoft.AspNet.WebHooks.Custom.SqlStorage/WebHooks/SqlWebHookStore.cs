@@ -75,8 +75,13 @@ namespace Microsoft.AspNet.WebHooks
         /// <paramref name="protector"/>, <paramref name="logger"/>, <paramref name="nameOrConnectionString"/>, <paramref name="schemaName"/> and <paramref name="tableName"/>. 
         /// Using this constructor, the data will be encrypted using the provided <paramref name="protector"/>.
         /// </summary>
-        public SqlWebHookStore(SettingsDictionary settings, IDataProtector protector, ILogger logger, string nameOrConnectionString, string schemaName, string tableName)
-            : base(protector, logger)
+        public SqlWebHookStore(
+            SettingsDictionary settings,
+            IDataProtector protector,
+            ILogger logger,
+            string nameOrConnectionString,
+            string schemaName,
+            string tableName) : base(protector, logger)
         {
             if (settings == null)
             {

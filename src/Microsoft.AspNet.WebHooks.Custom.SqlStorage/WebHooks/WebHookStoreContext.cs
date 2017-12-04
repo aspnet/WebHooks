@@ -15,9 +15,9 @@ namespace Microsoft.AspNet.WebHooks
     /// </summary>
     public class WebHookStoreContext : DbContext
     {
+        internal const string ConnectionStringName = "MS_SqlStoreConnectionString";
         private readonly string _tableName;
         private readonly string _schemaName = "WebHooks";
-        internal static string ConnectionStringName = "MS_SqlStoreConnectionString";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebHookStoreContext"/> class.
@@ -33,7 +33,7 @@ namespace Microsoft.AspNet.WebHooks
         /// <param name="nameOrConnectionString">Either the database name or a connection string.</param>
         public WebHookStoreContext(string nameOrConnectionString) : base(nameOrConnectionString)
         {
-            ConnectionStringName = nameOrConnectionString;
+            NameOrConnectionString = nameOrConnectionString;
         }
 
         /// <summary>
@@ -62,6 +62,11 @@ namespace Microsoft.AspNet.WebHooks
             _schemaName = schemaName;
             _tableName = tableName;
         }
+
+        /// <summary>
+        /// Gets the database name or a connection string.
+        /// </summary>
+        public string NameOrConnectionString { get; }
 
         /// <summary>
         /// Gets or sets the current collection of <see cref="Registration"/> instances.

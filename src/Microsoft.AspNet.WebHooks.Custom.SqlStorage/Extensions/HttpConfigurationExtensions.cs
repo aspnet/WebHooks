@@ -36,7 +36,7 @@ namespace System.Web.Http
         /// <param name="encryptData">Indicates whether the data should be encrypted using <see cref="IDataProtector"/> while persisted.</param>
         public static void InitializeCustomWebHooksSqlStorage(this HttpConfiguration config, bool encryptData)
         {
-            InitializeCustomWebHooksSqlStorage(config, encryptData: encryptData, nameOrConnectionString: string.Empty);
+            InitializeCustomWebHooksSqlStorage(config, encryptData, null);
         }
 
         /// <summary>
@@ -48,12 +48,7 @@ namespace System.Web.Http
         /// <param name="nameOrConnectionString">The custom connection string or name of the connection string application setting. Used to initialize <see cref="WebHookStoreContext"/>.</param>
         public static void InitializeCustomWebHooksSqlStorage(this HttpConfiguration config, bool encryptData, string nameOrConnectionString)
         {
-            if (nameOrConnectionString == null)
-            {
-                throw new ArgumentNullException(nameof(nameOrConnectionString));
-            }
-
-            InitializeCustomWebHooksSqlStorage(config, encryptData: encryptData, nameOrConnectionString: nameOrConnectionString, schemaName: null, tableName: null);
+            InitializeCustomWebHooksSqlStorage(config, encryptData, nameOrConnectionString, schemaName: null, tableName: null);
         }
 
         /// <summary>
@@ -65,16 +60,16 @@ namespace System.Web.Http
         /// <param name="nameOrConnectionString">The custom connection string or name of the connection string application setting. Used to initialize <see cref="WebHookStoreContext"/>.</param>
         /// <param name="schemaName">The custom name of database schema. Used to initialize <see cref="WebHookStoreContext"/>.</param>
         /// <param name="tableName">The custom name of database table. Used to initialize <see cref="WebHookStoreContext"/>.</param>
-        public static void InitializeCustomWebHooksSqlStorage(this HttpConfiguration config, bool encryptData, string nameOrConnectionString, string schemaName, string tableName)
+        public static void InitializeCustomWebHooksSqlStorage(
+            this HttpConfiguration config,
+            bool encryptData,
+            string nameOrConnectionString,
+            string schemaName,
+            string tableName)
         {
             if (config == null)
             {
                 throw new ArgumentNullException(nameof(config));
-            }
-
-            if (nameOrConnectionString == null)
-            {
-                throw new ArgumentNullException(nameof(nameOrConnectionString));
             }
 
             WebHooksConfig.Initialize(config);
