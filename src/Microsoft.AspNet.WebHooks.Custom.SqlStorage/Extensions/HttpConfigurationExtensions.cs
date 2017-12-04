@@ -36,7 +36,7 @@ namespace System.Web.Http
         /// <param name="encryptData">Indicates whether the data should be encrypted using <see cref="IDataProtector"/> while persisted.</param>
         public static void InitializeCustomWebHooksSqlStorage(this HttpConfiguration config, bool encryptData)
         {
-            InitializeCustomWebHooksSqlStorage(config, encryptData, null);
+            InitializeCustomWebHooksSqlStorage(config, encryptData, nameOrConnectionString: null);
         }
 
         /// <summary>
