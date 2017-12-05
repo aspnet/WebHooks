@@ -77,7 +77,6 @@
     <Message Text="Restoring NuGet packages..." Importance="High" />
     <Exec Command='SET BuildNumber=$(BuildNumber)
 "$(NuGetExe)" restore "%(SolutionsToBuild.Identity)" -PackagesDirectory packages -NonInteractive -Verbosity quiet -ConfigFile "$(MsBuildThisFileDirectory)\.nuget\NuGet.Config"' />
-    <!-- Pick the right Microsoft.Web.FxCop package to use and copy it to a standard location. -->
   </Target>
 
   <Target Name="BuildPackages" DependsOnTargets="UnitTest">
@@ -88,6 +87,7 @@
   </Target>
 
   <Target Name="BuildTools">
+    <!-- Pick the right Microsoft.Web.FxCop package to use and copy it to a standard location. -->
     <PropertyGroup>
         <FxCopProjectLocation>$(MsBuildThisFileDirectory)tools\src\Microsoft.Web.FxCop\</FxCopProjectLocation>
         <CustomFxCopRulesPath>$(MsBuildThisFileDirectory)packages\CustomFxCopRules</CustomFxCopRulesPath>
