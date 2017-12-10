@@ -50,6 +50,11 @@ namespace Microsoft.AspNet.WebHooks
                 throw new ArgumentNullException(nameof(settings));
             }
 
+            if (string.IsNullOrEmpty(_nameOrConnectionString))
+            {
+                CheckSqlStorageConnectionString(settings);
+            }
+
             _nameOrConnectionString = nameOrConnectionString;
             _schemaName = schemaName;
             _tableName = tableName;
@@ -88,6 +93,11 @@ namespace Microsoft.AspNet.WebHooks
                 throw new ArgumentNullException(nameof(settings));
             }
 
+            if (string.IsNullOrEmpty(_nameOrConnectionString))
+            {
+                CheckSqlStorageConnectionString(settings);
+            }
+
             _nameOrConnectionString = nameOrConnectionString;
             _schemaName = schemaName;
             _tableName = tableName;
@@ -123,7 +133,7 @@ namespace Microsoft.AspNet.WebHooks
         /// <param name="nameOrConnectionString">The custom connection string or name of the connection string application setting. Used to initialize <see cref="WebHookStoreContext"/>.</param>
         /// <param name="schemaName">The custom name of database schema. Used to initialize <see cref="WebHookStoreContext"/>.</param>
         /// <param name="tableName">The custom name of database table. Used to initialize <see cref="WebHookStoreContext"/>.</param>
-        /// <returns></returns>
+        /// <returns>An initialized <see cref="SqlWebHookStore"/> instance.</returns>
         public static IWebHookStore CreateStore(
             ILogger logger,
             bool encryptData,
@@ -145,20 +155,6 @@ namespace Microsoft.AspNet.WebHooks
             return store;
         }
 
-        /// <inheritdoc />
-        protected override WebHookStoreContext GetContext()
-        {
-            if (string.IsNullOrEmpty(_nameOrConnectionString))
-            {
-                return new WebHookStoreContext();
-            }
-            if (string.IsNullOrEmpty(_schemaName) && string.IsNullOrEmpty(_tableName))
-            {
-                return new WebHookStoreContext(_nameOrConnectionString);
-            }
-            return new WebHookStoreContext(_nameOrConnectionString, _schemaName, _tableName);
-        }
-
         internal static string CheckSqlStorageConnectionString(SettingsDictionary settings)
         {
             if (settings == null)
@@ -173,6 +169,20 @@ namespace Microsoft.AspNet.WebHooks
                 throw new InvalidOperationException(msg);
             }
             return connection.ConnectionString;
+        }
+
+        /// <inheritdoc />
+        protected override WebHookStoreContext GetContext()
+        {
+            if (string.IsNullOrEmpty(_nameOrConnectionString))
+            {
+                return new WebHookStoreContext();
+            }
+            if (string.IsNullOrEmpty(_schemaName) && string.IsNullOrEmpty(_tableName))
+            {
+                return new WebHookStoreContext(_nameOrConnectionString);
+            }
+            return new WebHookStoreContext(_nameOrConnectionString, _schemaName, _tableName);
         }
     }
 }

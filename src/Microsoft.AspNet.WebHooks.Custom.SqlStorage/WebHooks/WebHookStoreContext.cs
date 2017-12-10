@@ -16,14 +16,16 @@ namespace Microsoft.AspNet.WebHooks
     public class WebHookStoreContext : DbContext
     {
         internal const string ConnectionStringName = "MS_SqlStoreConnectionString";
+        private const string ConnectionStringNameParameter = "name=" + ConnectionStringName;
         private readonly string _tableName;
         private readonly string _schemaName = "WebHooks";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebHookStoreContext"/> class.
         /// </summary>
-        public WebHookStoreContext() : base("name=" + ConnectionStringName)
+        public WebHookStoreContext() : base(ConnectionStringNameParameter)
         {
+            NameOrConnectionString = ConnectionStringNameParameter;
         }
 
         /// <summary>
@@ -49,13 +51,13 @@ namespace Microsoft.AspNet.WebHooks
         {
             if (string.IsNullOrEmpty(schemaName))
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, SqlStorageResources.SqlStore_EmptyString, nameof(schemaName));
+                var msg = string.Format(CultureInfo.CurrentCulture, SqlStorageResources.SqlStore_EmptyString, nameof(schemaName));
                 throw new ArgumentException(msg);
             }
 
             if (string.IsNullOrEmpty(tableName))
             {
-                string msg = string.Format(CultureInfo.CurrentCulture, SqlStorageResources.SqlStore_EmptyString, nameof(tableName));
+                var msg = string.Format(CultureInfo.CurrentCulture, SqlStorageResources.SqlStore_EmptyString, nameof(tableName));
                 throw new ArgumentException(msg);
             }
 
@@ -85,7 +87,7 @@ namespace Microsoft.AspNet.WebHooks
 
             if (!string.IsNullOrEmpty(_tableName))
             {
-                EntityTypeConfiguration<Registration> registrationConfiguration = modelBuilder.Entity<Registration>();
+                var registrationConfiguration = modelBuilder.Entity<Registration>();
                 registrationConfiguration.ToTable(_tableName);
             }
         }
