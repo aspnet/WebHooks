@@ -93,7 +93,7 @@ namespace Microsoft.AspNet.WebHooks
                 throw new ArgumentNullException(nameof(settings));
             }
 
-            if (string.IsNullOrEmpty(_nameOrConnectionString))
+            if (string.IsNullOrEmpty(nameOrConnectionString))
             {
                 CheckSqlStorageConnectionString(settings);
             }
