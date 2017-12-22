@@ -147,7 +147,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
 
             var secret = GetSecretKey(
-                SalesforceConstants.ConfigurationName,
+                ReceiverName,
                 routeData,
                 SalesforceConstants.SecretKeyMinLength,
                 SalesforceConstants.SecretKeyMaxLength);
