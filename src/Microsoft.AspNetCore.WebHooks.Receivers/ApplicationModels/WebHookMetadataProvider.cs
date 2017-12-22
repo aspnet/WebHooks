@@ -106,11 +106,10 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             var receiverName = attribute.ReceiverName;
             if (receiverName != null)
             {
-                var bindingMMetadata = _bindingMetadata.FirstOrDefault(
-                    metadata => metadata.IsApplicable(receiverName));
-                if (bindingMMetadata != null)
+                var bindingMetadata = _bindingMetadata.FirstOrDefault(metadata => metadata.IsApplicable(receiverName));
+                if (bindingMetadata != null)
                 {
-                    action.Properties[typeof(IWebHookBindingMetadata)] = bindingMMetadata;
+                    action.Properties[typeof(IWebHookBindingMetadata)] = bindingMetadata;
                 }
             }
 
