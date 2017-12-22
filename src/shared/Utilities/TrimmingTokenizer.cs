@@ -14,6 +14,17 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
     /// </summary>
     internal struct TrimmingTokenizer : IEnumerable<StringSegment>
     {
+        private static readonly char[] WhitespaceCharacters = new[]
+        {
+            // Cribbed from a char.IsWhitespace() optimization in
+            // https://www.codeproject.com/Articles/1014073/Fastest-method-to-remove-all-whitespace-from-Strin
+            '\u0009', '\u000A', '\u000B', '\u000C', '\u000D',
+            '\u0020', '\u0085', '\u00A0', '\u1680', '\u2000',
+            '\u2001', '\u2002', '\u2003', '\u2004', '\u2005',
+            '\u2006', '\u2007', '\u2008', '\u2009', '\u200A',
+            '\u2028', '\u2029', '\u202F', '\u205F', '\u3000',
+        };
+
         private readonly int _maxCount;
         private readonly StringSegment _originalString;
         private readonly StringTokenizer _tokenizer;
@@ -61,6 +72,23 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
         /// <param name="maxCount">The maximum number of <see cref="StringSegment"/>s to return.</param>
         public TrimmingTokenizer(StringSegment value, char[] separators, int maxCount)
         {
+            // !HasValue matches odd-looking (for a struct) value==null check in StringTokenizer(...).
+            if (!value.HasValue)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            if (maxCount < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(maxCount));
+            }
+
+            // Work around lack of automatic whitespace handling in StringTokenizer. This mimics how string.Split(...)
+            // and similar methods (e.g. string.Trim(...)) handle null or empty separator arrays.
+            if (separators == null || separators.Length == 0)
+            {
+                separators = WhitespaceCharacters;
+            }
+
             _maxCount = maxCount;
             _originalString = value;
             _tokenizer = new StringTokenizer(value, separators);
