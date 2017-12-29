@@ -15,9 +15,6 @@
     <Compile Include="..\Microsoft.AspNet.WebHooks.Receivers.Stripe\WebHooks\StripeRequestData.cs">
       <Link>StripeRequestData.cs</Link>
     </Compile>
-    <Compile Include="..\shared\Extensions\WebHookConfigurationExtensions.cs">
-      <Link>Extensions\WebHookConfigurationExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\shared\Utilities\TrimmingTokenizer.cs">
       <Link>Utilities\TrimmingTokenizer.cs</Link>
     </Compile>

@@ -148,7 +148,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(request));
             }
 
-            var contentType = request.GetTypedHeaders()?.ContentType;
+            var contentType = request.GetTypedHeaders().ContentType;
             if (contentType == null)
             {
                 return false;
@@ -159,7 +159,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return true;
             }
 
-            // MVC's JsonInputFormatter does not support text/*+json by default.
+            // MVC's JsonInputFormatter does not support text/*+json by default. RFC 3023 and 6839 allow */*+json but
+            // https://www.iana.org/assignments/media-types/media-types.xhtml shows all +json registrations except
+            // model/gltf+json match application/*+json.
             return contentType.Type.Equals("application", StringComparison.OrdinalIgnoreCase) &&
                 contentType.SubType.EndsWith("+json", StringComparison.OrdinalIgnoreCase);
         }
@@ -180,7 +182,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(request));
             }
 
-            var contentType = request.GetTypedHeaders()?.ContentType;
+            var contentType = request.GetTypedHeaders().ContentType;
             if (contentType == null)
             {
                 return false;
@@ -191,7 +193,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return true;
             }
 
-            // MVC's XML input formatters do not support text/*+xml by default.
+            // MVC's XML input formatters do not support text/*+xml by default. RFC 3023 and 6839 allow */*+xml but
+            // https://www.iana.org/assignments/media-types/media-types.xhtml shows almost all +xml registrations
+            // match application/*+xml and none match text/*+xml.
             return contentType.Type.Equals("application", StringComparison.OrdinalIgnoreCase) &&
                 contentType.SubType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
         }
