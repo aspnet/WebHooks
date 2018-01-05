@@ -20,15 +20,11 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
                     { "   ", new[] { ',' }, 0 },
                     { ",,,", new[] { ',' }, 0 },
                     { "   , , ,  ", new[] { ',' }, 0 },
-                    { "a,b,c", null, 1 },
-                    { "  a, b,  ", null, 2 },
-                    { "a, b, c", null, 3 },
-                    { ",,,a, ,,,b, c,,,", null, 3 },
-                    { " , , , a, , , , b, c, , , ", null, 11 },
                     { "a,b,c", Array.Empty<char>(), 1 },
-                    { "a, b, c", Array.Empty<char>(), 3 },
-                    { ",,,a, ,,,b, c,,,", Array.Empty<char>(), 3 },
-                    { " , , , a, , , , b, c, , , ", Array.Empty<char>(), 11 },
+                    { "a, b, c", Array.Empty<char>(), 1 },
+                    { ",,,a, ,,,b, c,,,", Array.Empty<char>(), 1 },
+                    { " , , , a, , , , b, c, , , ", Array.Empty<char>(), 1 },
+                    { " , , , a, , , , b, c, , , ", new[] { ' ' }, 11 },
                     { "a,b,c", new[] { ',' }, 3 },
                     { " a , b , c ", new[] { ',' }, 3 },
                     { ",,,a, ,,,b, c,,,", new[] { ',' }, 3 },
@@ -53,15 +49,11 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
                     { "   ", new[] { ',' }, 0 },
                     { ",,,", new[] { ',' }, 0 },
                     { "   , , ,  ", new[] { ',' }, 0 },
-                    { "a,b,c", null, 1 },
-                    { "  a, b,  ", null, 2 },
-                    { "a, b, c", null, 2 },
-                    { ",,,a, ,,,b, c,,,", null, 2 },
-                    { " , , , a, , , , b, c, , , ", null, 2 },
                     { "a,b,c", Array.Empty<char>(), 1 },
-                    { "a, b, c", Array.Empty<char>(), 2 },
-                    { ",,,a, ,,,b, c,,,", Array.Empty<char>(), 2 },
-                    { " , , , a, , , , b, c, , , ", Array.Empty<char>(), 2 },
+                    { "a, b, c", Array.Empty<char>(), 1 },
+                    { ",,,a, ,,,b, c,,,", Array.Empty<char>(), 1 },
+                    { " , , , a, , , , b, c, , , ", Array.Empty<char>(), 1 },
+                    { " , , , a, , , , b, c, , , ", new[] { ' ' }, 2 },
                     { "a,b,c", new[] { ',' }, 2 },
                     { " a , b , c ", new[] { ',' }, 2 },
                     { ",,,a, ,,,b, c,,,", new[] { ',' }, 2 },
@@ -86,21 +78,17 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
                     { "   ", new[] { ',' }, Array.Empty<StringSegment>() },
                     { ",,,", new[] { ',' }, Array.Empty<StringSegment>() },
                     { "   , , ,  ", new[] { ',' }, Array.Empty<StringSegment>() },
-                    { "a,b,c", null, new StringSegment[] { "a,b,c" } },
-                    { "  a, b,  ", null, new StringSegment[] { "a,", "b," } },
-                    { "a, b, c", null, new StringSegment[] { "a,", "b,", "c" } },
-                    { ",,,a, ,,,b, c,,,", null, new StringSegment[] { ",,,a,", ",,,b,", "c,,," } },
-                    {
-                        " , , , a, , , , b, c, , , ",
-                        null,
-                        new StringSegment[] { ",", ",", ",", "a,", ",", ",", ",", "b,", "c,", ",", "," }
-                    },
                     { "a,b,c", Array.Empty<char>(), new StringSegment[] { "a,b,c" } },
-                    { "a, b, c", Array.Empty<char>(), new StringSegment[] { "a,", "b,", "c" } },
-                    { ",,,a, ,,,b, c,,,", Array.Empty<char>(), new StringSegment[] { ",,,a,", ",,,b,", "c,,," } },
+                    { "a, b, c", Array.Empty<char>(), new StringSegment[] { "a, b, c" } },
+                    { ",,,a, ,,,b, c,,,", Array.Empty<char>(), new StringSegment[] { ",,,a, ,,,b, c,,," } },
                     {
                         " , , , a, , , , b, c, , , ",
                         Array.Empty<char>(),
+                        new StringSegment[] { ", , , a, , , , b, c, , ," }
+                    },
+                    {
+                        " , , , a, , , , b, c, , , ",
+                        new[] { ' ' },
                         new StringSegment[] { ",", ",", ",", "a,", ",", ",", ",", "b,", "c,", ",", "," }
                     },
                     { "a,b,c", new[] { ',' }, new StringSegment[] { "a", "b", "c" } },
@@ -127,17 +115,17 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
                     { "   ", new[] { ',' }, Array.Empty<StringSegment>() },
                     { ",,,", new[] { ',' }, Array.Empty<StringSegment>() },
                     { "   , , ,  ", new[] { ',' }, Array.Empty<StringSegment>() },
-                    { "a,b,c", null, new StringSegment[] { "a,b,c" } },
-                    { "  a, b,  ", null, new StringSegment[] { "a,", "b," } },
-                    { "a, b, c", null, new StringSegment[] { "a,", "b, c" } },
-                    { ",,,a, ,,,b, c,,,", null, new StringSegment[] { ",,,a,", ",,,b, c,,," } },
-                    { " , , , a, , , , b, c, , , ", null, new StringSegment[] { ",", ", , a, , , , b, c, , ," } },
                     { "a,b,c", Array.Empty<char>(), new StringSegment[] { "a,b,c" } },
-                    { "a, b, c", Array.Empty<char>(), new StringSegment[] { "a,", "b, c" } },
-                    { ",,,a, ,,,b, c,,,", Array.Empty<char>(), new StringSegment[] { ",,,a,", ",,,b, c,,," } },
+                    { "a, b, c", Array.Empty<char>(), new StringSegment[] { "a, b, c" } },
+                    { ",,,a, ,,,b, c,,,", Array.Empty<char>(), new StringSegment[] { ",,,a, ,,,b, c,,," } },
                     {
                         " , , , a, , , , b, c, , , ",
                         Array.Empty<char>(),
+                        new StringSegment[] { ", , , a, , , , b, c, , ," }
+                    },
+                    {
+                        " , , , a, , , , b, c, , , ",
+                        new[] { ' ' },
                         new StringSegment[] { ",", ", , a, , , , b, c, , ," }
                     },
                     { "a,b,c", new[] { ',' }, new StringSegment[] { "a", "b,c" } },
@@ -272,7 +260,7 @@ namespace Microsoft.AspNetCore.WebHooks.Utilities
         public void Count_ReturnsExpectedValue_WithMaxCount(int maxCount, int expetedCount)
         {
             // Arrange
-            var tokenizer = new TrimmingTokenizer(" , , , a, , , , b, c, , , ", separators: null, maxCount: maxCount);
+            var tokenizer = new TrimmingTokenizer(" , , , a, , , , b, c, , , ", new[] { ' ' }, maxCount);
 
             // Act
             var actual = tokenizer.Count;
