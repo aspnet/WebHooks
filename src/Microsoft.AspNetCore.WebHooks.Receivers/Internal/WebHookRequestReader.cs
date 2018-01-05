@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.WebHooks.Properties;
+using Microsoft.AspNetCore.WebHooks.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -47,27 +47,45 @@ namespace Microsoft.AspNetCore.WebHooks.Internal
         }
 
         /// <inheritdoc />
-        public bool IsValidPost(HttpRequest request)
-        {
-            return request.Body != null &&
-                request.ContentLength.HasValue &&
-                request.ContentLength.Value > 0L &&
-                HttpMethods.IsPost(request.Method);
-        }
-
-        /// <inheritdoc />
-        /// <remarks>This method assumes the necessary input formatters have been registered.</remarks>
-        public async Task<TModel> ReadBodyAsync<TModel>(
-            ActionContext actionContext,
-            IList<IValueProviderFactory> valueProviderFactories)
+        public async Task<IFormCollection> ReadAsFormDataAsync(ActionContext actionContext)
         {
             if (actionContext == null)
             {
                 throw new ArgumentNullException(nameof(actionContext));
             }
-            if (valueProviderFactories == null)
+
+            var request = actionContext.HttpContext.Request;
+            if (!IsValidPost(request) ||
+                !request.HasFormContentType)
             {
-                throw new ArgumentNullException(nameof(valueProviderFactories));
+                // Filters e.g. WebHookVerifyBodyTypeFilter will log and return errors about these conditions.
+                return null;
+            }
+
+            // ReadFormAsync does not always ensure the body can be read multiple times.
+            await WebHookHttpRequestUtilities.PrepareRequestBody(request);
+
+            // Read request body.
+            IFormCollection formCollection;
+            try
+            {
+                formCollection = await request.ReadFormAsync();
+            }
+            finally
+            {
+                request.Body.Seek(0L, SeekOrigin.Begin);
+            }
+
+            return formCollection;
+        }
+
+        /// <inheritdoc />
+        /// <remarks>This method assumes the necessary input formatters have been registered.</remarks>
+        public async Task<TModel> ReadBodyAsync<TModel>(ActionContext actionContext)
+        {
+            if (actionContext == null)
+            {
+                throw new ArgumentNullException(nameof(actionContext));
             }
 
             var request = actionContext.HttpContext.Request;
@@ -78,7 +96,12 @@ namespace Microsoft.AspNetCore.WebHooks.Internal
             }
 
             var modelMetadata = _metadataProvider.GetMetadataForType(typeof(TModel));
-            var bindingContext = await CreateBindingContextAsync(actionContext, valueProviderFactories, modelMetadata);
+            var bindingContext = DefaultModelBindingContext.CreateBindingContext(
+                actionContext,
+                new CompositeValueProvider(),
+                modelMetadata,
+                bindingInfo: null,
+                modelName: WebHookConstants.ModelStateBodyModelName);
 
             // Read request body.
             try
@@ -104,19 +127,12 @@ namespace Microsoft.AspNetCore.WebHooks.Internal
             return (TModel)bindingContext.Result.Model;
         }
 
-        private static async Task<ModelBindingContext> CreateBindingContextAsync(
-            ActionContext actionContext,
-            IList<IValueProviderFactory> valueProviderFactories,
-            ModelMetadata modelMetadata)
+        private bool IsValidPost(HttpRequest request)
         {
-            var valueProvider = await CompositeValueProvider.CreateAsync(actionContext, valueProviderFactories);
-
-            return DefaultModelBindingContext.CreateBindingContext(
-                actionContext,
-                valueProvider,
-                modelMetadata,
-                bindingInfo: null,
-                modelName: WebHookConstants.ModelStateBodyModelName);
+            return request.Body != null &&
+                request.ContentLength.HasValue &&
+                request.ContentLength.Value > 0L &&
+                HttpMethods.IsPost(request.Method);
         }
     }
 }

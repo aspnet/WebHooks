@@ -78,7 +78,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
 
             // 2. Get JObject from the request body.
-            var data = await _requestReader.ReadAsJObjectAsync(context, context.ValueProviderFactories);
+            var data = await _requestReader.ReadBodyAsync<JObject>(context);
             if (data == null)
             {
                 var modelState = context.ModelState;

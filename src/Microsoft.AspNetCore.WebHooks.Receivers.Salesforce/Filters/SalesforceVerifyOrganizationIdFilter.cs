@@ -101,7 +101,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
 
             // 3. Get XElement from the request body.
-            var data = await _requestReader.ReadAsXmlAsync(context, context.ValueProviderFactories);
+            var data = await _requestReader.ReadBodyAsync<XElement>(context);
             if (data == null)
             {
                 var modelState = context.ModelState;
