@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.AspNetCore.WebHooks.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.WebHooks.Filters
 {
@@ -140,9 +142,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     break;
 
                 case WebHookBodyType.Json:
-                    var json = await _requestReader.ReadAsJContainerAsync(
-                        context,
-                        context.ValueProviderFactories);
+                    var json = await _requestReader.ReadBodyAsync<JContainer>(context);
                     if (json == null)
                     {
                         var modelState = context.ModelState;
@@ -164,7 +164,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     break;
 
                 case WebHookBodyType.Xml:
-                    var xml = await _requestReader.ReadAsXmlAsync(context, context.ValueProviderFactories);
+                    var xml = await _requestReader.ReadBodyAsync<XElement>(context);
                     if (xml == null)
                     {
                         var modelState = context.ModelState;
