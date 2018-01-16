@@ -295,6 +295,15 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The &apos;{0}&apos; header value is invalid. It must be a valid Base64-encoded string..
+        /// </summary>
+        internal static string VerifySignature_BadBase64HeaderEncoding {
+            get {
+                return ResourceManager.GetString("VerifySignature_BadBase64HeaderEncoding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expecting exactly one &apos;{0}&apos; header field in the WebHook request but found {1}. Please ensure the request contains exactly one &apos;{0}&apos; header field..
         /// </summary>
         internal static string VerifySignature_BadHeader {

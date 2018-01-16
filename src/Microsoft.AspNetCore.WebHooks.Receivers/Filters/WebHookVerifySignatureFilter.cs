@@ -62,6 +62,41 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         }
 
         /// <summary>
+        /// Converts a base64-encoded string to a <see cref="T:byte[]"/> (with or without URI-safe mode encoding).
+        /// </summary>
+        /// <param name="content">The Base64-encoded string to convert.</param>
+        /// <returns>The converted <see cref="T:byte[]"/>.</returns>
+        public static byte[] FromBase64(string content)
+        {
+            if (string.IsNullOrEmpty(content))
+            {
+                return new byte[0];
+            }
+
+            // Reverse URI-safe encoding.
+            var base64 = content
+                .Replace('_', '/')
+                .Replace('-', '+');
+
+            // Append padding if missing in content.
+            switch (content.Length % 4)
+            {
+                case 2:
+                    base64 += "==";
+                    break;
+
+                case 3:
+                    base64 += "=";
+                    break;
+            }
+
+            // May throw a FormatException if base64 is not valid.
+            var data = Convert.FromBase64String(base64);
+
+            return data;
+        }
+
+        /// <summary>
         /// Converts a hex-encoded string to a <see cref="T:byte[]"/>.
         /// </summary>
         /// <param name="content">THe hex-encoded string to convert.</param>
@@ -192,10 +227,57 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <param name="secret">The key data used to initialize the <see cref="HMACSHA1"/>.</param>
         /// <returns>
-        /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA1 HMAC of the
-        /// <paramref name="request"/>'s body.
+        /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA1 HMAC of
+        /// the <paramref name="request"/>'s body.
         /// </returns>
-        protected virtual async Task<byte[]> GetRequestBodyHash_SHA1(HttpRequest request, byte[] secret)
+        protected Task<byte[]> GetRequestBodyHash_SHA1(HttpRequest request, byte[] secret)
+        {
+            return GetRequestBodyHash_SHA1(request, secret, prefix: null);
+        }
+
+        /// <summary>
+        /// Returns the SHA1 HMAC of the given <paramref name="prefix"/> followed by the given
+        /// <paramref name="request"/>'s body.
+        /// </summary>
+        /// <param name="request">The current <see cref="HttpRequest"/>.</param>
+        /// <param name="secret">The key data used to initialize the <see cref="HMACSHA1"/>.</param>
+        /// <param name="prefix">
+        /// If non-<see langword="null"/> and non-empty, additional <c>byte</c>s to include in the hashed content
+        /// before the <paramref name="request"/>'s body.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA1 HMAC of
+        /// the <paramref name="prefix"/> followed by the <paramref name="request"/>'s body.
+        /// </returns>
+        protected Task<byte[]> GetRequestBodyHash_SHA1(HttpRequest request, byte[] secret, byte[] prefix)
+        {
+            return GetRequestBodyHash_SHA1(request, secret, prefix, suffix: null);
+        }
+
+        /// <summary>
+        /// Returns the SHA1 HMAC of the given <paramref name="prefix"/>, the given <paramref name="request"/>'s
+        /// body, and the given <paramref name="suffix"/> (in that order).
+        /// </summary>
+        /// <param name="request">The current <see cref="HttpRequest"/>.</param>
+        /// <param name="secret">The key data used to initialize the <see cref="HMACSHA1"/>.</param>
+        /// <param name="prefix">
+        /// If non-<see langword="null"/> and non-empty, additional <c>byte</c>s to include in the hashed content
+        /// before the <paramref name="request"/>'s body.
+        /// </param>
+        /// <param name="suffix">
+        /// If non-<see langword="null"/> and non-empty, additional <c>byte</c>s to include in the hashed content
+        /// after the <paramref name="request"/>'s body.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA1 HMAC of
+        /// the <paramref name="prefix"/>, the <paramref name="request"/>'s body, and the <paramref name="suffix"/>
+        /// (in that order).
+        /// </returns>
+        protected virtual async Task<byte[]> GetRequestBodyHash_SHA1(
+            HttpRequest request,
+            byte[] secret,
+            byte[] prefix,
+            byte[] suffix)
         {
             await WebHookHttpRequestUtilities.PrepareRequestBody(request);
 
@@ -203,8 +285,43 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             {
                 try
                 {
-                    var hash = hasher.ComputeHash(request.Body);
-                    return hash;
+                    if (prefix != null && prefix.Length > 0)
+                    {
+                        hasher.TransformBlock(
+                            prefix,
+                            inputOffset: 0,
+                            inputCount: prefix.Length,
+                            outputBuffer: null,
+                            outputOffset: 0);
+                    }
+
+                    // Split body into 4K chunks.
+                    var buffer = new byte[4096];
+                    var inputStream = request.Body;
+                    int bytesRead;
+                    while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        hasher.TransformBlock(
+                            buffer,
+                            inputOffset: 0,
+                            inputCount: bytesRead,
+                            outputBuffer: null,
+                            outputOffset: 0);
+                    }
+
+                    if (suffix != null && suffix.Length > 0)
+                    {
+                        hasher.TransformBlock(
+                            suffix,
+                            inputOffset: 0,
+                            inputCount: suffix.Length,
+                            outputBuffer: null,
+                            outputOffset: 0);
+                    }
+
+                    hasher.TransformFinalBlock(Array.Empty<byte>(), inputOffset: 0, inputCount: 0);
+
+                    return hasher.Hash;
                 }
                 finally
                 {
@@ -229,20 +346,48 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         }
 
         /// <summary>
-        /// Returns the SHA256 HMAC of the given <paramref name="prefix"/> (if non-<see langword="null"/>) followed by
-        /// the given <paramref name="request"/>'s body.
+        /// Returns the SHA256 HMAC of the given <paramref name="prefix"/> followed by the given
+        /// <paramref name="request"/>'s body.
         /// </summary>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <param name="secret">The key data used to initialize the <see cref="HMACSHA256"/>.</param>
-        /// <param name="prefix">If non-<see langword="null"/>, additional <c>byte</c>s to include in the hash.</param>
+        /// <param name="prefix">
+        /// If non-<see langword="null"/> and non-empty, additional <c>byte</c>s to include in the hashed content
+        /// before the <paramref name="request"/>'s body.
+        /// </param>
         /// <returns>
         /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA256 HMAC of
         /// the <paramref name="prefix"/> followed by the <paramref name="request"/>'s body.
         /// </returns>
+        protected Task<byte[]> GetRequestBodyHash_SHA256(HttpRequest request, byte[] secret, byte[] prefix)
+        {
+            return GetRequestBodyHash_SHA256(request, secret, prefix, suffix: null);
+        }
+
+        /// <summary>
+        /// Returns the SHA256 HMAC of the given <paramref name="prefix"/>, the given <paramref name="request"/>'s
+        /// body, and the given <paramref name="suffix"/> (in that order).
+        /// </summary>
+        /// <param name="request">The current <see cref="HttpRequest"/>.</param>
+        /// <param name="secret">The key data used to initialize the <see cref="HMACSHA256"/>.</param>
+        /// <param name="prefix">
+        /// If non-<see langword="null"/> and non-empty, additional <c>byte</c>s to include in the hashed content
+        /// before the <paramref name="request"/>'s body.
+        /// </param>
+        /// <param name="suffix">
+        /// If non-<see langword="null"/> and non-empty, additional <c>byte</c>s to include in the hashed content
+        /// after the <paramref name="request"/>'s body.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA256 HMAC of
+        /// the <paramref name="prefix"/>, the <paramref name="request"/>'s body, and the <paramref name="suffix"/>
+        /// (in that order).
+        /// </returns>
         protected virtual async Task<byte[]> GetRequestBodyHash_SHA256(
             HttpRequest request,
             byte[] secret,
-            byte[] prefix)
+            byte[] prefix,
+            byte[] suffix)
         {
             await WebHookHttpRequestUtilities.PrepareRequestBody(request);
 
@@ -260,8 +405,33 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                             outputOffset: 0);
                     }
 
-                    var hash = hasher.ComputeHash(request.Body);
-                    return hash;
+                    // Split body into 4K chunks.
+                    var buffer = new byte[4096];
+                    var inputStream = request.Body;
+                    int bytesRead;
+                    while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        hasher.TransformBlock(
+                            buffer,
+                            inputOffset: 0,
+                            inputCount: bytesRead,
+                            outputBuffer: null,
+                            outputOffset: 0);
+                    }
+
+                    if (suffix != null && suffix.Length > 0)
+                    {
+                        hasher.TransformBlock(
+                            suffix,
+                            inputOffset: 0,
+                            inputCount: suffix.Length,
+                            outputBuffer: null,
+                            outputOffset: 0);
+                    }
+
+                    hasher.TransformFinalBlock(Array.Empty<byte>(), inputOffset: 0, inputCount: 0);
+
+                    return hasher.Hash;
                 }
                 finally
                 {
@@ -310,6 +480,51 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             var message = string.Format(
                 CultureInfo.CurrentCulture,
                 Resources.VerifySignature_BadHeaderEncoding,
+                signatureHeaderName);
+            errorResult = new BadRequestObjectResult(message);
+
+            return null;
+        }
+
+        /// <summary>
+        /// Decode the given <paramref name="base64EncodedValue"/>.
+        /// </summary>
+        /// <param name="base64EncodedValue">The Base64-encoded <see cref="string"/>.</param>
+        /// <param name="signatureHeaderName">
+        /// The name of the HTTP header containing the <paramref name="base64EncodedValue"/>.
+        /// </param>
+        /// <param name="errorResult">
+        /// Set to <see langword="null"/> if decoding is successful. Otherwise, an <see cref="IActionResult"/> that
+        /// when executed will produce a response containing details about the problem.
+        /// </param>
+        /// <returns>
+        /// If successful, the <see cref="byte"/> array containing the decoded hash. <see langword="null"/> if any
+        /// issues occur.
+        /// </returns>
+        protected virtual byte[] GetBase64DecodedHash(
+            string base64EncodedValue,
+            string signatureHeaderName,
+            out IActionResult errorResult)
+        {
+            try
+            {
+                var decodedHash = FromBase64(base64EncodedValue);
+                errorResult = null;
+
+                return decodedHash;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(
+                    401,
+                    ex,
+                    "The '{HeaderName}' header value is invalid. It must be a valid Base64-encoded string.",
+                    signatureHeaderName);
+            }
+
+            var message = string.Format(
+                CultureInfo.CurrentCulture,
+                Resources.VerifySignature_BadBase64HeaderEncoding,
                 signatureHeaderName);
             errorResult = new BadRequestObjectResult(message);
 
