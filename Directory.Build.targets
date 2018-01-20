@@ -1,7 +1,13 @@
 <Project>
   <!-- Will also stop MsBuild searching parent directories for this file. -->
 
-  <!-- Delayed because default items are added after Directory.Build.props runs, causing invalid duplicate entries. -->
+  <!-- Delayed because $(TargetFramework) may not be set when Directory.Build.props is imported. -->
+  <PropertyGroup>
+    <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.0</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">2.1.0-preview1-26016-05</RuntimeFrameworkVersion>
+  </PropertyGroup>
+
+  <!-- Delayed because default items are added after Directory.Build.props is imported, causing invalid duplicate entries. -->
   <ItemGroup Condition="Exists( '$(MSBuildProjectDirectory)\Properties\Resources.resx' )">
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>

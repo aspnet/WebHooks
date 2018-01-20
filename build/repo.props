@@ -3,6 +3,11 @@
     <DisablePackageReferenceRestrictions>true</DisablePackageReferenceRestrictions>
   </PropertyGroup>
 
+  <ItemGroup>
+    <DotNetCoreRuntime Include="2.0.0" />
+    <DotNetCoreRuntime Include="2.1.0-preview1-26016-05" />
+  </ItemGroup>
+
   <Target Name="GetBuildNumber">
     <!-- Create second-based build number for local builds. 635556672000000000 is Jan 1, 2015. -->
     <PropertyGroup>
