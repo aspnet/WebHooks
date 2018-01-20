@@ -3,7 +3,9 @@
 
 AppVeyor: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/aspnet/webhooks?branch=dev&svg=true)](https://ci.appveyor.com/project/aspnetci/webhooks/branch/dev)
 
-ASP.NET Web Hooks provide support for sending and receiving WebHooks. 
+ASP.NET Core WebHooks provide support for receiving WebHooks. The packages depend on [ASP.NET Core MVC](https://github.com/aspnet/mvc).
+
+ASP.NET Core MVC is part of ASP.NET Core. You can find samples, documentation and getting started instructions for ASP.NET Core at the [Home](https://github.com/aspnet/home) repo.
 
 ### Samples
 - [All Samples](/samples/)
@@ -20,3 +22,7 @@ ASP.NET Web Hooks provide support for sending and receiving WebHooks.
 - [SalesForce](/samples/SalesforceCoreReceiver)
 - [Slack](/samples/SlackCoreReceiver)
 - [Stripe](/samples/StripeCoreReceiver)
+
+### Building from source
+
+To run a complete build on command line only, execute `build.cmd` or `build.sh` without arguments. See [developer documentation](https://github.com/aspnet/Home/wiki) for more details.
