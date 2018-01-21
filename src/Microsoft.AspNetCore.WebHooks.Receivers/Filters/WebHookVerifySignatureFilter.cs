@@ -297,7 +297,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     var buffer = new byte[4096];
                     var inputStream = request.Body;
                     int bytesRead;
-                    while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+                    while ((bytesRead = await inputStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                     {
                         hasher.TransformBlock(
                             buffer,
@@ -407,7 +407,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     var buffer = new byte[4096];
                     var inputStream = request.Body;
                     int bytesRead;
-                    while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+                    while ((bytesRead = await inputStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                     {
                         hasher.TransformBlock(
                             buffer,
