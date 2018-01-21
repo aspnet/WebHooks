@@ -167,6 +167,60 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             Assert.Equal(expectedMessage, result.Value);
         }
 
+        // Captured content, confirmed test succeeded, restored TestSecret, and changed signature guard to match.
+        [Fact]
+        public async Task OnResourceExecutionAsync_Succeeds_WithRealMessage()
+        {
+            // Arrange
+            var filter = GetFilter(TestSecret);
+            var content = "{\"model\":{\"id\":\"5a5e5f375c8e0c172aa8346e\",\"name\":\"Done\",\"closed\":false," +
+                "\"idBoard\":\"5a5e5f375c8e0c172aa8346b\",\"pos\":49152},\"action\":{\"id\":" +
+                "\"5a63bde7f1598138fdec45b8\",\"idMemberCreator\":\"5a5e5f348cd3653c8a06e4a6\",\"data\":{\"list\":" +
+                "{\"name\":\"Done\",\"id\":\"5a5e5f375c8e0c172aa8346e\"},\"board\":{\"shortLink\":\"djV2ms51\"," +
+                "\"name\":\"My board\",\"id\":\"5a5e5f375c8e0c172aa8346b\"},\"card\":{\"shortLink\":\"yglTnQly\"," +
+                "\"idShort\":3,\"id\":\"5a5e5f88864a35655e139af1\",\"name\":\"I'm done!\"},\"old\":{\"name\":" +
+                "\"I'm done with something\"}},\"type\":\"updateCard\",\"date\":\"2018-01-20T22:08:39.787Z\"," +
+                "\"display\":{\"translationKey\":\"action_renamed_card\",\"entities\":{\"card\":{\"type\":\"card\"," +
+                "\"id\":\"5a5e5f88864a35655e139af1\",\"shortLink\":\"yglTnQly\",\"text\":\"I'm done!\"},\"name\":" +
+                "{\"type\":\"text\",\"text\":\"I'm done with something\"},\"memberCreator\":{\"type\":\"member\"," +
+                "\"id\":\"5a5e5f348cd3653c8a06e4a6\",\"username\":\"dougbunting1\",\"text\":\"Doug Bunting\"}}}," +
+                "\"memberCreator\":{\"id\":\"5a5e5f348cd3653c8a06e4a6\",\"avatarHash\":" +
+                "\"b8714517b3b510820b30d24b55f32bf8\",\"fullName\":\"Doug Bunting\",\"initials\":\"DRB\"," +
+                "\"username\":\"dougbunting1\"}}}";
+            var context = GetContext(content);
+            var request = context.HttpContext.Request;
+            request.Host = new HostString("requestb.in");
+            request.Path = "/11ue7rt1";
+            request.Scheme = Uri.UriSchemeHttps;
+
+            var url = "https://requestb.in/11ue7rt1";
+            var signature = GetSignatureHeader(content, url);
+            context.HttpContext.Request.Headers.Add(TrelloConstants.SignatureHeaderName, signature);
+
+            var nextCount = 0;
+
+            // Guards
+            Assert.Equal(1044, content.Length);
+            Assert.Equal("ZRFZgf/mGj2fp0LnvRTsjmMW6aY=", signature);
+
+            // Act
+            await filter.OnResourceExecutionAsync(context, () =>
+            {
+                nextCount++;
+                var executedContext = new ResourceExecutedContext(context, context.Filters)
+                {
+                    Result = context.Result,
+                };
+
+                return Task.FromResult(executedContext);
+            });
+
+            // Assert
+            Assert.Null(context.Result);
+            Assert.Equal(1, nextCount);
+        }
+
+
         [Fact]
         public async Task OnResourceExecutionAsync_Succeeds_IfPostIsNotJson()
         {
@@ -362,10 +416,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             return GetFilter(settings);
         }
 
-        private static string GetSignatureHeader(string content)
+        private static string GetSignatureHeader(string content, string url = TestUrl)
         {
             var secret = Encoding.UTF8.GetBytes(TestSecret);
-            var fullContent = $"{content}{TestUrl}";
+            var fullContent = $"{content}{url}";
             var data = Encoding.UTF8.GetBytes(fullContent);
 
             using (var hasher = new HMACSHA1(secret))
