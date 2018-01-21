@@ -242,6 +242,19 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             byte[] prefix,
             byte[] suffix)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            if (secret == null)
+            {
+                throw new ArgumentNullException(nameof(secret));
+            }
+            if (secret.Length == 0)
+            {
+                throw new ArgumentException(Resources.General_ArgumentCannotBeNullOrEmpty);
+            }
+
             await WebHookHttpRequestUtilities.PrepareRequestBody(request);
 
             using (var hasher = new HMACSHA1(secret))
@@ -352,6 +365,19 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             byte[] prefix,
             byte[] suffix)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            if (secret == null)
+            {
+                throw new ArgumentNullException(nameof(secret));
+            }
+            if (secret.Length == 0)
+            {
+                throw new ArgumentException(Resources.General_ArgumentCannotBeNullOrEmpty);
+            }
+
             await WebHookHttpRequestUtilities.PrepareRequestBody(request);
 
             using (var hasher = new HMACSHA256(secret))
