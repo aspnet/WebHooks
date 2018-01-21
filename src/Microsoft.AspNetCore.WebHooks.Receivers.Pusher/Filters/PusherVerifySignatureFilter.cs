@@ -80,10 +80,17 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                var expectedHash = GetDecodedHash(header, PusherConstants.SignatureHeaderName, out errorResult);
-                if (errorResult != null)
+                byte[] expectedHash;
+                try
                 {
-                    context.Result = errorResult;
+                    expectedHash = FromHex(header);
+                }
+                catch (Exception exception)
+                {
+                    context.Result = CreateBadHexEncodingResult(
+                        ReceiverName,
+                        PusherConstants.SignatureHeaderName,
+                        exception);
                     return;
                 }
 
@@ -95,7 +102,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                var applicationKey = GetRequestHeader(request, PusherConstants.SignatureKeyHeaderName, out errorResult);
+                var applicationKey = GetRequestHeader(
+                    request,
+                    PusherConstants.SignatureKeyHeaderName,
+                    out errorResult);
                 if (errorResult != null)
                 {
                     context.Result = errorResult;

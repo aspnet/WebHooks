@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -79,10 +80,17 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                var expectedHash = GetBase64DecodedHash(header, TrelloConstants.SignatureHeaderName, out errorResult);
-                if (errorResult != null)
+                byte[] expectedHash;
+                try
                 {
-                    context.Result = errorResult;
+                    expectedHash = Base64UrlTextEncoder.Decode(header);
+                }
+                catch (Exception exception)
+                {
+                    context.Result = CreateBadBase64EncodingResult(
+                        ReceiverName,
+                        TrelloConstants.SignatureHeaderName,
+                        exception);
                     return;
                 }
 

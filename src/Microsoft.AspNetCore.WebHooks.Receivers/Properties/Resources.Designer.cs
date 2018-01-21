@@ -295,11 +295,11 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;{0}&apos; header value is invalid. It must be a valid Base64-encoded string..
+        ///   Looks up a localized string similar to The &apos;{0}&apos; header value is invalid. The &apos;{1}&apos; receiver requires a valid Base64-encoded string..
         /// </summary>
-        internal static string VerifySignature_BadBase64HeaderEncoding {
+        internal static string VerifySignature_BadBase64Encoding {
             get {
-                return ResourceManager.GetString("VerifySignature_BadBase64HeaderEncoding", resourceCulture);
+                return ResourceManager.GetString("VerifySignature_BadBase64Encoding", resourceCulture);
             }
         }
         
@@ -313,11 +313,11 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;{0}&apos; header value is invalid. It must be a valid hex-encoded string..
+        ///   Looks up a localized string similar to The &apos;{0}&apos; header value is invalid. The &apos;{1}&apos; receiver requires a valid hex-encoded string..
         /// </summary>
-        internal static string VerifySignature_BadHeaderEncoding {
+        internal static string VerifySignature_BadHexEncoding {
             get {
-                return ResourceManager.GetString("VerifySignature_BadHeaderEncoding", resourceCulture);
+                return ResourceManager.GetString("VerifySignature_BadHexEncoding", resourceCulture);
             }
         }
         

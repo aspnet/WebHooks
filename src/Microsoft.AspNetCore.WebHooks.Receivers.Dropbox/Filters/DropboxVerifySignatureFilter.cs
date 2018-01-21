@@ -78,10 +78,17 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                var expectedHash = GetDecodedHash(header, DropboxConstants.SignatureHeaderName, out errorResult);
-                if (errorResult != null)
+                byte[] expectedHash;
+                try
                 {
-                    context.Result = errorResult;
+                    expectedHash = FromHex(header);
+                }
+                catch (Exception exception)
+                {
+                    context.Result = CreateBadHexEncodingResult(
+                        ReceiverName,
+                        DropboxConstants.SignatureHeaderName,
+                        exception);
                     return;
                 }
 

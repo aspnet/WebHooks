@@ -152,8 +152,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         public async Task OnResourceExecutionAsync_Fails_IfPostHasInvalidSignatureHeader(string header)
         {
             // Arrange
-            var expectedMessage = $"The '{TrelloConstants.SignatureHeaderName}' header value is invalid. It must be " +
-                "a valid Base64-encoded string.";
+            var expectedMessage = $"The '{TrelloConstants.SignatureHeaderName}' header value is invalid. The " +
+                "'trello' receiver requires a valid Base64-encoded string.";
             var filter = GetFilter(TestSecret);
             var context = GetContext(TestContent);
             context.HttpContext.Request.Headers.Add(TrelloConstants.SignatureHeaderName, header);

@@ -116,10 +116,18 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
                 enumerator.MoveNext();
                 var headerValue = enumerator.Current.Value;
-                var expectedHash = GetDecodedHash(headerValue, GitHubConstants.SignatureHeaderName, out errorResult);
-                if (errorResult != null)
+
+                byte[] expectedHash;
+                try
                 {
-                    context.Result = errorResult;
+                    expectedHash = FromHex(headerValue);
+                }
+                catch (Exception exception)
+                {
+                    context.Result = CreateBadHexEncodingResult(
+                        ReceiverName,
+                        GitHubConstants.SignatureHeaderKey,
+                        exception);
                     return;
                 }
 
