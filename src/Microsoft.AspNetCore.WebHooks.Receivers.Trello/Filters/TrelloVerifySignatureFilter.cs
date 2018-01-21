@@ -102,7 +102,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 var suffix = Encoding.UTF8.GetBytes(request.GetEncodedUrl());
 
                 // 4. Get the actual hash of the request body.
-                var actualHash = await GetRequestBodyHash_SHA1(request, secret, prefix: null, suffix: suffix);
+                var actualHash = await ComputeRequestBodySha1HashAsync(request, secret, prefix: null, suffix: suffix);
 
                 // 5. Verify that the actual hash matches the expected hash.
                 if (!SecretEqual(expectedHash, actualHash))

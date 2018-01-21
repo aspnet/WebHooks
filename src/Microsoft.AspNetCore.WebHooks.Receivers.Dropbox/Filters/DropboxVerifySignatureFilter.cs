@@ -100,7 +100,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 var secret = Encoding.UTF8.GetBytes(secretKey);
 
                 // 4. Get the actual hash of the request body.
-                var actualHash = await GetRequestBodyHash_SHA256(request, secret);
+                var actualHash = await ComputeRequestBodySha256HashAsync(request, secret);
 
                 // 5. Verify that the actual hash matches the expected hash.
                 if (!SecretEqual(expectedHash, actualHash))

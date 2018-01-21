@@ -117,7 +117,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             var prefix = Encoding.UTF8.GetBytes(timestamp + ".");
 
             // 5. Get the actual hash of the request body.
-            var actualHash = await GetRequestBodyHash_SHA256(request, secret, prefix);
+            var actualHash = await ComputeRequestBodySha256HashAsync(request, secret, prefix);
 
             // 6. Verify that the actual hash matches one of the expected hashes.
             var match = false;

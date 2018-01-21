@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -180,7 +179,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// when executed will produce a response containing details about the problem.
         /// </param>
         /// <returns>The signature header; <see langword="null"/> if this cannot be found.</returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller")]
         protected virtual string GetRequestHeader(
             HttpRequest request,
             string headerName,
@@ -230,9 +228,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA1 HMAC of
         /// the <paramref name="request"/>'s body.
         /// </returns>
-        protected Task<byte[]> GetRequestBodyHash_SHA1(HttpRequest request, byte[] secret)
+        protected Task<byte[]> ComputeRequestBodySha1HashAsync(HttpRequest request, byte[] secret)
         {
-            return GetRequestBodyHash_SHA1(request, secret, prefix: null);
+            return ComputeRequestBodySha1HashAsync(request, secret, prefix: null);
         }
 
         /// <summary>
@@ -249,9 +247,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA1 HMAC of
         /// the <paramref name="prefix"/> followed by the <paramref name="request"/>'s body.
         /// </returns>
-        protected Task<byte[]> GetRequestBodyHash_SHA1(HttpRequest request, byte[] secret, byte[] prefix)
+        protected Task<byte[]> ComputeRequestBodySha1HashAsync(HttpRequest request, byte[] secret, byte[] prefix)
         {
-            return GetRequestBodyHash_SHA1(request, secret, prefix, suffix: null);
+            return ComputeRequestBodySha1HashAsync(request, secret, prefix, suffix: null);
         }
 
         /// <summary>
@@ -273,7 +271,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// the <paramref name="prefix"/>, the <paramref name="request"/>'s body, and the <paramref name="suffix"/>
         /// (in that order).
         /// </returns>
-        protected virtual async Task<byte[]> GetRequestBodyHash_SHA1(
+        protected virtual async Task<byte[]> ComputeRequestBodySha1HashAsync(
             HttpRequest request,
             byte[] secret,
             byte[] prefix,
@@ -340,9 +338,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA256 HMAC of
         /// the <paramref name="request"/>'s body.
         /// </returns>
-        protected Task<byte[]> GetRequestBodyHash_SHA256(HttpRequest request, byte[] secret)
+        protected Task<byte[]> ComputeRequestBodySha256HashAsync(HttpRequest request, byte[] secret)
         {
-            return GetRequestBodyHash_SHA256(request, secret, prefix: null);
+            return ComputeRequestBodySha256HashAsync(request, secret, prefix: null);
         }
 
         /// <summary>
@@ -359,9 +357,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// A <see cref="Task"/> that on completion provides a <see cref="byte"/> array containing the SHA256 HMAC of
         /// the <paramref name="prefix"/> followed by the <paramref name="request"/>'s body.
         /// </returns>
-        protected Task<byte[]> GetRequestBodyHash_SHA256(HttpRequest request, byte[] secret, byte[] prefix)
+        protected Task<byte[]> ComputeRequestBodySha256HashAsync(HttpRequest request, byte[] secret, byte[] prefix)
         {
-            return GetRequestBodyHash_SHA256(request, secret, prefix, suffix: null);
+            return ComputeRequestBodySha256HashAsync(request, secret, prefix, suffix: null);
         }
 
         /// <summary>
@@ -383,7 +381,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// the <paramref name="prefix"/>, the <paramref name="request"/>'s body, and the <paramref name="suffix"/>
         /// (in that order).
         /// </returns>
-        protected virtual async Task<byte[]> GetRequestBodyHash_SHA256(
+        protected virtual async Task<byte[]> ComputeRequestBodySha256HashAsync(
             HttpRequest request,
             byte[] secret,
             byte[] prefix,
@@ -541,7 +539,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// An <see cref="IActionResult"/> that when executed will produce a response with status code 400 "Bad
         /// Request" and containing details about the problem.
         /// </returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by caller")]
         protected virtual IActionResult CreateBadSignatureResult(string receiverName, string signatureHeaderName)
         {
             Logger.LogError(
