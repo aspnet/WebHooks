@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 namespace Microsoft.AspNetCore.WebHooks.Metadata
@@ -33,8 +33,8 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
 
         /// <summary>
         /// Gets the <see cref="Http.IFormCollection"/> property name, JSON path, or XPath used to read event names
-        /// from the request body. Interpretation depends on the <see cref="IWebHookBodyTypeMetadata.BodyType"/> of
-        /// the receiver.
+        /// from the request body. Interpretation depends on the <see cref="IWebHookBodyTypeMetadataService.BodyType"/>
+        /// of the receiver.
         /// </summary>
         /// <value>Should not return an empty string or <see langword="null"/>.</value>
         string BodyPropertyPath { get; }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -20,7 +20,8 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <code>
     /// Task{IActionResult} ActionName(string receiverName, string id, string[] events, TData data)
     /// </code>
-    /// or the subset of parameters required. <c>TData</c> must be compatible with expected requests.
+    /// or the subset of parameters required. <c>TData</c> must be compatible with expected requests and
+    /// <see cref="BodyType"/>.
     /// </para>
     /// <para>
     /// An example WebHook URI is '<c>https://{host}/api/webhooks/incoming/{receiver name}/{id}</c>' or
@@ -41,7 +42,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// </remarks>
     public class GeneralWebHookAttribute : WebHookAttribute, IWebHookBodyTypeMetadata, IWebHookEventSelectorMetadata
     {
-        private WebHookBodyType _bodyType = WebHookBodyType.Json;
+        private WebHookBodyType _bodyType = WebHookBodyType.All;
         private string _eventName;
 
         /// <summary>
@@ -54,7 +55,11 @@ namespace Microsoft.AspNetCore.WebHooks
         }
 
         /// <inheritdoc />
-        /// <value>Default value is <see cref="WebHookBodyType.Json"/>.</value>
+        /// <value>
+        /// Default value is <see cref="WebHookBodyType.All"/>, indicating the action does not have body type
+        /// requirements beyond those of the registered receivers. Should be set to a specific (single flag) value if
+        /// the action has a <c>data</c> parameter.
+        /// </value>
         public WebHookBodyType BodyType
         {
             get
@@ -63,14 +68,41 @@ namespace Microsoft.AspNetCore.WebHooks
             }
             set
             {
-                if (!Enum.IsDefined(typeof(WebHookBodyType), value))
+                // Avoid Enum.IsDefined because we want to distinguish invalid flag combinations from undefined flags.
+                switch (value)
                 {
-                    var message = string.Format(
-                        CultureInfo.CurrentCulture,
-                        Resources.General_InvalidEnumValue,
-                        nameof(WebHookBodyType),
-                        value);
-                    throw new ArgumentException(message, nameof(value));
+                    case WebHookBodyType.All:
+                    case WebHookBodyType.Form:
+                    case WebHookBodyType.Json:
+                    case WebHookBodyType.Xml:
+                        // Just right.
+                        break;
+
+                    case 0:
+                    case WebHookBodyType.Form | WebHookBodyType.Json:
+                    case WebHookBodyType.Form | WebHookBodyType.Xml:
+                    case WebHookBodyType.Json | WebHookBodyType.Xml:
+                        // 0 or contains an invalid combination of flags.
+                        {
+                            var message = string.Format(
+                                CultureInfo.CurrentCulture,
+                                Resources.GeneralAttribute_InvalidBodyType,
+                                value,
+                                nameof(WebHookBodyType),
+                                WebHookBodyType.All);
+                            throw new ArgumentException(message, nameof(value));
+                        }
+
+                    default:
+                        // Contains undefined flags.
+                        {
+                            var message = string.Format(
+                                CultureInfo.CurrentCulture,
+                                Resources.General_InvalidEnumValue,
+                                nameof(WebHookBodyType),
+                                value);
+                            throw new ArgumentException(message, nameof(value));
+                        }
                 }
 
                 _bodyType = value;

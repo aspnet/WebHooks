@@ -123,6 +123,12 @@
   <data name="EventMapper_NoBodyProperty" xml:space="preserve">
     <value>A '{0}' WebHook request must contain a match for '{1}' in the HTTP request entity body indicating the type or types of event.</value>
   </data>
+  <data name="EventMapper_UnsupportedContentType" xml:space="preserve">
+    <value>Invalid WebHook filter configuration encountered. The '{0}' WebHook receiver does not support content type '{1}' and '{2}' should have disallowed the request.</value>
+  </data>
+  <data name="GeneralAttribute_InvalidBodyType" xml:space="preserve">
+    <value>The '{0}' value is not valid for this property. Must have a single {1} flag set or be '{2}'.</value>
+  </data>
   <data name="General_ArgumentCannotBeNullOrEmpty" xml:space="preserve">
     <value>Value cannot be null or empty.</value>
   </data>
@@ -141,26 +147,20 @@
   <data name="MetadataProvider_DuplicateMetadata" xml:space="preserve">
     <value>Duplicate '{0}' registrations found.</value>
   </data>
-  <data name="MetadataProvider_MissingAttributeMetadata" xml:space="preserve">
-    <value>'{0}' has a null {1} property but does not implement '{2}'.</value>
+  <data name="MetadataProvider_InvalidBodyType" xml:space="preserve">
+    <value>Invalid WebHook attribute '{0}' found.  Attributes implementing '{1}' must have valid {2} values. Must have a single {3} flag set or be '{4}'.</value>
   </data>
-  <data name="MetadataProvider_MissingMetadata" xml:space="preserve">
-    <value>No '{0}' implementation found for the '{1}' WebHook receiver.</value>
+  <data name="MetadataProvider_InvalidMetadataServiceValue" xml:space="preserve">
+    <value>Invalid metadata services found. Metadata services implementing '{0}' must have valid {1} values.</value>
   </data>
   <data name="MetadataProvider_MissingMetadataServices" xml:space="preserve">
-    <value>Invalid metadata services found. Metadata services implementing '{0}' must also implement '{1}'.</value>
-  </data>
-  <data name="MetadataProvider_MissingMetadataServicesForReceiver" xml:space="preserve">
     <value>Invalid metadata services found for the '{0}' WebHook receiver. Receivers with attributes implementing '{1}' must also provide a '{2}' service.</value>
   </data>
   <data name="MetadataProvider_WrongInterface" xml:space="preserve">
-    <value>Invalid metadata services found. Metadata services implementing '{0}' must implement '{1}'.</value>
+    <value>Invalid metadata services found. Metadata services must not implement '{0}' and must instead implement all of '{1}'.</value>
   </data>
   <data name="RequestReader_ModelBindingFailed" xml:space="preserve">
     <value>The MVC model binding system failed. Model state is valid but model was not set.</value>
-  </data>
-  <data name="RequestReader_ModelBindingUnexpectedlyInvalid" xml:space="preserve">
-    <value>The MVC model binding system unexpectedly failed. Binding the {0} type should never add {1} errors.</value>
   </data>
   <data name="RoutingProvider_MixedRouteWithWebHookAttribute" xml:space="preserve">
     <value>'{0}' and '{1}' were applied to the same action. '{0}' must not be combined with another attribute that provides a route template.</value>
@@ -174,20 +174,29 @@
   <data name="Security_NoSecrets" xml:space="preserve">
     <value>Could not find a valid configuration for the '{0}' WebHook receiver. Configure secret keys for this receiver.</value>
   </data>
+  <data name="Shared_InvalidAttributeValue" xml:space="preserve">
+    <value>Invalid WebHook attribute '{0}' found. Attributes implementing '{1}' must have valid {2} values. Must be a subset of the receiver requirements.</value>
+  </data>
+  <data name="Shared_MissingMetadata" xml:space="preserve">
+    <value>No '{0}' implementation found for the '{1}' WebHook receiver.</value>
+  </data>
   <data name="VerifyBody_NoFormData" xml:space="preserve">
-    <value>The WebHook request must contain an entity body formatted as HTML form URL-encoded data.</value>
+    <value>The '{0}' WebHook receiver does not support content type '{1}'. The WebHook request must contain an entity body formatted as HTML form URL-encoded data.</value>
   </data>
   <data name="VerifyBody_NoJson" xml:space="preserve">
-    <value>The WebHook request must contain an entity body formatted as JSON.</value>
+    <value>The '{0}' WebHook receiver does not support content type '{1}'. The WebHook request must contain an entity body formatted as JSON.</value>
   </data>
   <data name="VerifyBody_NoXml" xml:space="preserve">
-    <value>The WebHook request must contain an entity body formatted as XML.</value>
+    <value>The '{0}' WebHook receiver does not support content type '{1}'. The WebHook request must contain an entity body formatted as XML.</value>
+  </data>
+  <data name="VerifyBody_UnsupportedContentType" xml:space="preserve">
+    <value>The '{0}' WebHook receiver does not support content type '{1}'. The WebHook request must contain an entity body formatted to match '{2}'.</value>
   </data>
   <data name="VerifyCode_BadCode" xml:space="preserve">
     <value>The '{0}' query parameter provided in the HTTP request did not match the expected value.</value>
   </data>
   <data name="VerifyMethod_BadMethod" xml:space="preserve">
-    <value>The HTTP '{0}' method is not supported by the '{1}' WebHook receiver.</value>
+    <value>The '{0}' WebHook receiver does not support the HTTP '{1}' method.</value>
   </data>
   <data name="VerifyRequiredValue_NoHeader" xml:space="preserve">
     <value>A '{0}' WebHook request must contain a '{1}' HTTP header.</value>
@@ -196,18 +205,15 @@
     <value>A '{0}' WebHook request must contain a '{1}' value in the route data.</value>
   </data>
   <data name="VerifySignature_BadBase64Encoding" xml:space="preserve">
-    <value>The '{0}' header value is invalid. The '{1}' receiver requires a valid Base64-encoded string.</value>
+    <value>The '{0}' header value is invalid. The '{1}' WebHook receiver requires a valid Base64-encoded string.</value>
   </data>
   <data name="VerifySignature_BadHeader" xml:space="preserve">
     <value>Expecting exactly one '{0}' header field in the WebHook request but found {1}. Ensure the request contains exactly one '{0}' header field.</value>
   </data>
   <data name="VerifySignature_BadHexEncoding" xml:space="preserve">
-    <value>The '{0}' header value is invalid. The '{1}' receiver requires a valid hex-encoded string.</value>
+    <value>The '{0}' header value is invalid. The '{1}' WebHook receiver requires a valid hex-encoded string.</value>
   </data>
   <data name="VerifySignature_BadSignature" xml:space="preserve">
     <value>The signature provided by the '{0}' header field does not match the value expected by the '{1}' WebHook receiver. WebHook request is invalid.</value>
-  </data>
-  <data name="VerifySignature_InvalidHexValue" xml:space="preserve">
-    <value>Input is not a valid hex-encoded string: '{0}'.</value>
   </data>
 </root>
