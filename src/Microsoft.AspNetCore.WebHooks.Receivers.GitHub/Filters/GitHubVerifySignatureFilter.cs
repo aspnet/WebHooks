@@ -117,17 +117,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 enumerator.MoveNext();
                 var headerValue = enumerator.Current.Value;
 
-                byte[] expectedHash;
-                try
+                var expectedHash = FromHex(headerValue, GitHubConstants.SignatureHeaderName);
+                if (expectedHash == null)
                 {
-                    expectedHash = FromHex(headerValue);
-                }
-                catch (Exception exception)
-                {
-                    context.Result = CreateBadHexEncodingResult(
-                        ReceiverName,
-                        GitHubConstants.SignatureHeaderKey,
-                        exception);
+                    context.Result = CreateBadHexEncodingResult(GitHubConstants.SignatureHeaderKey);
                     return;
                 }
 
@@ -152,7 +145,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 if (!SecretEqual(expectedHash, actualHash))
                 {
                     // Log about the issue and short-circuit remainder of the pipeline.
-                    errorResult = CreateBadSignatureResult(receiverName, GitHubConstants.SignatureHeaderName);
+                    errorResult = CreateBadSignatureResult(GitHubConstants.SignatureHeaderName);
 
                     context.Result = errorResult;
                     return;

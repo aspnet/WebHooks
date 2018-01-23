@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.AspNetCore.WebHooks.Utilities;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -61,21 +62,56 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         }
 
         /// <summary>
-        /// Converts a hex-encoded string to a <see cref="T:byte[]"/>.
+        /// Converts a Base64-encoded string to a <see cref="T:byte[]"/>.
         /// </summary>
-        /// <param name="content">THe hex-encoded string to convert.</param>
-        /// <returns>The converted <see cref="T:byte[]"/>.</returns>
-        protected static byte[] FromHex(string content)
+        /// <param name="content">THe Base64-encoded string to convert.</param>
+        /// <param name="signatureHeaderName">
+        /// The name of the HTTP header containing <paramref name="content"/>.
+        /// </param>
+        /// <returns>The converted <see cref="T:byte[]"/>. <see langword="null"/> if conversion fails.</returns>
+        protected byte[] FromBase64(string content, string signatureHeaderName)
         {
             if (string.IsNullOrEmpty(content))
             {
                 return Array.Empty<byte>();
             }
 
-            byte[] data = null;
             try
             {
-                data = new byte[content.Length / 2];
+                return Base64UrlTextEncoder.Decode(content);
+            }
+            catch (FormatException exception)
+            {
+                Logger.LogError(
+                    400,
+                    exception,
+                    "The '{HeaderName}' header value is invalid. The '{ReceiverName}' receiver requires a valid " +
+                    "hex-encoded string.",
+                    signatureHeaderName,
+                    ReceiverName);
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Converts a hex-encoded string to a <see cref="T:byte[]"/>.
+        /// </summary>
+        /// <param name="content">THe hex-encoded string to convert.</param>
+        /// <param name="signatureHeaderName">
+        /// The name of the HTTP header containing <paramref name="content"/>.
+        /// </param>
+        /// <returns>The converted <see cref="T:byte[]"/>. <see langword="null"/> if conversion fails.</returns>
+        protected byte[] FromHex(string content, string signatureHeaderName)
+        {
+            if (string.IsNullOrEmpty(content))
+            {
+                return Array.Empty<byte>();
+            }
+
+            try
+            {
+                var data = new byte[content.Length / 2];
                 var input = 0;
                 for (var output = 0; output < data.Length; output++)
                 {
@@ -84,24 +120,32 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
                 if (input != content.Length)
                 {
-                    data = null;
+                    Logger.LogError(
+                        401,
+                        "The '{HeaderName}' header value is invalid. The '{ReceiverName}' receiver requires a valid " +
+                        "hex-encoded string.",
+                        signatureHeaderName,
+                        ReceiverName);
+
+                    return null;
                 }
-            }
-            catch
-            {
-                data = null;
-            }
 
-            if (data == null)
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.VerifySignature_InvalidHexValue,
-                    content);
-                throw new InvalidOperationException(message);
+                return data;
             }
+            catch (Exception exception) when (exception is ArgumentException || exception is FormatException)
+            {
+                // FormatException is most likely. ToByte throws an ArgumentException when e.g. content contains a
+                // minus sign ('-').
+                Logger.LogError(
+                    402,
+                    exception,
+                    "The '{HeaderName}' header value is invalid. The '{ReceiverName}' receiver requires a valid " +
+                    "hex-encoded string.",
+                    signatureHeaderName,
+                    ReceiverName);
 
-            return data;
+                return null;
+            }
         }
 
         /// <summary>
@@ -162,7 +206,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             {
                 var headersCount = headers.Count;
                 Logger.LogInformation(
-                    400,
+                    403,
                     "Expecting exactly one '{HeaderName}' header field in the WebHook request but found " +
                     "{HeaderCount}. Please ensure the request contains exactly one '{HeaderName}' header field.",
                     headerName,
@@ -432,92 +476,50 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
         /// <summary>
         /// Returns a new <see cref="IActionResult"/> that when executed produces a response indicating the request
-        /// had a signature header containing an invalid (non-Base64-encoded) hash value. Also logs about the problem.
+        /// had a signature header containing an invalid (non-Base64-encoded) hash value.
         /// </summary>
-        /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
-        /// <param name="signatureHeaderName">The name of the HTTP header with invalid contents.</param>
-        /// <param name="exception">The <see cref="Exception"/> encountered when decoding the hash value.</param>
+        /// <param name="signatureHeaderName">The name of the HTTP header with invalid content.</param>
         /// <returns>
         /// An <see cref="IActionResult"/> that when executed will produce a response with status code 400 "Bad
         /// Request" and containing details about the problem.
         /// </returns>
-        protected virtual IActionResult CreateBadBase64EncodingResult(
-            string receiverName,
-            string signatureHeaderName,
-            Exception exception)
+        protected virtual IActionResult CreateBadBase64EncodingResult(string signatureHeaderName)
         {
-            if (receiverName == null)
-            {
-                throw new ArgumentNullException(nameof(receiverName));
-            }
             if (signatureHeaderName == null)
             {
                 throw new ArgumentNullException(nameof(signatureHeaderName));
             }
-            if (exception == null)
-            {
-                throw new ArgumentNullException(nameof(exception));
-            }
-
-            Logger.LogError(
-                403,
-                exception,
-                "The '{HeaderName}' header value is invalid. The '{ReceiverName}' receiver requires a valid " +
-                "Base64-encoded string.",
-                signatureHeaderName,
-                receiverName);
 
             var message = string.Format(
                 CultureInfo.CurrentCulture,
                 Resources.VerifySignature_BadBase64Encoding,
                 signatureHeaderName,
-                receiverName);
+                ReceiverName);
 
             return new BadRequestObjectResult(message);
         }
 
         /// <summary>
         /// Returns a new <see cref="IActionResult"/> that when executed produces a response indicating the request
-        /// had a signature header containing an invalid (non-hex-encoded) hash value. Also logs about the problem.
+        /// had a signature header containing an invalid (non-hex-encoded) hash value.
         /// </summary>
-        /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
-        /// <param name="signatureHeaderName">The name of the HTTP header with invalid contents.</param>
-        /// <param name="exception">The <see cref="Exception"/> encountered when decoding the hash value.</param>
+        /// <param name="signatureHeaderName">The name of the HTTP header with invalid content.</param>
         /// <returns>
         /// An <see cref="IActionResult"/> that when executed will produce a response with status code 400 "Bad
         /// Request" and containing details about the problem.
         /// </returns>
-        protected virtual IActionResult CreateBadHexEncodingResult(
-            string receiverName,
-            string signatureHeaderName,
-            Exception exception)
+        protected virtual IActionResult CreateBadHexEncodingResult(string signatureHeaderName)
         {
-            if (receiverName == null)
-            {
-                throw new ArgumentNullException(nameof(receiverName));
-            }
             if (signatureHeaderName == null)
             {
                 throw new ArgumentNullException(nameof(signatureHeaderName));
             }
-            if (exception == null)
-            {
-                throw new ArgumentNullException(nameof(exception));
-            }
-
-            Logger.LogError(
-                401,
-                exception,
-                "The '{HeaderName}' header value is invalid. The '{ReceiverName}' receiver requires a valid " +
-                "hex-encoded string.",
-                signatureHeaderName,
-                receiverName);
 
             var message = string.Format(
                 CultureInfo.CurrentCulture,
                 Resources.VerifySignature_BadHexEncoding,
                 signatureHeaderName,
-                receiverName);
+                ReceiverName);
 
             return new BadRequestObjectResult(message);
         }
@@ -527,35 +529,30 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// invalid signature (an unexpected hash value) and as a result could not be processed. Also logs about the
         /// problem.
         /// </summary>
-        /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
-        /// <param name="signatureHeaderName">The name of the HTTP header with invalid contents.</param>
+        /// <param name="signatureHeaderName">The name of the HTTP header with invalid content.</param>
         /// <returns>
         /// An <see cref="IActionResult"/> that when executed will produce a response with status code 400 "Bad
         /// Request" and containing details about the problem.
         /// </returns>
-        protected virtual IActionResult CreateBadSignatureResult(string receiverName, string signatureHeaderName)
+        protected virtual IActionResult CreateBadSignatureResult(string signatureHeaderName)
         {
-            if (receiverName == null)
-            {
-                throw new ArgumentNullException(nameof(receiverName));
-            }
             if (signatureHeaderName == null)
             {
                 throw new ArgumentNullException(nameof(signatureHeaderName));
             }
 
             Logger.LogError(
-                402,
+                404,
                 "The WebHook signature provided by the '{HeaderName}' header field does not match the value " +
                 "expected by the '{ReceiverName}' receiver. WebHook request is invalid.",
                 signatureHeaderName,
-                receiverName);
+                ReceiverName);
 
             var message = string.Format(
                 CultureInfo.CurrentCulture,
                 Resources.VerifySignature_BadSignature,
                 signatureHeaderName,
-                receiverName);
+                ReceiverName);
 
             return new BadRequestObjectResult(message);
         }

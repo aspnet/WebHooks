@@ -125,17 +125,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             {
                 // While this looks repetitious compared to hex-encoding actualHash (once), a single v1 entry in the
                 // header is the normal case. Expect multiple signatures only when rolling secret keys.
-                byte[] expectedHash;
-                try
+                var expectedHash = FromHex(signature.Value, StripeConstants.SignatureHeaderName);
+                if (expectedHash == null)
                 {
-                    expectedHash = FromHex(signature.Value);
-                }
-                catch (Exception exception)
-                {
-                    context.Result = CreateBadHexEncodingResult(
-                        ReceiverName,
-                        StripeConstants.SignatureHeaderName,
-                        exception);
+                    context.Result = CreateBadHexEncodingResult(StripeConstants.SignatureHeaderName);
                     return;
                 }
 
@@ -149,7 +142,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             if (!match)
             {
                 // Log about the issue and short-circuit remainder of the pipeline.
-                context.Result = CreateBadSignatureResult(ReceiverName, StripeConstants.SignatureHeaderName);
+                context.Result = CreateBadSignatureResult(StripeConstants.SignatureHeaderName);
                 return;
             }
 

@@ -78,17 +78,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                byte[] expectedHash;
-                try
+                var expectedHash = FromHex(header, DropboxConstants.SignatureHeaderName);
+                if (expectedHash == null)
                 {
-                    expectedHash = FromHex(header);
-                }
-                catch (Exception exception)
-                {
-                    context.Result = CreateBadHexEncodingResult(
-                        ReceiverName,
-                        DropboxConstants.SignatureHeaderName,
-                        exception);
+                    context.Result = CreateBadHexEncodingResult(DropboxConstants.SignatureHeaderName);
                     return;
                 }
 
@@ -113,7 +106,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 if (!SecretEqual(expectedHash, actualHash))
                 {
                     // Log about the issue and short-circuit remainder of the pipeline.
-                    errorResult = CreateBadSignatureResult(receiverName, DropboxConstants.SignatureHeaderName);
+                    errorResult = CreateBadSignatureResult(DropboxConstants.SignatureHeaderName);
 
                     context.Result = errorResult;
                     return;

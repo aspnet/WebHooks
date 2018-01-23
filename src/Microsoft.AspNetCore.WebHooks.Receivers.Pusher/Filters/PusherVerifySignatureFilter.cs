@@ -80,17 +80,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                byte[] expectedHash;
-                try
+                var expectedHash = FromHex(header, PusherConstants.SignatureHeaderName);
+                if (expectedHash == null)
                 {
-                    expectedHash = FromHex(header);
-                }
-                catch (Exception exception)
-                {
-                    context.Result = CreateBadHexEncodingResult(
-                        ReceiverName,
-                        PusherConstants.SignatureHeaderName,
-                        exception);
+                    context.Result = CreateBadHexEncodingResult(PusherConstants.SignatureHeaderName);
                     return;
                 }
 
@@ -144,7 +137,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 if (!SecretEqual(expectedHash, actualHash))
                 {
                     // Log about the issue and short-circuit remainder of the pipeline.
-                    errorResult = CreateBadSignatureResult(receiverName, PusherConstants.SignatureHeaderName);
+                    errorResult = CreateBadSignatureResult(PusherConstants.SignatureHeaderName);
 
                     context.Result = errorResult;
                     return;
