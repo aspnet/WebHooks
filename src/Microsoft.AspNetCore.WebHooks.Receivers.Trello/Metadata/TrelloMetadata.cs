@@ -4,19 +4,19 @@
 namespace Microsoft.AspNetCore.WebHooks.Metadata
 {
     /// <summary>
-    /// An <see cref="IWebHookMetadata"/> service containing metadata about the Dropbox receiver.
+    /// An <see cref="IWebHookMetadata"/> service containing metadata about the Trello receiver.
     /// </summary>
-    public class DropboxMetadata :
+    public class TrelloMetadata :
         WebHookMetadata,
         IWebHookBodyTypeMetadataService,
         IWebHookEventMetadata,
         IWebHookGetHeadRequestMetadata
     {
         /// <summary>
-        /// Instantiates a new <see cref="DropboxMetadata"/> instance.
+        /// Instantiates a new <see cref="TrelloMetadata"/> instance.
         /// </summary>
-        public DropboxMetadata()
-            : base(DropboxConstants.ReceiverName)
+        public TrelloMetadata()
+            : base(TrelloConstants.ReceiverName)
         {
         }
 
@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         // IWebHookEventMetadata...
 
         /// <inheritdoc />
-        public string ConstantValue => DropboxConstants.EventName;
+        public string ConstantValue => TrelloConstants.EventName;
 
         /// <inheritdoc />
         public string HeaderName => null;
@@ -39,15 +39,15 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         // IWebHookGetHeadRequestMetadata...
 
         /// <inheritdoc />
-        public bool AllowHeadRequests => false;
+        public bool AllowHeadRequests => true;
 
         /// <inheritdoc />
-        public string ChallengeQueryParameterName => DropboxConstants.ChallengeQueryParameterName;
+        public string ChallengeQueryParameterName => null;
 
         /// <inheritdoc />
-        public int SecretKeyMinLength => DropboxConstants.SecretKeyMinLength;
+        public int SecretKeyMinLength => TrelloConstants.SecretKeyMinLength;
 
         /// <inheritdoc />
-        public int SecretKeyMaxLength => DropboxConstants.SecretKeyMaxLength;
+        public int SecretKeyMaxLength => TrelloConstants.SecretKeyMaxLength;
     }
 }

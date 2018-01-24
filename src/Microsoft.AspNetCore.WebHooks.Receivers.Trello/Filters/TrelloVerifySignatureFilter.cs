@@ -2,28 +2,27 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.WebHooks.Filters
 {
     /// <summary>
-    /// An <see cref="IAsyncResourceFilter"/> that verifies the Pusher signature header. Confirms the header exists,
+    /// An <see cref="IAsyncResourceFilter"/> that verifies the Trello signature header. Confirms the header exists,
     /// reads Body bytes, and compares the hashes.
     /// </summary>
-    public class PusherVerifySignatureFilter : WebHookVerifySignatureFilter, IAsyncResourceFilter
+    public class TrelloVerifySignatureFilter : WebHookVerifySignatureFilter, IAsyncResourceFilter
     {
         /// <summary>
-        /// Instantiates a new <see cref="PusherVerifySignatureFilter"/> instance.
+        /// Instantiates a new <see cref="TrelloVerifySignatureFilter"/> instance.
         /// </summary>
         /// <param name="configuration">
         /// The <see cref="IConfiguration"/> used to initialize <see cref="WebHookSecurityFilter.Configuration"/>.
@@ -35,7 +34,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// <param name="loggerFactory">
         /// The <see cref="ILoggerFactory"/> used to initialize <see cref="WebHookSecurityFilter.Logger"/>.
         /// </param>
-        public PusherVerifySignatureFilter(
+        public TrelloVerifySignatureFilter(
             IConfiguration configuration,
             IHostingEnvironment hostingEnvironment,
             ILoggerFactory loggerFactory)
@@ -44,7 +43,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         }
 
         /// <inheritdoc />
-        public override string ReceiverName => PusherConstants.ReceiverName;
+        public override string ReceiverName => TrelloConstants.ReceiverName;
 
         /// <inheritdoc />
         public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
@@ -72,72 +71,44 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     return;
                 }
 
-                // 2. Get the expected hash from the signature headers.
-                var header = GetRequestHeader(request, PusherConstants.SignatureHeaderName, out errorResult);
+                // 2. Get the expected hash from the signature header.
+                var header = GetRequestHeader(request, TrelloConstants.SignatureHeaderName, out errorResult);
                 if (errorResult != null)
                 {
                     context.Result = errorResult;
                     return;
                 }
 
-                var expectedHash = FromHex(header, PusherConstants.SignatureHeaderName);
+                var expectedHash = FromBase64(header, TrelloConstants.SignatureHeaderName);
                 if (expectedHash == null)
                 {
-                    context.Result = CreateBadHexEncodingResult(PusherConstants.SignatureHeaderName);
+                    context.Result = CreateBadBase64EncodingResult(TrelloConstants.SignatureHeaderName);
                     return;
                 }
 
                 // 3. Get the configured secret key.
-                var secretKeys = GetSecretKeys(ReceiverName, routeData);
-                if (!secretKeys.Exists())
+                var secretKey = GetSecretKey(
+                    ReceiverName,
+                    routeData,
+                    TrelloConstants.SecretKeyMinLength,
+                    TrelloConstants.SecretKeyMaxLength);
+                if (secretKey == null)
                 {
                     context.Result = new NotFoundResult();
                     return;
                 }
 
-                var applicationKey = GetRequestHeader(
-                    request,
-                    PusherConstants.SignatureKeyHeaderName,
-                    out errorResult);
-                if (errorResult != null)
-                {
-                    context.Result = errorResult;
-                    return;
-                }
-
-                var secretKey = secretKeys[applicationKey];
-                if (secretKey == null ||
-                    secretKey.Length < PusherConstants.SecretKeyMinLength ||
-                    secretKey.Length > PusherConstants.SecretKeyMaxLength)
-                {
-                    Logger.LogError(
-                        0,
-                        "The '{HeaderName}' header value of '{HeaderValue}' is not recognized as a valid " +
-                        "application key. Please ensure the correct application key / secret key pairs have " +
-                        "been configured.",
-                        PusherConstants.SignatureKeyHeaderName,
-                        applicationKey);
-
-                    var message = string.Format(
-                        CultureInfo.CurrentCulture,
-                        Resources.SignatureFilter_SecretNotFound,
-                        PusherConstants.SignatureKeyHeaderName,
-                        applicationKey);
-
-                    context.Result = new BadRequestObjectResult(message);
-                    return;
-                }
-
                 var secret = Encoding.UTF8.GetBytes(secretKey);
+                var suffix = Encoding.UTF8.GetBytes(request.GetEncodedUrl());
 
                 // 4. Get the actual hash of the request body.
-                var actualHash = await ComputeRequestBodySha256HashAsync(request, secret);
+                var actualHash = await ComputeRequestBodySha1HashAsync(request, secret, prefix: null, suffix: suffix);
 
                 // 5. Verify that the actual hash matches the expected hash.
                 if (!SecretEqual(expectedHash, actualHash))
                 {
                     // Log about the issue and short-circuit remainder of the pipeline.
-                    errorResult = CreateBadSignatureResult(PusherConstants.SignatureHeaderName);
+                    errorResult = CreateBadSignatureResult(TrelloConstants.SignatureHeaderName);
 
                     context.Result = errorResult;
                     return;
