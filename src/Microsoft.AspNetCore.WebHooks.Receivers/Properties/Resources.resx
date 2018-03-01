@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -127,13 +127,13 @@
     <value>Invalid WebHook filter configuration encountered. The '{0}' WebHook receiver does not support content type '{1}' and '{2}' should have disallowed the request.</value>
   </data>
   <data name="GeneralAttribute_InvalidBodyType" xml:space="preserve">
-    <value>The '{0}' value is not valid for this property. Must have a single {1} flag set or be '{2}'.</value>
+    <value>The value '{0}' is not valid. Must be '{2}' or have a single '{1}' flag set.</value>
   </data>
   <data name="General_ArgumentCannotBeNullOrEmpty" xml:space="preserve">
     <value>Value cannot be null or empty.</value>
   </data>
   <data name="General_InvalidEnumValue" xml:space="preserve">
-    <value>Enum type {0} has no defined '{1}' value.</value>
+    <value>Enum type '{0}' has no defined '{1}' value.</value>
   </data>
   <data name="General_NoQueryParameter" xml:space="preserve">
     <value>A '{0}' WebHook request must contain a '{1}' query parameter.</value>
@@ -142,31 +142,28 @@
     <value>A '{0}' WebHook verification request must contain a '{1}' query parameter.</value>
   </data>
   <data name="MetadataProvider_ConflictingMetadataServices" xml:space="preserve">
-    <value>Invalid metadata services found. Receivers must not provide both '{0}' and '{1}' services.</value>
+    <value>Invalid metadata services found for the '{0}' WebHook receiver. Receivers must not provide both '{1}' and '{2}' services.</value>
   </data>
   <data name="MetadataProvider_DuplicateMetadata" xml:space="preserve">
-    <value>Duplicate '{0}' registrations found.</value>
+    <value>Invalid metadata services found for the '{0}' WebHook receiver. Receivers must not have more than one '{1}' registration.</value>
   </data>
-  <data name="MetadataProvider_InvalidBodyType" xml:space="preserve">
-    <value>Invalid WebHook attribute '{0}' found.  Attributes implementing '{1}' must have valid {2} values. Must have a single {3} flag set or be '{4}'.</value>
+  <data name="MetadataProvider_InvalidAttributeBodyType" xml:space="preserve">
+    <value>Invalid WebHook attribute '{0}' found. Attributes implementing '{1}' must have valid {2} values. '{3}' must instead be '{4}' or have a single {5} flag set.</value>
   </data>
-  <data name="MetadataProvider_InvalidMetadataServiceValue" xml:space="preserve">
-    <value>Invalid metadata services found. Metadata services implementing '{0}' must have valid {1} values.</value>
+  <data name="MetadataProvider_InvalidMetadataServiceBodyType" xml:space="preserve">
+    <value>Invalid metadata services found for the '{0}' WebHook receiver. Metadata services implementing '{1}' must have valid {2} values. '0' is not valid.</value>
   </data>
   <data name="MetadataProvider_MissingMetadataServices" xml:space="preserve">
     <value>Invalid metadata services found for the '{0}' WebHook receiver. Receivers with attributes implementing '{1}' must also provide a '{2}' service.</value>
-  </data>
-  <data name="MetadataProvider_WrongInterface" xml:space="preserve">
-    <value>Invalid metadata services found. Metadata services must not implement '{0}' and must instead implement all of '{1}'.</value>
   </data>
   <data name="RequestReader_ModelBindingFailed" xml:space="preserve">
     <value>The MVC model binding system failed. Model state is valid but model was not set.</value>
   </data>
   <data name="RoutingProvider_MixedRouteWithWebHookAttribute" xml:space="preserve">
-    <value>'{0}' and '{1}' were applied to the same action. '{0}' must not be combined with another attribute that provides a route template.</value>
+    <value>'{0}' and '{1}' were applied to the same action. '{2}' must not be combined with another attribute that provides a route template.</value>
   </data>
   <data name="Security_BadSecret" xml:space="preserve">
-    <value>Could not find a valid configuration for the '{0}' WebHook receiver, instance '{1}'.  The value must be between {2} and {3} characters long.</value>
+    <value>Could not find a valid configuration for the '{0}' WebHook receiver, instance '{1}'. The value must be between {2} and {3} characters long.</value>
   </data>
   <data name="Security_NoHttps" xml:space="preserve">
     <value>The '{0}' WebHook receiver requires {1} in order to be secure. Register a WebHook URI of type '{2}'.</value>
@@ -174,11 +171,11 @@
   <data name="Security_NoSecrets" xml:space="preserve">
     <value>Could not find a valid configuration for the '{0}' WebHook receiver. Configure secret keys for this receiver.</value>
   </data>
-  <data name="Shared_InvalidAttributeValue" xml:space="preserve">
-    <value>Invalid WebHook attribute '{0}' found. Attributes implementing '{1}' must have valid {2} values. Must be a subset of the receiver requirements.</value>
-  </data>
   <data name="Shared_MissingMetadata" xml:space="preserve">
-    <value>No '{0}' implementation found for the '{1}' WebHook receiver.</value>
+    <value>Invalid metadata services found for the '{0}' WebHook receiver.  Receiver must have an '{1}' implementation.</value>
+  </data>
+  <data name="Shared_NonSubsetAttributeBodyType" xml:space="preserve">
+    <value>Invalid WebHook attribute '{0}' found. Attributes implementing '{1}' must have valid {2} values. '{3}' must instead be '{4}' or a subset of the receiver requirements ('{5}').</value>
   </data>
   <data name="VerifyBody_NoFormData" xml:space="preserve">
     <value>The '{0}' WebHook receiver does not support content type '{1}'. The WebHook request must contain an entity body formatted as HTML form URL-encoded data.</value>

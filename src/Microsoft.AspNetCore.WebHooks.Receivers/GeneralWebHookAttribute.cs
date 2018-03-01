@@ -42,7 +42,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// </remarks>
     public class GeneralWebHookAttribute : WebHookAttribute, IWebHookBodyTypeMetadata, IWebHookEventSelectorMetadata
     {
-        private WebHookBodyType _bodyType = WebHookBodyType.All;
+        private WebHookBodyType _bodyType = WebHookConstants.AllBodyTypes;
         private string _eventName;
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Microsoft.AspNetCore.WebHooks
 
         /// <inheritdoc />
         /// <value>
-        /// Default value is <see cref="WebHookBodyType.All"/>, indicating the action does not have body type
+        /// Default value is <see cref="WebHookConstants.AllBodyTypes"/>, indicating the action does not have body type
         /// requirements beyond those of the registered receivers. Should be set to a specific (single flag) value if
         /// the action has a <c>data</c> parameter.
         /// </value>
@@ -71,7 +71,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 // Avoid Enum.IsDefined because we want to distinguish invalid flag combinations from undefined flags.
                 switch (value)
                 {
-                    case WebHookBodyType.All:
+                    case WebHookBodyType.Form | WebHookBodyType.Json | WebHookBodyType.Xml:
                     case WebHookBodyType.Form:
                     case WebHookBodyType.Json:
                     case WebHookBodyType.Xml:
@@ -88,8 +88,8 @@ namespace Microsoft.AspNetCore.WebHooks
                                 CultureInfo.CurrentCulture,
                                 Resources.GeneralAttribute_InvalidBodyType,
                                 value,
-                                nameof(WebHookBodyType),
-                                WebHookBodyType.All);
+                                WebHookConstants.AllBodyTypes,
+                                typeof(WebHookBodyType));
                             throw new ArgumentException(message, nameof(value));
                         }
 
@@ -99,7 +99,7 @@ namespace Microsoft.AspNetCore.WebHooks
                             var message = string.Format(
                                 CultureInfo.CurrentCulture,
                                 Resources.General_InvalidEnumValue,
-                                nameof(WebHookBodyType),
+                                typeof(WebHookBodyType),
                                 value);
                             throw new ArgumentException(message, nameof(value));
                         }

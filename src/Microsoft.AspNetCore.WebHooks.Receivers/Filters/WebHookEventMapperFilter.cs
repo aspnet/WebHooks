@@ -133,12 +133,14 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             // Determine the applicable WebhookBodyType i.e. how to read the request body.
             WebHookBodyType bodyType;
             var request = context.HttpContext.Request;
+
+            // WebHookReceiverExistsConstraint confirms the IWebHookBodyTypeMetadataService implementation exists.
             var bodyTypeMetadata = _bodyTypeMetadata.First(metadata => metadata.IsApplicable(receiverName));
             if ((WebHookBodyType.Form & bodyTypeMetadata.BodyType) != 0 && request.HasFormContentType)
             {
                 bodyType = WebHookBodyType.Form;
             }
-            else  if ((WebHookBodyType.Json & bodyTypeMetadata.BodyType) != 0 && RequestBodyTypes.IsJson(request))
+            else if ((WebHookBodyType.Json & bodyTypeMetadata.BodyType) != 0 && RequestBodyTypes.IsJson(request))
             {
                 bodyType = WebHookBodyType.Json;
             }
@@ -222,15 +224,15 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     var message = string.Format(
                         CultureInfo.CurrentCulture,
                         Resources.General_InvalidEnumValue,
-                        nameof(WebHookBodyType),
+                        typeof(WebHookBodyType),
                         bodyTypeMetadata.BodyType);
                     throw new InvalidOperationException(message);
             }
 
             if (StringValues.IsNullOrEmpty(eventNames) && !eventFromBodyMetadata.AllowMissing)
             {
-                _logger.LogError(
-                    500,
+                _logger.LogWarning(
+                    0,
                     "A '{ReceiverName}' WebHook request must contain a match for '{BodyPropertyPath}' in the HTTP " +
                     "request entity body indicating the type or types of event.",
                     receiverName,

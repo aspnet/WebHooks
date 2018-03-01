@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Internal; // For DefaultApplicationModelProvider
 using Microsoft.AspNetCore.WebHooks.Metadata;
-using Microsoft.Extensions.Logging.Testing;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -260,29 +259,17 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         public void Constructor_SucceedsWithEmptyMetadata()
         {
             // Arrange
-            var testSink = new TestSink();
-            var loggerFactory = new TestLoggerFactory(testSink, enabled: true);
             var metadata = Array.Empty<IWebHookMetadata>();
 
-            // Act (does not throw)
-            new WebHookMetadataProvider(metadata, loggerFactory);
-
-            // Assert
-            Assert.Empty(testSink.Writes);
+            // Act & Assert (does not throw)
+            new WebHookMetadataProvider(metadata);
         }
 
         [Fact]
         public void Constructor_SucceedsWithValidMetadata()
         {
-            // Arrange
-            var testSink = new TestSink();
-            var loggerFactory = new TestLoggerFactory(testSink, enabled: true);
-
-            // Act (does not throw)
-            new WebHookMetadataProvider(ValidMetadata, loggerFactory);
-
-            // Assert
-            Assert.Empty(testSink.Writes);
+            // Arrange, Act & Assert (does not throw)
+            new WebHookMetadataProvider(ValidMetadata);
         }
 
         [Theory]
@@ -290,214 +277,54 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         public void Constructor_ThrowsWithDuplicateMetadata(IEnumerable<IWebHookMetadata> metadata, Type metadataType)
         {
             // Arrange
-            var expectedMessage = $"Duplicate '{metadataType}' registrations found.";
-            var expectedLogMessage = $"Duplicate '{metadataType}' registrations found for the 'some name' WebHook " +
-                "receiver.";
-            var testSink = new TestSink();
-            var loggerFactory = new TestLoggerFactory(testSink, enabled: true);
+            var expectedMessage = "Invalid metadata services found for the 'some name' WebHook receiver. " +
+                $"Receivers must not have more than one '{metadataType}' registration.";
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(
-                () => new WebHookMetadataProvider(metadata, loggerFactory));
+            var exception = Assert.Throws<InvalidOperationException>(() => new WebHookMetadataProvider(metadata));
             Assert.Equal(expectedMessage, exception.Message);
-
-            // None of the collections contain duplicate metadata services for multiple receivers.
-            var writeContext = Assert.Single(testSink.Writes);
-            Assert.NotNull(writeContext);
-            var logMessage = writeContext.Formatter(writeContext.State, writeContext.Exception);
-            Assert.Equal(expectedLogMessage, logMessage);
-        }
-
-        [Fact]
-        public void Constructor_LogsAllDuplicateMetadata()
-        {
-            // Arrange
-            var expectedMessage = $"Duplicate '{typeof(IWebHookEventFromBodyMetadata)}' registrations found.";
-            var expectedLogMessage1 = $"Duplicate '{typeof(IWebHookEventFromBodyMetadata)}' registrations found for " +
-                "the 'some name' WebHook receiver.";
-            var expectedLogMessage2 = $"Duplicate '{typeof(IWebHookEventFromBodyMetadata)}' registrations found for " +
-                "the 'another name' WebHook receiver.";
-            var testSink = new TestSink();
-            var loggerFactory = new TestLoggerFactory(testSink, enabled: true);
-
-            var webHookEventFromBodyMetadata1 = new Mock<IWebHookEventFromBodyMetadata>(MockBehavior.Strict);
-            webHookEventFromBodyMetadata1
-                .SetupGet(m => m.ReceiverName)
-                .Returns("some name");
-            var webHookEventFromBodyMetadata2 = new Mock<IWebHookEventFromBodyMetadata>(MockBehavior.Strict);
-            webHookEventFromBodyMetadata2
-                .SetupGet(m => m.ReceiverName)
-                .Returns("unique name");
-            var webHookEventFromBodyMetadata3 = new Mock<IWebHookEventFromBodyMetadata>(MockBehavior.Strict);
-            webHookEventFromBodyMetadata3
-                .SetupGet(m => m.ReceiverName)
-                .Returns("some name");
-            var webHookEventFromBodyMetadata4 = new Mock<IWebHookEventFromBodyMetadata>(MockBehavior.Strict);
-            webHookEventFromBodyMetadata4
-                .SetupGet(m => m.ReceiverName)
-                .Returns("another name");
-            var webHookEventFromBodyMetadata5 = new Mock<IWebHookEventFromBodyMetadata>(MockBehavior.Strict);
-            webHookEventFromBodyMetadata5
-                .SetupGet(m => m.ReceiverName)
-                .Returns("another name");
-            var metadata = new IWebHookMetadata[]
-            {
-                webHookEventFromBodyMetadata1.Object,
-                webHookEventFromBodyMetadata2.Object,
-                webHookEventFromBodyMetadata3.Object,
-                webHookEventFromBodyMetadata4.Object,
-                webHookEventFromBodyMetadata5.Object,
-            };
-
-            // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(
-                () => new WebHookMetadataProvider(metadata, loggerFactory));
-            Assert.Equal(expectedMessage, exception.Message);
-
-            Assert.Collection(testSink.Writes,
-                writeContext =>
-                {
-                    Assert.NotNull(writeContext);
-
-                    var logMessage = writeContext.Formatter(writeContext.State, writeContext.Exception);
-                    Assert.Equal(expectedLogMessage1, logMessage);
-                },
-                writeContext =>
-                {
-                    Assert.NotNull(writeContext);
-
-                    var logMessage = writeContext.Formatter(writeContext.State, writeContext.Exception);
-                    Assert.Equal(expectedLogMessage2, logMessage);
-                });
-        }
-
-        [Fact]
-        public void Constructor_ThrowsWithBodyTypeMetadata()
-        {
-            // Arrange
-            var expectedMessage = "Invalid metadata services found. Metadata services must not implement " +
-                $"'{typeof(IWebHookBodyTypeMetadata)}' and must instead implement all of " +
-                $"'{typeof(IWebHookBodyTypeMetadataService)}'.";
-            var testSink = new TestSink();
-            var loggerFactory = new TestLoggerFactory(testSink, enabled: true);
-
-            var webHookBodyTypeMetadata1 = new Mock<IWebHookBodyTypeMetadata>(MockBehavior.Strict);
-            var webHookBodyTypeMetadata2 = new WebHookBodyTypeMetadata();
-            var webHookBodyTypeMetadataService = new Mock<IWebHookBodyTypeMetadataService>(MockBehavior.Strict);
-            webHookBodyTypeMetadataService
-                .SetupGet(m => m.ReceiverName)
-                .Returns("some name");
-
-            var expectedLogMessage1 = $"'{webHookBodyTypeMetadata1.Object.GetType()}' implements " +
-                $"'{typeof(IWebHookBodyTypeMetadata)}', not all of '{typeof(IWebHookBodyTypeMetadataService)}'.";
-            var expectedLogMessage2 = $"'{webHookBodyTypeMetadata2.GetType()}' implements " +
-                $"'{typeof(IWebHookBodyTypeMetadata)}', not all of '{typeof(IWebHookBodyTypeMetadataService)}'.";
-            var metadata = new IWebHookMetadata[]
-            {
-                webHookBodyTypeMetadata1.Object,
-                webHookBodyTypeMetadata2,
-                webHookBodyTypeMetadataService.Object,
-            };
-
-            // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(
-                () => new WebHookMetadataProvider(metadata, loggerFactory));
-            Assert.Equal(expectedMessage, exception.Message);
-
-            Assert.Collection(testSink.Writes,
-                writeContext =>
-                {
-                    Assert.NotNull(writeContext);
-
-                    var logMessage = writeContext.Formatter(writeContext.State, writeContext.Exception);
-                    Assert.Equal(expectedLogMessage1, logMessage);
-                },
-                writeContext =>
-                {
-                    Assert.NotNull(writeContext);
-
-                    var logMessage = writeContext.Formatter(writeContext.State, writeContext.Exception);
-                    Assert.Equal(expectedLogMessage2, logMessage);
-                });
         }
 
         [Fact]
         public void Constructor_ThrowsWithInvalidBodyTypeMetadataService()
         {
             // Arrange
-            var expectedMessage = "Invalid metadata services found. Metadata services implementing " +
-                $"'{typeof(IWebHookBodyTypeMetadataService)}' must have valid " +
-                $"{nameof(IWebHookBodyTypeMetadataService.BodyType)} values.";
-            var expectedLogMessage1 = $"Invalid '{typeof(IWebHookBodyTypeMetadataService)}." +
-                $"{nameof(IWebHookBodyTypeMetadataService.BodyType)}' value '0' for the 'unique name1' WebHook " +
-                $"receiver. Must have at least one {nameof(WebHookBodyType)} flag set.";
-            var expectedLogMessage2 = $"Invalid '{typeof(IWebHookBodyTypeMetadataService)}." +
-                $"{nameof(IWebHookBodyTypeMetadataService.BodyType)}' value '8' for the 'unique name3' WebHook " +
-                $"receiver. Enum type {nameof(WebHookBodyType)} has no matching defined value.";
-            var testSink = new TestSink();
-            var loggerFactory = new TestLoggerFactory(testSink, enabled: true);
+            var expectedMessage = "Invalid metadata services found for the 'unique name2' WebHook receiver. " +
+                $"Metadata services implementing '{typeof(IWebHookBodyTypeMetadataService)}' must have valid " +
+                $"{nameof(IWebHookBodyTypeMetadataService.BodyType)} values. '0' is not valid.";
 
             var webHookBodyTypeMetadataService1 = new Mock<IWebHookBodyTypeMetadataService>(MockBehavior.Strict);
             webHookBodyTypeMetadataService1
                 .SetupGet(m => m.BodyType)
-                .Returns(0);
+                .Returns(WebHookBodyType.Json); // valid
             webHookBodyTypeMetadataService1
                 .SetupGet(m => m.ReceiverName)
                 .Returns("unique name1");
             var webHookBodyTypeMetadataService2 = new Mock<IWebHookBodyTypeMetadataService>(MockBehavior.Strict);
             webHookBodyTypeMetadataService2
                 .SetupGet(m => m.BodyType)
-                .Returns(WebHookBodyType.Json); // valid
+                .Returns(0);
             webHookBodyTypeMetadataService2
                 .SetupGet(m => m.ReceiverName)
                 .Returns("unique name2");
-            var webHookBodyTypeMetadataService3 = new Mock<IWebHookBodyTypeMetadataService>(MockBehavior.Strict);
-            webHookBodyTypeMetadataService3
-                .SetupGet(m => m.BodyType)
-                .Returns((WebHookBodyType)8);
-            webHookBodyTypeMetadataService3
-                .SetupGet(m => m.ReceiverName)
-                .Returns("unique name3");
             var metadata = new IWebHookMetadata[]
             {
                 webHookBodyTypeMetadataService1.Object,
                 webHookBodyTypeMetadataService2.Object,
-                webHookBodyTypeMetadataService3.Object,
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(
-                () => new WebHookMetadataProvider(metadata, loggerFactory));
+            var exception = Assert.Throws<InvalidOperationException>(() => new WebHookMetadataProvider(metadata));
             Assert.Equal(expectedMessage, exception.Message);
-
-            Assert.Collection(testSink.Writes,
-                writeContext =>
-                {
-                    Assert.NotNull(writeContext);
-
-                    var logMessage = writeContext.Formatter(writeContext.State, writeContext.Exception);
-                    Assert.Equal(expectedLogMessage1, logMessage);
-                },
-                writeContext =>
-                {
-                    Assert.NotNull(writeContext);
-
-                    var logMessage = writeContext.Formatter(writeContext.State, writeContext.Exception);
-                    Assert.Equal(expectedLogMessage2, logMessage);
-                });
         }
 
         [Fact]
         public void Constructor_ThrowsWithEventAndEventFromBodyMetadata()
         {
             // Arrange
-            var expectedMessage = "Invalid metadata services found. Receivers must not provide both " +
-                $"'{typeof(IWebHookEventFromBodyMetadata)}' and '{typeof(IWebHookEventMetadata)}' services.";
-            var expectedLogMessage = "Invalid metadata services found for the 'some name' WebHook receiver. " +
-                $"Receivers must not provide both '{typeof(IWebHookEventFromBodyMetadata)}' and " +
+            var expectedMessage = "Invalid metadata services found for the 'some name' WebHook receiver. Receivers " +
+                $"must not provide both '{typeof(IWebHookEventFromBodyMetadata)}' and " +
                 $"'{typeof(IWebHookEventMetadata)}' services.";
-            var testSink = new TestSink();
-            var loggerFactory = new TestLoggerFactory(testSink, enabled: true);
 
             var webHookEventFromBodyMetadata = new Mock<IWebHookEventFromBodyMetadata>(MockBehavior.Strict);
             webHookEventFromBodyMetadata
@@ -517,15 +344,8 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(
-                () => new WebHookMetadataProvider(metadata, loggerFactory));
+            var exception = Assert.Throws<InvalidOperationException>(() => new WebHookMetadataProvider(metadata));
             Assert.Equal(expectedMessage, exception.Message);
-
-            // None of the collections contain duplicate metadata services for multiple receivers.
-            var writeContext = Assert.Single(testSink.Writes);
-            Assert.NotNull(writeContext);
-            var logMessage = writeContext.Formatter(writeContext.State, writeContext.Exception);
-            Assert.Equal(expectedLogMessage, logMessage);
         }
 
 
@@ -533,9 +353,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         public void OnProvidersExecuting_SucceedsWithGeneralAttributeAndValiddMetadata()
         {
             // Arrange
-            var testSink = new TestSink();
-            var loggerFactory = new TestLoggerFactory(testSink, enabled: true);
-            var provider = new WebHookMetadataProvider(ValidMetadata, loggerFactory);
+            var provider = new WebHookMetadataProvider(ValidMetadata);
             var context = new ApplicationModelProviderContext(new[] { typeof(GeneralController).GetTypeInfo() });
             var defaultProvider = new DefaultApplicationModelProvider(Options.Create(new MvcOptions()));
             defaultProvider.OnProvidersExecuting(context);
@@ -549,8 +367,47 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             Assert.Collection(actionModel.Properties.OrderBy(kvp => ((Type)kvp.Key).Name),
                 kvp =>
                 {
-                    Assert.Equal(typeof(IWebHookBodyTypeMetadata), kvp.Key);
+                    Assert.Equal(typeof(IWebHookBodyTypeMetadataService), kvp.Key);
+                    Assert.IsAssignableFrom<IReadOnlyList<IWebHookBodyTypeMetadataService>>(kvp.Value);
+                },
+                kvp =>
+                {
+                    Assert.Equal(typeof(IWebHookEventMetadata), kvp.Key);
+                    Assert.IsAssignableFrom<IReadOnlyList<IWebHookEventMetadata>>(kvp.Value);
+                },
+                kvp =>
+                {
+                    Assert.Equal(typeof(IWebHookEventSelectorMetadata), kvp.Key);
                     Assert.IsAssignableFrom<GeneralWebHookAttribute>(kvp.Value);
+                },
+                kvp =>
+                {
+                    Assert.Equal(typeof(IWebHookPingRequestMetadata), kvp.Key);
+                    Assert.IsAssignableFrom<IReadOnlyList<IWebHookPingRequestMetadata>>(kvp.Value);
+                });
+        }
+
+        [Fact]
+        public void OnProvidersExecuting_SucceedsWithGeneralAttributeAndValiddMetadata_IncludingBodyType()
+        {
+            // Arrange
+            var provider = new WebHookMetadataProvider(ValidMetadata);
+            var context = new ApplicationModelProviderContext(new[] { typeof(JsonGeneralController).GetTypeInfo() });
+            var defaultProvider = new DefaultApplicationModelProvider(Options.Create(new MvcOptions()));
+            defaultProvider.OnProvidersExecuting(context);
+
+            // Act
+            provider.OnProvidersExecuting(context);
+
+            // Assert
+            var controllerModel = Assert.Single(context.Result.Controllers);
+            var actionModel = Assert.Single(controllerModel.Actions);
+            Assert.Collection(actionModel.Properties.OrderBy(kvp => ((Type)kvp.Key).Name),
+                kvp =>
+                {
+                    Assert.Equal(typeof(IWebHookBodyTypeMetadata), kvp.Key);
+                    var attribute = Assert.IsAssignableFrom<GeneralWebHookAttribute>(kvp.Value);
+                    Assert.Equal(WebHookBodyType.Json, attribute.BodyType);
                 },
                 kvp =>
                 {
@@ -578,9 +435,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         public void OnProvidersExecuting_SucceedsWithValidAttributesAndMetadata()
         {
             // Arrange
-            var testSink = new TestSink();
-            var loggerFactory = new TestLoggerFactory(testSink, enabled: true);
-            var provider = new WebHookMetadataProvider(ValidMetadata, loggerFactory);
+            var provider = new WebHookMetadataProvider(ValidMetadata);
             var context = new ApplicationModelProviderContext(new[] { typeof(SomeController).GetTypeInfo() });
             var defaultProvider = new DefaultApplicationModelProvider(Options.Create(new MvcOptions()));
             defaultProvider.OnProvidersExecuting(context);
@@ -599,7 +454,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 },
                 kvp =>
                 {
-                    Assert.Equal(typeof(IWebHookBodyTypeMetadata), kvp.Key);
+                    Assert.Equal(typeof(IWebHookBodyTypeMetadataService), kvp.Key);
                     Assert.IsAssignableFrom<IWebHookBodyTypeMetadataService>(kvp.Value);
                 },
                 kvp =>
@@ -617,6 +472,60 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     Assert.Equal(typeof(IWebHookPingRequestMetadata), kvp.Key);
                     Assert.IsAssignableFrom<IWebHookPingRequestMetadata>(kvp.Value);
                 });
+        }
+
+        [Fact]
+        public void OnProvidersExecuting_SucceedsWithValidAttributesAndMetadata_IncludingBodyType()
+        {
+            // Arrange
+            var provider = new WebHookMetadataProvider(ValidMetadata);
+            var context = new ApplicationModelProviderContext(new[] { typeof(JsonController).GetTypeInfo() });
+            var defaultProvider = new DefaultApplicationModelProvider(Options.Create(new MvcOptions()));
+            defaultProvider.OnProvidersExecuting(context);
+
+            // Act
+            provider.OnProvidersExecuting(context);
+
+            // Assert
+            var controllerModel = Assert.Single(context.Result.Controllers);
+            var actionModel = Assert.Single(controllerModel.Actions);
+            Assert.Collection(actionModel.Properties.OrderBy(kvp => ((Type)kvp.Key).Name),
+                kvp =>
+                {
+                    Assert.Equal(typeof(IWebHookBindingMetadata), kvp.Key);
+                    Assert.IsAssignableFrom<IWebHookBindingMetadata>(kvp.Value);
+                },
+                kvp =>
+                {
+                    Assert.Equal(typeof(IWebHookBodyTypeMetadata), kvp.Key);
+                    var attribute = Assert.IsAssignableFrom<JsonWebHookAttribute>(kvp.Value);
+                    Assert.Equal(WebHookBodyType.Json, attribute.BodyType);
+                },
+                kvp =>
+                {
+                    Assert.Equal(typeof(IWebHookBodyTypeMetadataService), kvp.Key);
+                    Assert.IsAssignableFrom<IWebHookBodyTypeMetadataService>(kvp.Value);
+                },
+                kvp =>
+                {
+                    Assert.Equal(typeof(IWebHookEventMetadata), kvp.Key);
+                    Assert.IsAssignableFrom<IWebHookEventMetadata>(kvp.Value);
+                },
+                kvp =>
+                {
+                    Assert.Equal(typeof(IWebHookPingRequestMetadata), kvp.Key);
+                    Assert.IsAssignableFrom<IWebHookPingRequestMetadata>(kvp.Value);
+                });
+        }
+
+        private class JsonWebHookAttribute : WebHookAttribute, IWebHookBodyTypeMetadata
+        {
+            public JsonWebHookAttribute()
+                : base("some name")
+            {
+            }
+
+            public WebHookBodyType BodyType => WebHookBodyType.Json;
         }
 
         private class SomeWebHookAttribute : WebHookAttribute, IWebHookEventSelectorMetadata
@@ -638,6 +547,24 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             }
         }
 
+        private class JsonGeneralController : ControllerBase
+        {
+            [GeneralWebHook(BodyType = WebHookBodyType.Json, EventName = "non-null")]
+            public IActionResult MyAction()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class JsonController : ControllerBase
+        {
+            [JsonWebHook]
+            public IActionResult MyAction()
+            {
+                throw new NotFiniteNumberException();
+            }
+        }
+
         private class SomeController : ControllerBase
         {
             [SomeWebHook]
@@ -645,11 +572,6 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             {
                 throw new NotImplementedException();
             }
-        }
-
-        private class WebHookBodyTypeMetadata : IWebHookBodyTypeMetadata
-        {
-            public WebHookBodyType BodyType => throw new NotImplementedException();
         }
     }
 }

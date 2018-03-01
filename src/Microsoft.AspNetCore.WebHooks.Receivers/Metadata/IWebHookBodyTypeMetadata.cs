@@ -22,10 +22,10 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         /// Gets the <see cref="WebHookBodyType"/> this action expects.
         /// </summary>
         /// <value>
-        /// Must have just one <see cref="WebHookBodyType"/> flag set or be <see cref="WebHookBodyType.All"/>.
-        /// Other combinations of flags are not valid. In this context, <see cref="WebHookBodyType.All"/> means a
-        /// <c>data</c> parameter is not expected and, if such a parameter exists, it requires no additional
-        /// <see cref="Mvc.ModelBinding.BindingInfo"/>.
+        /// Must have just one <see cref="WebHookBodyType"/> flag set or be
+        /// <see cref="WebHookConstants.AllBodyTypes"/>. <c>0</c> and other combinations of flags are not valid. In
+        /// this context, <see cref="WebHookConstants.AllBodyTypes"/> means a <c>data</c> parameter is not expected
+        /// and, if such a parameter exists, it requires no additional <see cref="Mvc.ModelBinding.BindingInfo"/>.
         /// </value>
         WebHookBodyType BodyType { get; }
     }

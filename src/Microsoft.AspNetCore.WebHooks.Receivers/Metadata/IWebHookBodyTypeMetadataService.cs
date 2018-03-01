@@ -15,15 +15,13 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     /// how to parse the request body and how to interpret
     /// <see cref="IWebHookEventFromBodyMetadata.BodyPropertyPath"/>.
     /// </remarks>
-    public interface IWebHookBodyTypeMetadataService : IWebHookBodyTypeMetadata, IWebHookReceiver
+    public interface IWebHookBodyTypeMetadataService : IWebHookMetadata, IWebHookReceiver
     {
         /// <summary>
         /// Gets the <see cref="WebHookBodyType"/> this receiver requires.
         /// </summary>
-        /// <value>
-        /// <c>0</c> is not valid. Otherwise, any combination of defined flags is supported. Most receivers set a
-        /// single flag because they require a single body type.
-        /// </value>
-        new WebHookBodyType BodyType { get; }
+        /// <value><c>0</c> is not valid. Otherwise, any combination of defined flags is supported.</value>
+        /// <remarks>Most receivers set a single flag because they require a single body type.</remarks>
+        WebHookBodyType BodyType { get; }
     }
 }

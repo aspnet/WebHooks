@@ -97,7 +97,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enum type {0} has no defined &apos;{1}&apos; value..
+        ///   Looks up a localized string similar to Enum type &apos;{0}&apos; has no defined &apos;{1}&apos; value..
         /// </summary>
         internal static string General_InvalidEnumValue {
             get {
@@ -115,7 +115,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;{0}&apos; value is not valid for this property. Must have a single {1} flag set or be &apos;{2}&apos;..
+        ///   Looks up a localized string similar to The value &apos;{0}&apos; is not valid. Must be &apos;{2}&apos; or have a single &apos;{1}&apos; flag set..
         /// </summary>
         internal static string GeneralAttribute_InvalidBodyType {
             get {
@@ -133,7 +133,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid metadata services found. Receivers must not provide both &apos;{0}&apos; and &apos;{1}&apos; services..
+        ///   Looks up a localized string similar to Invalid metadata services found for the &apos;{0}&apos; WebHook receiver. Receivers must not provide both &apos;{1}&apos; and &apos;{2}&apos; services..
         /// </summary>
         internal static string MetadataProvider_ConflictingMetadataServices {
             get {
@@ -142,7 +142,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate &apos;{0}&apos; registrations found..
+        ///   Looks up a localized string similar to Invalid metadata services found for the &apos;{0}&apos; WebHook receiver. Receivers must not have more than one &apos;{1}&apos; registration..
         /// </summary>
         internal static string MetadataProvider_DuplicateMetadata {
             get {
@@ -151,20 +151,20 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid WebHook attribute &apos;{0}&apos; found.  Attributes implementing &apos;{1}&apos; must have valid {2} values. Must have a single {3} flag set or be &apos;{4}&apos;..
+        ///   Looks up a localized string similar to Invalid WebHook attribute &apos;{0}&apos; found. Attributes implementing &apos;{1}&apos; must have valid {2} values. &apos;{3}&apos; must instead be &apos;{4}&apos; or have a single {5} flag set..
         /// </summary>
-        internal static string MetadataProvider_InvalidBodyType {
+        internal static string MetadataProvider_InvalidAttributeBodyType {
             get {
-                return ResourceManager.GetString("MetadataProvider_InvalidBodyType", resourceCulture);
+                return ResourceManager.GetString("MetadataProvider_InvalidAttributeBodyType", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid metadata services found. Metadata services implementing &apos;{0}&apos; must have valid {1} values..
+        ///   Looks up a localized string similar to Invalid metadata services found for the &apos;{0}&apos; WebHook receiver. Metadata services implementing &apos;{1}&apos; must have valid {2} values. &apos;0&apos; is not valid..
         /// </summary>
-        internal static string MetadataProvider_InvalidMetadataServiceValue {
+        internal static string MetadataProvider_InvalidMetadataServiceBodyType {
             get {
-                return ResourceManager.GetString("MetadataProvider_InvalidMetadataServiceValue", resourceCulture);
+                return ResourceManager.GetString("MetadataProvider_InvalidMetadataServiceBodyType", resourceCulture);
             }
         }
         
@@ -178,15 +178,6 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid metadata services found. Metadata services must not implement &apos;{0}&apos; and must instead implement all of &apos;{1}&apos;..
-        /// </summary>
-        internal static string MetadataProvider_WrongInterface {
-            get {
-                return ResourceManager.GetString("MetadataProvider_WrongInterface", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The MVC model binding system failed. Model state is valid but model was not set..
         /// </summary>
         internal static string RequestReader_ModelBindingFailed {
@@ -196,7 +187,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} and {1} were applied to the same action. {0} must not be combined with another attribute that provides a route template..
+        ///   Looks up a localized string similar to &apos;{0}&apos; and &apos;{1}&apos; were applied to the same action. &apos;{2}&apos; must not be combined with another attribute that provides a route template..
         /// </summary>
         internal static string RoutingProvider_MixedRouteWithWebHookAttribute {
             get {
@@ -205,7 +196,7 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Could not find a valid configuration for the &apos;{0}&apos; WebHook receiver, instance &apos;{1}&apos;.  The value must be between {2} and {3} characters long..
+        ///   Looks up a localized string similar to Could not find a valid configuration for the &apos;{0}&apos; WebHook receiver, instance &apos;{1}&apos;. The value must be between {2} and {3} characters long..
         /// </summary>
         internal static string Security_BadSecret {
             get {
@@ -232,20 +223,20 @@ namespace Microsoft.AspNetCore.WebHooks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid WebHook attribute &apos;{0}&apos; found. Attributes implementing &apos;{1}&apos; must have valid {2} values. Must be a subset of the receiver requirements..
-        /// </summary>
-        internal static string Shared_InvalidAttributeValue {
-            get {
-                return ResourceManager.GetString("Shared_InvalidAttributeValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No &apos;{0}&apos; implementation found for the &apos;{1}&apos; WebHook receiver..
+        ///   Looks up a localized string similar to Invalid metadata services found for the &apos;{0}&apos; WebHook receiver.  Receiver must have an &apos;{1}&apos; implementation..
         /// </summary>
         internal static string Shared_MissingMetadata {
             get {
                 return ResourceManager.GetString("Shared_MissingMetadata", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid WebHook attribute &apos;{0}&apos; found. Attributes implementing &apos;{1}&apos; must have valid {2} values. &apos;{3}&apos; must instead be &apos;{4}&apos; or a subset of the receiver requirements (&apos;{5}&apos;)..
+        /// </summary>
+        internal static string Shared_NonSubsetAttributeBodyType {
+            get {
+                return ResourceManager.GetString("Shared_NonSubsetAttributeBodyType", resourceCulture);
             }
         }
         

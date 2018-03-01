@@ -26,7 +26,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Instantiates a new <see cref="WebHookRoutingProvider"/> with the given
+        /// Instantiates a new <see cref="WebHookModelBindingProvider"/> with the given
         /// <paramref name="loggerFactory"/>.
         /// </summary>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
@@ -80,15 +80,31 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                         continue;
                     }
 
-                    action.Properties.TryGetValue(typeof(IWebHookBindingMetadata), out var bindingMetadata);
                     action.Properties.TryGetValue(typeof(IWebHookBodyTypeMetadata), out var bodyTypeMetadata);
+                    var actionBodyTypeMetadata = (IWebHookBodyTypeMetadata)bodyTypeMetadata;
+                    bodyTypeMetadata = action.Properties[typeof(IWebHookBodyTypeMetadataService)];
+                    WebHookBodyType bodyType;
+                    if (actionBodyTypeMetadata != null &&
+                        actionBodyTypeMetadata.BodyType != WebHookConstants.AllBodyTypes)
+                    {
+                        // IWebHookBodyTypeMetadataService is either not known or a superset of actionBodyTypeMetadata.
+                        bodyType = actionBodyTypeMetadata.BodyType;
+                    }
+                    else if (bodyTypeMetadata is IWebHookBodyTypeMetadataService receiverBodyTypeMetadata)
+                    {
+                        bodyType = receiverBodyTypeMetadata.BodyType;
+                    }
+                    else
+                    {
+                        // Occurs if [GeneralWebHook]'s BodyType is set to AllBodyTypes.
+                        bodyType = WebHookConstants.AllBodyTypes;
+                    }
+
+                    action.Properties.TryGetValue(typeof(IWebHookBindingMetadata), out var bindingMetadata);
                     for (var k = 0; k < action.Parameters.Count; k++)
                     {
                         var parameter = action.Parameters[k];
-                        Apply(
-                            (IWebHookBindingMetadata)bindingMetadata,
-                            (IWebHookBodyTypeMetadata)bodyTypeMetadata,
-                            parameter);
+                        Apply((IWebHookBindingMetadata)bindingMetadata, bodyType, parameter);
                     }
                 }
             }
@@ -102,7 +118,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
         private void Apply(
             IWebHookBindingMetadata bindingMetadata,
-            IWebHookBodyTypeMetadata bodyTypeMetadata,
+            WebHookBodyType bodyType,
             ParameterModel parameter)
         {
             var bindingInfo = parameter.BindingInfo;
@@ -131,7 +147,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     break;
 
                 case "DATA":
-                    SourceData(bindingInfo, bodyTypeMetadata, parameterName);
+                    SourceData(bindingInfo, bodyType, parameterName);
                     break;
 
                 case "EVENT":
@@ -167,7 +183,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                          typeof(JToken).IsAssignableFrom(parameterType) ||
                          typeof(XElement).IsAssignableFrom(parameterType)))
                     {
-                        SourceData(bindingInfo, bodyTypeMetadata, parameterName);
+                        SourceData(bindingInfo, bodyType, parameterName);
                     }
                     break;
             }
@@ -175,22 +191,22 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
         private void SourceData(
             BindingInfo bindingInfo,
-            IWebHookBodyTypeMetadata bodyTypeMetadata,
+            WebHookBodyType bodyType,
             string parameterName)
         {
-            if ((bodyTypeMetadata.BodyType & WebHookBodyType.Form) != 0 &&
-                (bodyTypeMetadata.BodyType & (WebHookBodyType.Json | WebHookBodyType.Xml)) != 0)
+            if ((bodyType & WebHookBodyType.Form) != 0 &&
+                (bodyType & (WebHookBodyType.Json | WebHookBodyType.Xml)) != 0)
             {
                 _logger.LogWarning(
                     0,
                     "Not adding binding information for '{ParameterName}' parameter. WebHookBodyType '{BodyType}' " +
                     "is ambiguous.",
                     parameterName,
-                    bodyTypeMetadata.BodyType);
+                    bodyType);
                 return;
             }
 
-            if (bodyTypeMetadata.BodyType == WebHookBodyType.Form)
+            if (bodyType == WebHookBodyType.Form)
             {
                 bindingInfo.BinderModelName = WebHookConstants.ModelStateBodyModelName;
                 bindingInfo.BindingSource = BindingSource.Form;
@@ -286,7 +302,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     var message = string.Format(
                         CultureInfo.CurrentCulture,
                         Resources.General_InvalidEnumValue,
-                        nameof(WebHookParameterType),
+                        typeof(WebHookParameterType),
                         parameter.ParameterType);
                     throw new InvalidOperationException(message);
             }

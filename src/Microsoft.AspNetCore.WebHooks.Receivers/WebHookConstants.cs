@@ -1,6 +1,7 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using Microsoft.AspNetCore.WebHooks.Metadata;
 using Microsoft.AspNetCore.WebHooks.Routing;
 using Microsoft.Extensions.Configuration;
 
@@ -11,6 +12,18 @@ namespace Microsoft.AspNetCore.WebHooks
     /// </summary>
     public static class WebHookConstants
     {
+
+        /// <summary>
+        /// Gets the <see cref="WebHookBodyType"/> indicating requests may have any supported <c>content-type</c>. The
+        /// <see cref="ApplicationModels.WebHookModelBindingProvider"/> ignores bound <c>data</c> parameters when the
+        /// action and receiver has this <see cref="WebHookBodyType"/>.
+        /// </summary>
+        /// <remarks>
+        /// This value is intended for use as <see cref="GeneralWebHookAttribute"/>'s default
+        /// <see cref="IWebHookBodyTypeMetadata.BodyType"/>.
+        /// </remarks>
+        public static WebHookBodyType AllBodyTypes = WebHookBodyType.Form | WebHookBodyType.Json | WebHookBodyType.Xml;
+
         /// <summary>
         /// Gets the minimum length of the <see cref="CodeQueryParameterName"/> query parameter value and secret key
         /// for receivers using such a query parameter.

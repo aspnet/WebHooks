@@ -145,8 +145,9 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.RoutingProvider_MixedRouteWithWebHookAttribute,
-                    attribute.GetType().Name,
-                    selector.AttributeRouteModel.Attribute?.GetType().Name);
+                    attribute.GetType(),
+                    selector.AttributeRouteModel.Attribute?.GetType(),
+                    attribute.GetType().Name);
                 throw new InvalidOperationException(message);
             }
 
@@ -222,16 +223,25 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
         private void AddFilters(IDictionary<object, object> properties, IList<IFilterMetadata> filters)
         {
-            var bodyTypeMetadata = (IWebHookBodyTypeMetadata)properties[typeof(IWebHookBodyTypeMetadata)];
-            if (properties.TryGetValue(typeof(IWebHookBodyTypeMetadataService), out var bodyTypeMetadataObject))
+            properties.TryGetValue(typeof(IWebHookBodyTypeMetadata), out var bodyTypeMetadataObject);
+            var actionBodyTypeMetadata = (IWebHookBodyTypeMetadata)bodyTypeMetadataObject;
+            bodyTypeMetadataObject = properties[typeof(IWebHookBodyTypeMetadataService)];
+
+            WebHookVerifyBodyTypeFilter filter;
+            if (bodyTypeMetadataObject is IWebHookBodyTypeMetadataService receiverBodyTypeMetadata)
             {
-                var allBodyTypeMetadata = (IReadOnlyList<IWebHookBodyTypeMetadataService>)bodyTypeMetadataObject;
-                filters.Add(new WebHookVerifyBodyTypeFilter(bodyTypeMetadata, allBodyTypeMetadata, _loggerFactory));
+                filter = new WebHookVerifyBodyTypeFilter(
+                    receiverBodyTypeMetadata,
+                    actionBodyTypeMetadata,
+                    _loggerFactory);
             }
             else
             {
-                filters.Add(new WebHookVerifyBodyTypeFilter(bodyTypeMetadata, _loggerFactory));
+                var allBodyTypeMetadata = (IReadOnlyList<IWebHookBodyTypeMetadataService>)bodyTypeMetadataObject;
+                filter = new WebHookVerifyBodyTypeFilter(allBodyTypeMetadata, actionBodyTypeMetadata, _loggerFactory);
             }
+
+            filters.Add(filter);
         }
     }
 }

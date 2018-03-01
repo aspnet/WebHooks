@@ -37,16 +37,5 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         /// when the action or receiver has this <see cref="WebHookBodyType"/>.
         /// </summary>
         Xml = 4,
-
-        /// <summary>
-        /// Request may have any supported <c>content-type</c>. The
-        /// <see cref="ApplicationModels.WebHookModelBindingProvider"/> ignores bound <c>data</c> parameters when the
-        /// action or receiver has this <see cref="WebHookBodyType"/>.
-        /// </summary>
-        /// <remarks>
-        /// This value is intended for use as <see cref="GeneralWebHookAttribute"/>'s default
-        /// <see cref="IWebHookBodyTypeMetadata.BodyType"/>.
-        /// </remarks>
-        All = Form | Json | Xml,
     }
 }
