@@ -262,14 +262,14 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             var metadata = Array.Empty<IWebHookMetadata>();
 
             // Act & Assert (does not throw)
-            new WebHookMetadataProvider(metadata);
+            new TestMetadataProvider(metadata);
         }
 
         [Fact]
         public void Constructor_SucceedsWithValidMetadata()
         {
             // Arrange, Act & Assert (does not throw)
-            new WebHookMetadataProvider(ValidMetadata);
+            new TestMetadataProvider(ValidMetadata);
         }
 
         [Theory]
@@ -281,7 +281,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 $"Receivers must not have more than one '{metadataType}' registration.";
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => new WebHookMetadataProvider(metadata));
+            var exception = Assert.Throws<InvalidOperationException>(() => new TestMetadataProvider(metadata));
             Assert.Equal(expectedMessage, exception.Message);
         }
 
@@ -314,7 +314,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => new WebHookMetadataProvider(metadata));
+            var exception = Assert.Throws<InvalidOperationException>(() => new TestMetadataProvider(metadata));
             Assert.Equal(expectedMessage, exception.Message);
         }
 
@@ -344,7 +344,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             };
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => new WebHookMetadataProvider(metadata));
+            var exception = Assert.Throws<InvalidOperationException>(() => new TestMetadataProvider(metadata));
             Assert.Equal(expectedMessage, exception.Message);
         }
 
@@ -353,7 +353,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         public void OnProvidersExecuting_SucceedsWithGeneralAttributeAndValiddMetadata()
         {
             // Arrange
-            var provider = new WebHookMetadataProvider(ValidMetadata);
+            var provider = new TestMetadataProvider(ValidMetadata);
             var context = new ApplicationModelProviderContext(new[] { typeof(GeneralController).GetTypeInfo() });
             var defaultProvider = new DefaultApplicationModelProvider(Options.Create(new MvcOptions()));
             defaultProvider.OnProvidersExecuting(context);
@@ -391,7 +391,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         public void OnProvidersExecuting_SucceedsWithGeneralAttributeAndValiddMetadata_IncludingBodyType()
         {
             // Arrange
-            var provider = new WebHookMetadataProvider(ValidMetadata);
+            var provider = new TestMetadataProvider(ValidMetadata);
             var context = new ApplicationModelProviderContext(new[] { typeof(JsonGeneralController).GetTypeInfo() });
             var defaultProvider = new DefaultApplicationModelProvider(Options.Create(new MvcOptions()));
             defaultProvider.OnProvidersExecuting(context);
@@ -435,7 +435,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         public void OnProvidersExecuting_SucceedsWithValidAttributesAndMetadata()
         {
             // Arrange
-            var provider = new WebHookMetadataProvider(ValidMetadata);
+            var provider = new TestMetadataProvider(ValidMetadata);
             var context = new ApplicationModelProviderContext(new[] { typeof(SomeController).GetTypeInfo() });
             var defaultProvider = new DefaultApplicationModelProvider(Options.Create(new MvcOptions()));
             defaultProvider.OnProvidersExecuting(context);
@@ -478,7 +478,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         public void OnProvidersExecuting_SucceedsWithValidAttributesAndMetadata_IncludingBodyType()
         {
             // Arrange
-            var provider = new WebHookMetadataProvider(ValidMetadata);
+            var provider = new TestMetadataProvider(ValidMetadata);
             var context = new ApplicationModelProviderContext(new[] { typeof(JsonController).GetTypeInfo() });
             var defaultProvider = new DefaultApplicationModelProvider(Options.Create(new MvcOptions()));
             defaultProvider.OnProvidersExecuting(context);
@@ -516,6 +516,21 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     Assert.Equal(typeof(IWebHookPingRequestMetadata), kvp.Key);
                     Assert.IsAssignableFrom<IWebHookPingRequestMetadata>(kvp.Value);
                 });
+        }
+
+        private class TestMetadataProvider : WebHookMetadataProvider
+        {
+            public TestMetadataProvider(IEnumerable<IWebHookMetadata> metadata)
+                : base(
+                    metadata.OfType<IWebHookBindingMetadata>(),
+                    metadata.OfType<IWebHookBodyTypeMetadataService>(),
+                    metadata.OfType<IWebHookEventFromBodyMetadata>(),
+                    metadata.OfType<IWebHookEventMetadata>(),
+                    metadata.OfType<IWebHookGetHeadRequestMetadata>(),
+                    metadata.OfType<IWebHookPingRequestMetadata>(),
+                    metadata.OfType<IWebHookVerifyCodeMetadata>())
+            {
+            }
         }
 
         private class JsonWebHookAttribute : WebHookAttribute, IWebHookBodyTypeMetadata
