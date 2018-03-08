@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     public abstract class WebHookMetadata : IWebHookBodyTypeMetadataService
     {
         /// <summary>
-        /// Instantiates a new <see cref="WebHookMetadata"/> with the given <paramref name="receiverName"/>.
+        /// Instantiates a new <see cref="WebHookMetadata"/> instance with the given <paramref name="receiverName"/>.
         /// </summary>
         /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
         protected WebHookMetadata(string receiverName)

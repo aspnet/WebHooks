@@ -26,7 +26,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Instantiates a new <see cref="WebHookModelBindingProvider"/> with the given
+        /// Instantiates a new <see cref="WebHookModelBindingProvider"/> instance with the given
         /// <paramref name="loggerFactory"/>.
         /// </summary>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
@@ -80,24 +80,19 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                         continue;
                     }
 
-                    action.Properties.TryGetValue(typeof(IWebHookBodyTypeMetadata), out var bodyTypeMetadata);
-                    var actionBodyTypeMetadata = (IWebHookBodyTypeMetadata)bodyTypeMetadata;
-                    bodyTypeMetadata = action.Properties[typeof(IWebHookBodyTypeMetadataService)];
-                    WebHookBodyType bodyType;
-                    if (actionBodyTypeMetadata != null &&
-                        actionBodyTypeMetadata.BodyType != WebHookConstants.AllBodyTypes)
-                    {
-                        // IWebHookBodyTypeMetadataService is either not known or a superset of actionBodyTypeMetadata.
-                        bodyType = actionBodyTypeMetadata.BodyType;
-                    }
-                    else if (bodyTypeMetadata is IWebHookBodyTypeMetadataService receiverBodyTypeMetadata)
+                    WebHookBodyType? bodyType;
+                    var bodyTypeMetadata = action.Properties[typeof(IWebHookBodyTypeMetadataService)];
+                    if (bodyTypeMetadata is IWebHookBodyTypeMetadataService receiverBodyTypeMetadata)
                     {
                         bodyType = receiverBodyTypeMetadata.BodyType;
                     }
                     else
                     {
-                        // Occurs if [GeneralWebHook]'s BodyType is set to AllBodyTypes.
-                        bodyType = WebHookConstants.AllBodyTypes;
+                        // Reachable only for [GeneralWebHook] cases. That attribute implements
+                        // IWebHookBodyTypeMetadata and WebHookMetadataProvider passed it along.
+                        bodyTypeMetadata = action.Properties[typeof(IWebHookBodyTypeMetadata)];
+                        var actionBodyTypeMetadata = (IWebHookBodyTypeMetadata)bodyTypeMetadata;
+                        bodyType = actionBodyTypeMetadata.BodyType;
                     }
 
                     action.Properties.TryGetValue(typeof(IWebHookBindingMetadata), out var bindingMetadata);
@@ -118,7 +113,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
         private void Apply(
             IWebHookBindingMetadata bindingMetadata,
-            WebHookBodyType bodyType,
+            WebHookBodyType? bodyType,
             ParameterModel parameter)
         {
             var bindingInfo = parameter.BindingInfo;
@@ -191,22 +186,19 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
         private void SourceData(
             BindingInfo bindingInfo,
-            WebHookBodyType bodyType,
+            WebHookBodyType? bodyType,
             string parameterName)
         {
-            if ((bodyType & WebHookBodyType.Form) != 0 &&
-                (bodyType & (WebHookBodyType.Json | WebHookBodyType.Xml)) != 0)
+            if (!bodyType.HasValue)
             {
                 _logger.LogWarning(
                     0,
-                    "Not adding binding information for '{ParameterName}' parameter. WebHookBodyType '{BodyType}' " +
-                    "is ambiguous.",
-                    parameterName,
-                    bodyType);
+                    "Not adding binding information for '{ParameterName}' parameter. WebHookBodyType is not known.",
+                    parameterName);
                 return;
             }
 
-            if (bodyType == WebHookBodyType.Form)
+            if (bodyType.Value == WebHookBodyType.Form)
             {
                 bindingInfo.BinderModelName = WebHookConstants.ModelStateBodyModelName;
                 bindingInfo.BindingSource = BindingSource.Form;

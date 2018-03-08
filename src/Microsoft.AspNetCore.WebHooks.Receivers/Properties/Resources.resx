@@ -123,12 +123,6 @@
   <data name="EventMapper_NoBodyProperty" xml:space="preserve">
     <value>A '{0}' WebHook request must contain a match for '{1}' in the HTTP request entity body indicating the type or types of event.</value>
   </data>
-  <data name="EventMapper_UnsupportedContentType" xml:space="preserve">
-    <value>Invalid WebHook filter configuration encountered. The '{0}' WebHook receiver does not support content type '{1}' and '{2}' should have disallowed the request.</value>
-  </data>
-  <data name="GeneralAttribute_InvalidBodyType" xml:space="preserve">
-    <value>The value '{0}' is not valid. Must be '{2}' or have a single '{1}' flag set.</value>
-  </data>
   <data name="General_ArgumentCannotBeNullOrEmpty" xml:space="preserve">
     <value>Value cannot be null or empty.</value>
   </data>
@@ -147,11 +141,8 @@
   <data name="MetadataProvider_DuplicateMetadata" xml:space="preserve">
     <value>Invalid metadata services found for the '{0}' WebHook receiver. Receivers must not have more than one '{1}' registration.</value>
   </data>
-  <data name="MetadataProvider_InvalidAttributeBodyType" xml:space="preserve">
-    <value>Invalid WebHook attribute '{0}' found. Attributes implementing '{1}' must have valid {2} values. '{3}' must instead be '{4}' or have a single {5} flag set.</value>
-  </data>
-  <data name="MetadataProvider_InvalidMetadataServiceBodyType" xml:space="preserve">
-    <value>Invalid metadata services found for the '{0}' WebHook receiver. Metadata services implementing '{1}' must have valid {2} values. '0' is not valid.</value>
+  <data name="MetadataProvider_MissingMetadata" xml:space="preserve">
+    <value>Invalid metadata services found for the '{0}' WebHook receiver.  Receiver must have an '{1}' implementation.</value>
   </data>
   <data name="MetadataProvider_MissingMetadataServices" xml:space="preserve">
     <value>Invalid metadata services found for the '{0}' WebHook receiver. Receivers with attributes implementing '{1}' must also provide a '{2}' service.</value>
@@ -171,12 +162,6 @@
   <data name="Security_NoSecrets" xml:space="preserve">
     <value>Could not find a valid configuration for the '{0}' WebHook receiver. Configure secret keys for this receiver.</value>
   </data>
-  <data name="Shared_MissingMetadata" xml:space="preserve">
-    <value>Invalid metadata services found for the '{0}' WebHook receiver.  Receiver must have an '{1}' implementation.</value>
-  </data>
-  <data name="Shared_NonSubsetAttributeBodyType" xml:space="preserve">
-    <value>Invalid WebHook attribute '{0}' found. Attributes implementing '{1}' must have valid {2} values. '{3}' must instead be '{4}' or a subset of the receiver requirements ('{5}').</value>
-  </data>
   <data name="VerifyBody_NoFormData" xml:space="preserve">
     <value>The '{0}' WebHook receiver does not support content type '{1}'. The WebHook request must contain an entity body formatted as HTML form URL-encoded data.</value>
   </data>
@@ -185,9 +170,6 @@
   </data>
   <data name="VerifyBody_NoXml" xml:space="preserve">
     <value>The '{0}' WebHook receiver does not support content type '{1}'. The WebHook request must contain an entity body formatted as XML.</value>
-  </data>
-  <data name="VerifyBody_UnsupportedContentType" xml:space="preserve">
-    <value>The '{0}' WebHook receiver does not support content type '{1}'. The WebHook request must contain an entity body formatted to match '{2}'.</value>
   </data>
   <data name="VerifyCode_BadCode" xml:space="preserve">
     <value>The '{0}' query parameter provided in the HTTP request did not match the expected value.</value>

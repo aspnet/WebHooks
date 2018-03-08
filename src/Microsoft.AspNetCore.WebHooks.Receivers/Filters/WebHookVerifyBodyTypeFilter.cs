@@ -12,40 +12,49 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebHooks.Metadata;
 using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 
 namespace Microsoft.AspNetCore.WebHooks.Filters
 {
     /// <summary>
     /// An <see cref="IResourceFilter"/> to allow only WebHook requests with a <c>Content-Type</c> matching the
-    /// action's <see cref="IWebHookBodyTypeMetadata.BodyType"/> and / or the receiver's
-    /// <see cref="IWebHookBodyTypeMetadataService.BodyType"/>.
+    /// receiver's <see cref="IWebHookBodyTypeMetadataService.BodyType"/>.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Done as an <see cref="IResourceFilter"/> implementation and not an
     /// <see cref="Mvc.ActionConstraints.IActionConstraintMetadata"/> because receivers do not dynamically vary their
-    /// <see cref="IWebHookBodyTypeMetadata"/>. Use distinct <see cref="WebHookAttribute.Id"/> values if different
-    /// configurations are needed for one receiver and the receiver's <see cref="WebHookAttribute"/> implements
-    /// <see cref="IWebHookBodyTypeMetadata"/>.
+    /// <see cref="IWebHookBodyTypeMetadataService.BodyType"/>s.
+    /// </para>
+    /// <para>
+    /// Use <see cref="WebHookAttribute.Id"/> values to control routing to multiple actions with
+    /// <see cref="GeneralWebHookAttribute"/> and distinct non-<see langword="null"/>
+    /// <see cref="IWebHookBodyTypeMetadata.BodyType"/> settings.
+    /// </para>
     /// </remarks>
     public class WebHookVerifyBodyTypeFilter : IResourceFilter, IOrderedFilter
     {
+        private static readonly MediaTypeHeaderValue ApplicationJsonMediaType
+            = new MediaTypeHeaderValue("application/json");
+        private static readonly MediaTypeHeaderValue ApplicationXmlMediaType
+            = new MediaTypeHeaderValue("application/xml");
+        private static readonly MediaTypeHeaderValue TextJsonMediaType = new MediaTypeHeaderValue("text/json");
+        private static readonly MediaTypeHeaderValue TextXmlMediaType = new MediaTypeHeaderValue("text/xml");
+
         private readonly IReadOnlyList<IWebHookBodyTypeMetadataService> _allBodyTypeMetadata;
         private readonly IWebHookBodyTypeMetadataService _receiverBodyTypeMetadata;
-        private readonly IWebHookBodyTypeMetadata _actionBodyTypeMetadata;
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Instantiates a new <see cref="WebHookVerifyMethodFilter"/> instance to verify the given
-        /// <paramref name="receiverBodyTypeMetadata"/> or <paramref name="actionBodyTypeMetadata"/>.
+        /// Instantiates a new <see cref="WebHookVerifyBodyTypeFilter"/> instance to verify the given
+        /// <paramref name="receiverBodyTypeMetadata"/>.
         /// </summary>
         /// <param name="receiverBodyTypeMetadata">
         /// The receiver's <see cref="IWebHookBodyTypeMetadataService"/>.
         /// </param>
-        /// <param name="actionBodyTypeMetadata">The action's <see cref="IWebHookBodyTypeMetadata"/>, if any.</param>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
         public WebHookVerifyBodyTypeFilter(
             IWebHookBodyTypeMetadataService receiverBodyTypeMetadata,
-            IWebHookBodyTypeMetadata actionBodyTypeMetadata,
             ILoggerFactory loggerFactory)
         {
             if (receiverBodyTypeMetadata == null)
@@ -57,35 +66,25 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(loggerFactory));
             }
 
-            // Ignore AllBodyTypes metadata for the action.
-            if (actionBodyTypeMetadata != null && actionBodyTypeMetadata.BodyType != WebHookConstants.AllBodyTypes)
-            {
-                _actionBodyTypeMetadata = actionBodyTypeMetadata;
-            }
-
             _receiverBodyTypeMetadata = receiverBodyTypeMetadata;
             _logger = loggerFactory.CreateLogger<WebHookVerifyBodyTypeFilter>();
         }
 
         /// <summary>
-        /// Instantiates a new <see cref="WebHookVerifyMethodFilter"/> instance to verify the receiver's
-        /// <see cref="WebHookBodyType"/> (found in <paramref name="allBodyTypeMetadata"/>) or the given
-        /// <paramref name="actionBodyTypeMetadata"/>. Also confirms <paramref name="actionBodyTypeMetadata"/> is
-        /// <see langword="null"/>, <see cref="WebHookConstants.AllBodyTypes"/>, or a subset of the receiver's
-        /// <see cref="IWebHookBodyTypeMetadataService"/>.
+        /// Instantiates a new <see cref="WebHookVerifyBodyTypeFilter"/> instance to verify the receiver's
+        /// <see cref="IWebHookBodyTypeMetadataService.BodyType"/>. That <see cref="WebHookBodyType"/> value is found
+        /// in <paramref name="allBodyTypeMetadata"/>).
         /// </summary>
         /// <param name="allBodyTypeMetadata">
         /// The collection of <see cref="IWebHookBodyTypeMetadataService"/> services. Searched for applicable metadata
         /// per-request.
         /// </param>
-        /// <param name="actionBodyTypeMetadata">The action's <see cref="IWebHookBodyTypeMetadata"/>, if any.</param>
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
         /// <remarks>
         /// This overload is intended for use with <see cref="GeneralWebHookAttribute"/>.
         /// </remarks>
         public WebHookVerifyBodyTypeFilter(
             IReadOnlyList<IWebHookBodyTypeMetadataService> allBodyTypeMetadata,
-            IWebHookBodyTypeMetadata actionBodyTypeMetadata,
             ILoggerFactory loggerFactory)
         {
             if (allBodyTypeMetadata == null)
@@ -95,12 +94,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             if (loggerFactory == null)
             {
                 throw new ArgumentNullException(nameof(loggerFactory));
-            }
-
-            // Ignore AllBodyTypes metadata for the action.
-            if (actionBodyTypeMetadata != null && actionBodyTypeMetadata.BodyType != WebHookConstants.AllBodyTypes)
-            {
-                _actionBodyTypeMetadata = actionBodyTypeMetadata;
             }
 
             _allBodyTypeMetadata = allBodyTypeMetadata;
@@ -154,46 +147,17 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return;
             }
 
-            var bodyType = _actionBodyTypeMetadata?.BodyType ??
-                _receiverBodyTypeMetadata?.BodyType ??
-                WebHookConstants.AllBodyTypes;
-
-            if (_allBodyTypeMetadata != null)
-            {
+            var receiverBodyTypeMetadata = _receiverBodyTypeMetadata ??
                 // WebHookReceiverExistsConstraint confirms the IWebHookBodyTypeMetadataService implementation exists.
-                var receiverBodyTypeMetadata = _allBodyTypeMetadata
-                    .First(metadata => metadata.IsApplicable(receiverName));
-                if (bodyType == WebHookConstants.AllBodyTypes)
-                {
-                    // Use receiver-specific requirement since the action is flexible.
-                    bodyType = receiverBodyTypeMetadata.BodyType;
-                }
-                else if ((~receiverBodyTypeMetadata.BodyType & bodyType) != 0)
-                {
-                    // Failed subset check that WebHookMetadataProvider could not perform: Attribute must require the
-                    // same body type as receiver's metadata service or a subset. That is, bodyTypeMetadata.BodyType
-                    // flags must be AllBodyTypes (_actionBodyTypeMetadata is null in that case) or must not include
-                    // any beyond those set in receiverBodyTypeMetadata.BodyType.
-                    var message = string.Format(
-                        CultureInfo.CurrentCulture,
-                        Resources.Shared_NonSubsetAttributeBodyType,
-                        _actionBodyTypeMetadata.GetType(),
-                        typeof(IWebHookBodyTypeMetadata),
-                        nameof(IWebHookBodyTypeMetadata.BodyType),
-                        bodyType,
-                        WebHookConstants.AllBodyTypes,
-                        receiverBodyTypeMetadata.BodyType);
-                    throw new InvalidOperationException(message);
-                }
-            }
+                _allBodyTypeMetadata.First(metadata => metadata.IsApplicable(receiverName));
 
             var request = context.HttpContext.Request;
-            switch (bodyType)
+            var contentType = request.GetTypedHeaders().ContentType;
+            switch (receiverBodyTypeMetadata.BodyType)
             {
                 case WebHookBodyType.Form:
                     if (!request.HasFormContentType)
                     {
-                        var contentType = request.GetTypedHeaders().ContentType;
                         _logger.LogWarning(
                             0,
                             "The '{ReceiverName}' WebHook receiver does not support content type '{ContentType}'. " +
@@ -213,9 +177,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     break;
 
                 case WebHookBodyType.Json:
-                    if (!RequestBodyTypes.IsJson(request))
+                    if (!IsJson(contentType))
                     {
-                        var contentType = request.GetTypedHeaders().ContentType;
                         _logger.LogWarning(
                             1,
                             "The '{ReceiverName}' WebHook receiver does not support content type '{ContentType}'. " +
@@ -235,9 +198,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     break;
 
                 case WebHookBodyType.Xml:
-                    if (!RequestBodyTypes.IsXml(request))
+                    if (!IsXml(contentType))
                     {
-                        var contentType = request.GetTypedHeaders().ContentType;
                         _logger.LogWarning(
                             2,
                             "The '{ReceiverName}' WebHook receiver does not support content type '{ContentType}'. " +
@@ -257,44 +219,14 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                     break;
 
                 default:
-                    // Multiple flags set is a special case. Occurs when receiver supports multiple body types and
-                    // action has no more specific requirements i.e. its BodyType is AllBodyTypes.
-                    if ((WebHookBodyType.Form & bodyType) != 0 && request.HasFormContentType)
                     {
-                        return;
-                    }
-
-                    if ((WebHookBodyType.Json & bodyType) != 0 && RequestBodyTypes.IsJson(request))
-                    {
-                        return;
-                    }
-
-                    if ((WebHookBodyType.Xml & bodyType) != 0 && RequestBodyTypes.IsXml(request))
-                    {
-                        return;
-                    }
-
-                    {
-                        var contentType = request.GetTypedHeaders().ContentType;
-                        _logger.LogWarning(
-                            3,
-                            "The '{ReceiverName}' WebHook receiver does not support content type '{ContentType}'. " +
-                            "The WebHook request must contain an entity body formatted to match {BodyType}.",
-                            receiverName,
-                            contentType,
-                            bodyType);
                         var message = string.Format(
                             CultureInfo.CurrentCulture,
-                            Resources.VerifyBody_UnsupportedContentType,
-                            receiverName,
-                            contentType,
-                            bodyType);
-                        context.Result = new BadRequestObjectResult(message)
-                        {
-                            StatusCode = StatusCodes.Status415UnsupportedMediaType
-                        };
+                            Resources.General_InvalidEnumValue,
+                            typeof(WebHookBodyType),
+                            receiverBodyTypeMetadata.BodyType);
+                        throw new InvalidOperationException(message);
                     }
-                    break;
             }
         }
 
@@ -302,6 +234,64 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         public void OnResourceExecuted(ResourceExecutedContext context)
         {
             // No-op
+        }
+
+        /// <summary>
+        /// Determines whether the specified <paramref name="contentType"/> is <c>application/json</c>,
+        /// <c>text/json</c> or <c>application/xyz+json</c>. The term <c>xyz</c> can for example be <c>hal</c> or some
+        /// other JSON-derived media type.
+        /// </summary>
+        /// <param name="contentType">The request's <see cref="MediaTypeHeaderValue"/>.</param>
+        /// <returns>
+        /// <see langword="true"/> if the <paramref name="contentType"/> indicates the request has JSON content;
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
+        protected static bool IsJson(MediaTypeHeaderValue contentType)
+        {
+            if (contentType == null)
+            {
+                return false;
+            }
+
+            if (contentType.IsSubsetOf(ApplicationJsonMediaType) || contentType.IsSubsetOf(TextJsonMediaType))
+            {
+                return true;
+            }
+
+            // MVC's JsonInputFormatter does not support text/*+json by default. RFC 3023 and 6839 allow */*+json but
+            // https://www.iana.org/assignments/media-types/media-types.xhtml shows all +json registrations except
+            // model/gltf+json match application/*+json.
+            return contentType.Type.Equals("application", StringComparison.OrdinalIgnoreCase) &&
+                contentType.SubType.EndsWith("+json", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Determines whether the specified <paramref name="contentType"/> is <c>application/xml</c>, <c>text/xml</c>
+        /// or <c>application/xyz+xml</c>. The term <c>xyz</c> can for example be <c>rdf</c> or some other XML-derived
+        /// media type.
+        /// </summary>
+        /// <param name="contentType">The request's <see cref="MediaTypeHeaderValue"/>.</param>
+        /// <returns>
+        /// <see langword="true"/> if the <paramref name="contentType"/> indicates the request has XML content;
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
+        protected static bool IsXml(MediaTypeHeaderValue contentType)
+        {
+            if (contentType == null)
+            {
+                return false;
+            }
+
+            if (contentType.IsSubsetOf(ApplicationXmlMediaType) || contentType.IsSubsetOf(TextXmlMediaType))
+            {
+                return true;
+            }
+
+            // MVC's XML input formatters do not support text/*+xml by default. RFC 3023 and 6839 allow */*+xml but
+            // https://www.iana.org/assignments/media-types/media-types.xhtml shows almost all +xml registrations
+            // match application/*+xml and none match text/*+xml.
+            return contentType.Type.Equals("application", StringComparison.OrdinalIgnoreCase) &&
+                contentType.SubType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

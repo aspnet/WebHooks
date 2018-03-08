@@ -71,11 +71,31 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             // Check for duplicates in other metadata registrations.
             var eventFromBodyMetadataArray = eventFromBodyMetadata.ToArray();
             EnsureUniqueRegistrations(eventFromBodyMetadataArray);
-            EnsureUniqueRegistrations(getHeadRequestMetadata.ToArray());
-            EnsureUniqueRegistrations(verifyCodeMetadata.ToArray());
+            var getHeadRequestMetadataArray = getHeadRequestMetadata.ToArray();
+            EnsureUniqueRegistrations(getHeadRequestMetadataArray);
+            var verifyCodeMetadataArray = verifyCodeMetadata.ToArray();
+            EnsureUniqueRegistrations(verifyCodeMetadataArray);
 
             EnsureValidBodyTypeMetadata(_bodyTypeMetadata);
             EnsureValidEventFromBodyMetadata(eventFromBodyMetadataArray, _eventMetadata);
+
+            // Confirm no incomplete receivers exist i.e. no metadata services exist for a receiver unless one
+            // implements IWebHookBodyTypeMetadataService.
+            var receiverNames = _bindingMetadata
+                .Cast<IWebHookReceiver>()
+                .Concat(eventFromBodyMetadataArray)
+                .Concat(_eventMetadata)
+                .Concat(getHeadRequestMetadataArray)
+                .Concat(_pingRequestMetadata)
+                .Concat(verifyCodeMetadataArray)
+                .Select(metadata => metadata.ReceiverName)
+                .Distinct(StringComparer.OrdinalIgnoreCase);
+            foreach (var receiverName in receiverNames)
+            {
+                var receiverBodyTypeMetadata = _bodyTypeMetadata
+                    .FirstOrDefault(metadata => metadata.IsApplicable(receiverName));
+                EnsureValidBodyTypeMetadata(receiverBodyTypeMetadata, receiverName);
+            }
         }
 
         /// <summary>
@@ -181,27 +201,27 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 action.Properties[typeof(IWebHookEventSelectorMetadata)] = eventSelector;
             }
 
-            IWebHookBodyTypeMetadataService receiverBodyTypeMetadata;
             if (receiverName == null)
             {
                 // WebHookVerifyBodyTypeFilter should look up (and verify) the applicable
                 // IWebHookBodyTypeMetadataService per-request.
-                receiverBodyTypeMetadata = null;
                 action.Properties[typeof(IWebHookBodyTypeMetadataService)] = _bodyTypeMetadata;
             }
             else
             {
-                receiverBodyTypeMetadata = _bodyTypeMetadata
+                var receiverBodyTypeMetadata = _bodyTypeMetadata
                     .FirstOrDefault(metadata => metadata.IsApplicable(receiverName));
                 EnsureValidBodyTypeMetadata(receiverBodyTypeMetadata, receiverName);
                 action.Properties[typeof(IWebHookBodyTypeMetadataService)] = receiverBodyTypeMetadata;
             }
 
-            // Ignore metadata if attribute has AllBodyTypes.
-            if (attribute is IWebHookBodyTypeMetadata actionBodyTypeMetadata &&
-                actionBodyTypeMetadata.BodyType != WebHookConstants.AllBodyTypes)
+            // Ignore IWebHookBodyTypeMetadata metadata if attribute's BodyTypes property is null or if an attribute
+            // other than GeneralWebHookAttribute implements this interface.
+            if (receiverName == null &&
+                attribute is IWebHookBodyTypeMetadata actionBodyTypeMetadata &&
+                actionBodyTypeMetadata.BodyType.HasValue)
             {
-                EnsureValidBodyTypeMetadata(actionBodyTypeMetadata, receiverBodyTypeMetadata);
+                EnsureValidBodyTypeMetadata(actionBodyTypeMetadata);
                 action.Properties[typeof(IWebHookBodyTypeMetadata)] = actionBodyTypeMetadata;
             }
         }
@@ -222,20 +242,8 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
             foreach (var receiverBodyTypeMetadata in bodyTypeMetadata)
             {
-                // Confirm the receiver's BodyType is valid.
-                if (receiverBodyTypeMetadata.BodyType == 0)
+                if (!Enum.IsDefined(typeof(WebHookBodyType), receiverBodyTypeMetadata.BodyType))
                 {
-                    var message = string.Format(
-                        CultureInfo.CurrentCulture,
-                        Resources.MetadataProvider_InvalidMetadataServiceBodyType,
-                        receiverBodyTypeMetadata.ReceiverName,
-                        typeof(IWebHookBodyTypeMetadataService),
-                        nameof(IWebHookBodyTypeMetadataService.BodyType));
-                    throw new InvalidOperationException(message);
-                }
-                else if ((~WebHookConstants.AllBodyTypes & receiverBodyTypeMetadata.BodyType) != 0)
-                {
-                    // Value contains undefined flags.
                     var message = string.Format(
                         CultureInfo.CurrentCulture,
                         Resources.General_InvalidEnumValue,
@@ -247,6 +255,35 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         }
 
         /// <summary>
+        /// Ensure given <paramref name="actionBodyTypeMetadata"/> is valid.
+        /// </summary>
+        /// <param name="actionBodyTypeMetadata">
+        /// An attribute that implements <see cref="IWebHookBodyTypeMetadata"/>.
+        /// </param>
+        protected void EnsureValidBodyTypeMetadata(IWebHookBodyTypeMetadata actionBodyTypeMetadata)
+        {
+            if (actionBodyTypeMetadata == null)
+            {
+                throw new ArgumentNullException(nameof(actionBodyTypeMetadata));
+            }
+
+            if (!actionBodyTypeMetadata.BodyType.HasValue)
+            {
+                return;
+            }
+
+            if (!Enum.IsDefined(typeof(WebHookBodyType), actionBodyTypeMetadata.BodyType.Value))
+            {
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.General_InvalidEnumValue,
+                    typeof(WebHookBodyType),
+                    actionBodyTypeMetadata.BodyType.Value);
+                throw new InvalidOperationException(message);
+            }
+        }
+
+        /// <summary>
         /// Ensure given <paramref name="receiverBodyTypeMetadata"/> is not <see langword="null"/>.
         /// An <see cref="IWebHookBodyTypeMetadataService"/> service is mandatory for every receiver.
         /// </summary>
@@ -254,6 +291,10 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         /// The <paramref name="receiverName"/> receiver's <see cref="IWebHookBodyTypeMetadataService"/>, if any.
         /// </param>
         /// <param name="receiverName">The name of an available <see cref="IWebHookReceiver"/>.</param>
+        /// <remarks>
+        /// Called to detect both incomplete receiver metadata and receiver-specific attributes for which no metadata
+        /// has been registered.
+        /// </remarks>
         protected void EnsureValidBodyTypeMetadata(
             IWebHookBodyTypeMetadataService receiverBodyTypeMetadata,
             string receiverName)
@@ -267,92 +308,9 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             {
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
-                    Resources.Shared_MissingMetadata,
+                    Resources.MetadataProvider_MissingMetadata,
                     receiverName,
                     typeof(IWebHookBodyTypeMetadataService));
-                throw new InvalidOperationException(message);
-            }
-        }
-
-        /// <summary>
-        /// Ensure given <paramref name="actionBodyTypeMetadata"/> is valid and consistent with given
-        /// <paramref name="receiverBodyTypeMetadata"/>.
-        /// </summary>
-        /// <param name="actionBodyTypeMetadata">
-        /// An attribute that implements <see cref="IWebHookBodyTypeMetadata"/>.
-        /// </param>
-        /// <param name="receiverBodyTypeMetadata">
-        /// The corresponding receiver's <see cref="IWebHookBodyTypeMetadataService"/>, if any.
-        /// </param>
-        /// <remarks>
-        /// <paramref name="receiverBodyTypeMetadata"/> is <see langword="null"/> only if
-        /// <paramref name="actionBodyTypeMetadata"/> is a <see cref="GeneralWebHookAttribute"/> instance.
-        /// </remarks>
-        protected void EnsureValidBodyTypeMetadata(
-            IWebHookBodyTypeMetadata actionBodyTypeMetadata,
-            IWebHookBodyTypeMetadataService receiverBodyTypeMetadata)
-        {
-            if (actionBodyTypeMetadata == null)
-            {
-                throw new ArgumentNullException(nameof(actionBodyTypeMetadata));
-            }
-
-            // Confirm the attribute's BodyType is valid on its own. Avoid Enum.IsDefined because we want to
-            // distinguish invalid flag combinations from undefined flags. This method is not called if
-            // actionBodyTypeMetadata.BodyType is AllBodyTypes.
-            switch (actionBodyTypeMetadata.BodyType)
-            {
-                case WebHookBodyType.Form:
-                case WebHookBodyType.Json:
-                case WebHookBodyType.Xml:
-                    // Just right.
-                    break;
-
-                case 0:
-                case WebHookBodyType.Form | WebHookBodyType.Json:
-                case WebHookBodyType.Form | WebHookBodyType.Xml:
-                case WebHookBodyType.Json | WebHookBodyType.Xml:
-                    {
-                        // 0 or contains an invalid combination of flags.
-                        var message = string.Format(
-                            CultureInfo.CurrentCulture,
-                            Resources.MetadataProvider_InvalidAttributeBodyType,
-                            actionBodyTypeMetadata.GetType(),
-                            typeof(IWebHookBodyTypeMetadata),
-                            nameof(IWebHookBodyTypeMetadata.BodyType),
-                            actionBodyTypeMetadata.BodyType,
-                            WebHookConstants.AllBodyTypes,
-                            nameof(WebHookBodyType));
-                        throw new InvalidOperationException(message);
-                    }
-
-                default:
-                    {
-                        // Value contains undefined flags.
-                        var message = string.Format(
-                            CultureInfo.CurrentCulture,
-                            Resources.General_InvalidEnumValue,
-                            typeof(WebHookBodyType),
-                            actionBodyTypeMetadata.BodyType);
-                        throw new InvalidOperationException(message);
-                    }
-            }
-
-            // Attribute must require the same body type as receiver's metadata service or a subset. That is,
-            // actionBodyTypeMetadata.BodyType flags must not include any beyond those set in
-            // receiverBodyTypeMetadata.BodyType.
-            if (receiverBodyTypeMetadata != null &&
-                (~receiverBodyTypeMetadata.BodyType & actionBodyTypeMetadata.BodyType) != 0)
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.Shared_NonSubsetAttributeBodyType,
-                    actionBodyTypeMetadata.GetType(),
-                    typeof(IWebHookBodyTypeMetadata),
-                    nameof(IWebHookBodyTypeMetadata.BodyType),
-                    actionBodyTypeMetadata.BodyType,
-                    WebHookConstants.AllBodyTypes,
-                    receiverBodyTypeMetadata.BodyType);
                 throw new InvalidOperationException(message);
             }
         }
@@ -413,9 +371,8 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             }
 
             var receiverWithConflictingMetadata = eventFromBodyMetadata
-                .Where(metadata => eventMetadata.Any(
-                    innerMetadata => innerMetadata.IsApplicable(metadata.ReceiverName)))
-                .FirstOrDefault();
+                .FirstOrDefault(metadata => eventMetadata.Any(
+                    innerMetadata => innerMetadata.IsApplicable(metadata.ReceiverName)));
             if (receiverWithConflictingMetadata != null)
             {
                 var message = string.Format(
@@ -450,8 +407,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
             var duplicateMetadataGroup = services
                 .GroupBy(item => item.ReceiverName, StringComparer.OrdinalIgnoreCase)
-                .Where(group => group.Count() != 1)
-                .FirstOrDefault();
+                .FirstOrDefault(group => group.Count() != 1);
             if (duplicateMetadataGroup != null)
             {
                 var message = string.Format(

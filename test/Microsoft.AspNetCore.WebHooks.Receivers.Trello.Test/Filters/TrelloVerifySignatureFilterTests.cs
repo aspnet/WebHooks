@@ -220,7 +220,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             Assert.Equal(1, nextCount);
         }
 
-
         [Fact]
         public async Task OnResourceExecutionAsync_Succeeds_IfPostIsNotJson()
         {

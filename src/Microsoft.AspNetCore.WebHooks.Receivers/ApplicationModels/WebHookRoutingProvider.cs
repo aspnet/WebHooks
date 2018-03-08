@@ -27,7 +27,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         private readonly ILoggerFactory _loggerFactory;
 
         /// <summary>
-        /// Instantiates a new <see cref="WebHookRoutingProvider"/> with the given
+        /// Instantiates a new <see cref="WebHookRoutingProvider"/> instance with the given
         /// <paramref name="existsConstraint"/>, <paramref name="eventMapperConstraint"/> and
         /// <paramref name="loggerFactory"/>.
         /// </summary>
@@ -223,22 +223,16 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
         private void AddFilters(IDictionary<object, object> properties, IList<IFilterMetadata> filters)
         {
-            properties.TryGetValue(typeof(IWebHookBodyTypeMetadata), out var bodyTypeMetadataObject);
-            var actionBodyTypeMetadata = (IWebHookBodyTypeMetadata)bodyTypeMetadataObject;
-            bodyTypeMetadataObject = properties[typeof(IWebHookBodyTypeMetadataService)];
-
             WebHookVerifyBodyTypeFilter filter;
+            var bodyTypeMetadataObject = properties[typeof(IWebHookBodyTypeMetadataService)];
             if (bodyTypeMetadataObject is IWebHookBodyTypeMetadataService receiverBodyTypeMetadata)
             {
-                filter = new WebHookVerifyBodyTypeFilter(
-                    receiverBodyTypeMetadata,
-                    actionBodyTypeMetadata,
-                    _loggerFactory);
+                filter = new WebHookVerifyBodyTypeFilter(receiverBodyTypeMetadata, _loggerFactory);
             }
             else
             {
                 var allBodyTypeMetadata = (IReadOnlyList<IWebHookBodyTypeMetadataService>)bodyTypeMetadataObject;
-                filter = new WebHookVerifyBodyTypeFilter(allBodyTypeMetadata, actionBodyTypeMetadata, _loggerFactory);
+                filter = new WebHookVerifyBodyTypeFilter(allBodyTypeMetadata, _loggerFactory);
             }
 
             filters.Add(filter);

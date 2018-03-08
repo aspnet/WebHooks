@@ -151,6 +151,9 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     .SetupGet(m => m.ReceiverName)
                     .Returns("some name");
                 webHookBindingMetadata
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
+                    .Returns(false);
+                webHookBindingMetadata
                     .Setup(m => m.IsApplicable("some name"))
                     .Returns(true);
                 var webHookBodyTypeMetadataService1 = new Mock<IWebHookBodyTypeMetadataService>(MockBehavior.Strict);
@@ -161,64 +164,117 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     .SetupGet(m => m.ReceiverName)
                     .Returns("some name");
                 webHookBodyTypeMetadataService1
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
+                    .Returns(false);
+                webHookBodyTypeMetadataService1
                     .Setup(m => m.IsApplicable("some name"))
                     .Returns(true);
                 var webHookBodyTypeMetadataService2 = new Mock<IWebHookBodyTypeMetadataService>(MockBehavior.Strict);
                 webHookBodyTypeMetadataService2
                     .SetupGet(m => m.BodyType)
-                    .Returns(WebHookBodyType.Json);
+                    .Returns(WebHookBodyType.Form);
                 webHookBodyTypeMetadataService2
                     .SetupGet(m => m.ReceiverName)
-                    .Returns("unique name");
+                    .Returns("unique name1");
                 webHookBodyTypeMetadataService2
-                    .Setup(m => m.IsApplicable("some name"))
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
                     .Returns(false);
+                webHookBodyTypeMetadataService2
+                    .Setup(m => m.IsApplicable("unique name1"))
+                    .Returns(true);
+                var webHookBodyTypeMetadataService3 = new Mock<IWebHookBodyTypeMetadataService>(MockBehavior.Strict);
+                webHookBodyTypeMetadataService3
+                    .SetupGet(m => m.BodyType)
+                    .Returns(WebHookBodyType.Xml);
+                webHookBodyTypeMetadataService3
+                    .SetupGet(m => m.ReceiverName)
+                    .Returns("unique name2");
+                webHookBodyTypeMetadataService3
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
+                    .Returns(false);
+                webHookBodyTypeMetadataService3
+                    .Setup(m => m.IsApplicable("unique name2"))
+                    .Returns(true);
+                var webHookBodyTypeMetadataService4 = new Mock<IWebHookBodyTypeMetadataService>(MockBehavior.Strict);
+                webHookBodyTypeMetadataService4
+                    .SetupGet(m => m.BodyType)
+                    .Returns(WebHookBodyType.Json);
+                webHookBodyTypeMetadataService4
+                    .SetupGet(m => m.ReceiverName)
+                    .Returns("unique name3");
+                webHookBodyTypeMetadataService4
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
+                    .Returns(false);
+                webHookBodyTypeMetadataService4
+                    .Setup(m => m.IsApplicable("unique name3"))
+                    .Returns(true);
                 var webHookEventFromBodyMetadata1 = new Mock<IWebHookEventFromBodyMetadata>(MockBehavior.Strict);
                 webHookEventFromBodyMetadata1
                     .SetupGet(m => m.ReceiverName)
                     .Returns("unique name1");
                 webHookEventFromBodyMetadata1
-                    .Setup(m => m.IsApplicable("some name"))
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
                     .Returns(false);
+                webHookEventFromBodyMetadata1
+                    .Setup(m => m.IsApplicable("unique name1"))
+                    .Returns(true);
                 var webHookEventFromBodyMetadata2 = new Mock<IWebHookEventFromBodyMetadata>(MockBehavior.Strict);
                 webHookEventFromBodyMetadata2
                     .SetupGet(m => m.ReceiverName)
                     .Returns("unique name2");
                 webHookEventFromBodyMetadata2
-                    .Setup(m => m.IsApplicable("some name"))
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
                     .Returns(false);
+                webHookEventFromBodyMetadata2
+                    .Setup(m => m.IsApplicable("unique name2"))
+                    .Returns(true);
                 var webHookEventFromBodyMetadata3 = new Mock<IWebHookEventFromBodyMetadata>(MockBehavior.Strict);
                 webHookEventFromBodyMetadata3
                     .SetupGet(m => m.ReceiverName)
                     .Returns("unique name3");
                 webHookEventFromBodyMetadata3
-                    .Setup(m => m.IsApplicable("some name"))
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
                     .Returns(false);
+                webHookEventFromBodyMetadata3
+                    .Setup(m => m.IsApplicable("unique name3"))
+                    .Returns(true);
                 var webHookEventMetadata = new Mock<IWebHookEventMetadata>(MockBehavior.Strict);
                 webHookEventMetadata
                     .SetupGet(m => m.ReceiverName)
                     .Returns("some name");
                 webHookEventMetadata
                     .Setup(m => m.IsApplicable(It.IsAny<string>()))
-                    .Returns((string s) => string.Equals("some name", s, StringComparison.Ordinal));
+                    .Returns(false);
+                webHookEventMetadata
+                    .Setup(m => m.IsApplicable("some name"))
+                    .Returns(true);
                 var webHookGetHeadRequestMetadata1 = new Mock<IWebHookGetHeadRequestMetadata>(MockBehavior.Strict);
                 webHookGetHeadRequestMetadata1
                     .SetupGet(m => m.ReceiverName)
                     .Returns("unique name1");
                 webHookGetHeadRequestMetadata1
-                    .Setup(m => m.IsApplicable("some name"))
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
                     .Returns(false);
+                webHookGetHeadRequestMetadata1
+                    .Setup(m => m.IsApplicable("unique name1"))
+                    .Returns(true);
                 var webHookGetHeadRequestMetadata2 = new Mock<IWebHookGetHeadRequestMetadata>(MockBehavior.Strict);
                 webHookGetHeadRequestMetadata2
                     .SetupGet(m => m.ReceiverName)
-                    .Returns("unique nam2");
+                    .Returns("unique name2");
                 webHookGetHeadRequestMetadata2
-                    .Setup(m => m.IsApplicable("some name"))
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
                     .Returns(false);
+                webHookGetHeadRequestMetadata2
+                    .Setup(m => m.IsApplicable("unique name2"))
+                    .Returns(true);
                 var webHookGetHeadRequestMetadata3 = new Mock<IWebHookGetHeadRequestMetadata>(MockBehavior.Strict);
                 webHookGetHeadRequestMetadata3
                     .SetupGet(m => m.ReceiverName)
                     .Returns("some name");
+                webHookGetHeadRequestMetadata3
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
+                    .Returns(false);
                 webHookGetHeadRequestMetadata3
                     .Setup(m => m.IsApplicable("some name"))
                     .Returns(true);
@@ -227,12 +283,18 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     .SetupGet(m => m.ReceiverName)
                     .Returns("some name");
                 webHookPingRequestMetadata
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
+                    .Returns(false);
+                webHookPingRequestMetadata
                     .Setup(m => m.IsApplicable("some name"))
                     .Returns(true);
                 var webHookVerifyCodeMetadata = new Mock<IWebHookVerifyCodeMetadata>(MockBehavior.Strict);
                 webHookVerifyCodeMetadata
                     .SetupGet(m => m.ReceiverName)
                     .Returns("some name");
+                webHookVerifyCodeMetadata
+                    .Setup(m => m.IsApplicable(It.IsAny<string>()))
+                    .Returns(false);
                 webHookVerifyCodeMetadata
                     .Setup(m => m.IsApplicable("some name"))
                     .Returns(true);
@@ -242,6 +304,8 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     webHookBindingMetadata.Object,
                     webHookBodyTypeMetadataService1.Object,
                     webHookBodyTypeMetadataService2.Object,
+                    webHookBodyTypeMetadataService3.Object,
+                    webHookBodyTypeMetadataService4.Object,
                     webHookEventFromBodyMetadata1.Object,
                     webHookEventFromBodyMetadata2.Object,
                     webHookEventFromBodyMetadata3.Object,
@@ -289,9 +353,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         public void Constructor_ThrowsWithInvalidBodyTypeMetadataService()
         {
             // Arrange
-            var expectedMessage = "Invalid metadata services found for the 'unique name2' WebHook receiver. " +
-                $"Metadata services implementing '{typeof(IWebHookBodyTypeMetadataService)}' must have valid " +
-                $"{nameof(IWebHookBodyTypeMetadataService.BodyType)} values. '0' is not valid.";
+            var expectedMessage = $"Enum type '{typeof(WebHookBodyType)}' has no defined '0' value.";
 
             var webHookBodyTypeMetadataService1 = new Mock<IWebHookBodyTypeMetadataService>(MockBehavior.Strict);
             webHookBodyTypeMetadataService1
@@ -348,9 +410,8 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
             Assert.Equal(expectedMessage, exception.Message);
         }
 
-
         [Fact]
-        public void OnProvidersExecuting_SucceedsWithGeneralAttributeAndValiddMetadata()
+        public void OnProvidersExecuting_SucceedsWithGeneralAttributeAndValidMetadata()
         {
             // Arrange
             var provider = new TestMetadataProvider(ValidMetadata);
@@ -388,7 +449,7 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
         }
 
         [Fact]
-        public void OnProvidersExecuting_SucceedsWithGeneralAttributeAndValiddMetadata_IncludingBodyType()
+        public void OnProvidersExecuting_SucceedsWithGeneralAttributeAndValidMetadata_IncludingBodyType()
         {
             // Arrange
             var provider = new TestMetadataProvider(ValidMetadata);
@@ -474,50 +535,6 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                 });
         }
 
-        [Fact]
-        public void OnProvidersExecuting_SucceedsWithValidAttributesAndMetadata_IncludingBodyType()
-        {
-            // Arrange
-            var provider = new TestMetadataProvider(ValidMetadata);
-            var context = new ApplicationModelProviderContext(new[] { typeof(JsonController).GetTypeInfo() });
-            var defaultProvider = new DefaultApplicationModelProvider(Options.Create(new MvcOptions()));
-            defaultProvider.OnProvidersExecuting(context);
-
-            // Act
-            provider.OnProvidersExecuting(context);
-
-            // Assert
-            var controllerModel = Assert.Single(context.Result.Controllers);
-            var actionModel = Assert.Single(controllerModel.Actions);
-            Assert.Collection(actionModel.Properties.OrderBy(kvp => ((Type)kvp.Key).Name),
-                kvp =>
-                {
-                    Assert.Equal(typeof(IWebHookBindingMetadata), kvp.Key);
-                    Assert.IsAssignableFrom<IWebHookBindingMetadata>(kvp.Value);
-                },
-                kvp =>
-                {
-                    Assert.Equal(typeof(IWebHookBodyTypeMetadata), kvp.Key);
-                    var attribute = Assert.IsAssignableFrom<JsonWebHookAttribute>(kvp.Value);
-                    Assert.Equal(WebHookBodyType.Json, attribute.BodyType);
-                },
-                kvp =>
-                {
-                    Assert.Equal(typeof(IWebHookBodyTypeMetadataService), kvp.Key);
-                    Assert.IsAssignableFrom<IWebHookBodyTypeMetadataService>(kvp.Value);
-                },
-                kvp =>
-                {
-                    Assert.Equal(typeof(IWebHookEventMetadata), kvp.Key);
-                    Assert.IsAssignableFrom<IWebHookEventMetadata>(kvp.Value);
-                },
-                kvp =>
-                {
-                    Assert.Equal(typeof(IWebHookPingRequestMetadata), kvp.Key);
-                    Assert.IsAssignableFrom<IWebHookPingRequestMetadata>(kvp.Value);
-                });
-        }
-
         private class TestMetadataProvider : WebHookMetadataProvider
         {
             public TestMetadataProvider(IEnumerable<IWebHookMetadata> metadata)
@@ -531,16 +548,6 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
                     metadata.OfType<IWebHookVerifyCodeMetadata>())
             {
             }
-        }
-
-        private class JsonWebHookAttribute : WebHookAttribute, IWebHookBodyTypeMetadata
-        {
-            public JsonWebHookAttribute()
-                : base("some name")
-            {
-            }
-
-            public WebHookBodyType BodyType => WebHookBodyType.Json;
         }
 
         private class SomeWebHookAttribute : WebHookAttribute, IWebHookEventSelectorMetadata
@@ -564,19 +571,10 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 
         private class JsonGeneralController : ControllerBase
         {
-            [GeneralWebHook(BodyType = WebHookBodyType.Json, EventName = "non-null")]
+            [GeneralWebHook(WebHookBodyType.Json, EventName = "non-null")]
             public IActionResult MyAction()
             {
                 throw new NotImplementedException();
-            }
-        }
-
-        private class JsonController : ControllerBase
-        {
-            [JsonWebHook]
-            public IActionResult MyAction()
-            {
-                throw new NotFiniteNumberException();
             }
         }
 

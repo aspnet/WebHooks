@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
@@ -131,37 +130,13 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
 
             // Determine the applicable WebhookBodyType i.e. how to read the request body.
-            WebHookBodyType bodyType;
-            var request = context.HttpContext.Request;
-
             // WebHookReceiverExistsConstraint confirms the IWebHookBodyTypeMetadataService implementation exists.
             var bodyTypeMetadata = _bodyTypeMetadata.First(metadata => metadata.IsApplicable(receiverName));
-            if ((WebHookBodyType.Form & bodyTypeMetadata.BodyType) != 0 && request.HasFormContentType)
-            {
-                bodyType = WebHookBodyType.Form;
-            }
-            else if ((WebHookBodyType.Json & bodyTypeMetadata.BodyType) != 0 && RequestBodyTypes.IsJson(request))
-            {
-                bodyType = WebHookBodyType.Json;
-            }
-            else if ((WebHookBodyType.Xml & bodyTypeMetadata.BodyType) != 0 && RequestBodyTypes.IsXml(request))
-            {
-                bodyType = WebHookBodyType.Xml;
-            }
-            else
-            {
-                // WebHookVerifyBodyTypeFilter should have short-circuited the request.
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.EventMapper_UnsupportedContentType,
-                    receiverName,
-                    request.GetTypedHeaders().ContentType,
-                    typeof(WebHookVerifyBodyTypeFilter));
-                throw new InvalidOperationException(message);
-            }
 
+            // No need to double-check the request's Content-Type. WebHookVerifyBodyTypeFilter would have
+            // short-circuited the request if unsupported.
             StringValues eventNames;
-            switch (bodyType)
+            switch (bodyTypeMetadata.BodyType)
             {
                 case WebHookBodyType.Form:
                     var form = await _requestReader.ReadAsFormDataAsync(context);

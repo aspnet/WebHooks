@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         // IWebHookBodyTypeMetadataService...
 
         /// <inheritdoc />
-        public override WebHookBodyType BodyType => WebHookBodyType.Form | WebHookBodyType.Json;
+        public override WebHookBodyType BodyType => WebHookBodyType.Json;
 
         // IWebHookEventMetadata...
 

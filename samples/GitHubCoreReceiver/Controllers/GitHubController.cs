@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebHooks;
 using Newtonsoft.Json.Linq;
@@ -7,8 +6,8 @@ namespace GitHubCoreReceiver.Controllers
 {
     public class GitHubController : ControllerBase
     {
-        [GitHubWebHook(AcceptFormData = true, EventName = "push", Id = "It")]
-        public IActionResult HandlerForItsPushes(string[] events, IFormCollection data)
+        [GitHubWebHook(EventName = "push", Id = "It")]
+        public IActionResult HandlerForItsPushes(string[] events, JObject data)
         {
             if (!ModelState.IsValid)
             {
@@ -18,8 +17,8 @@ namespace GitHubCoreReceiver.Controllers
             return Ok();
         }
 
-        [GitHubWebHook(AcceptFormData = true, Id = "It")]
-        public IActionResult HandlerForIt(string[] events, IFormCollection data)
+        [GitHubWebHook(Id = "It")]
+        public IActionResult HandlerForIt(string[] events, JObject data)
         {
             if (!ModelState.IsValid)
             {
