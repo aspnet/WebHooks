@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebHooks.Metadata;
 using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.AspNetCore.WebHooks.Routing;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
 {
@@ -25,24 +24,19 @@ namespace Microsoft.AspNetCore.WebHooks.ApplicationModels
     {
         private readonly WebHookReceiverExistsConstraint _existsConstraint;
         private readonly WebHookEventMapperConstraint _eventMapperConstraint;
-        private readonly ILoggerFactory _loggerFactory;
 
         /// <summary>
         /// Instantiates a new <see cref="WebHookRoutingProvider"/> instance with the given
-        /// <paramref name="existsConstraint"/>, <paramref name="eventMapperConstraint"/> and
-        /// <paramref name="loggerFactory"/>.
+        /// <paramref name="existsConstraint"/> and <paramref name="eventMapperConstraint"/>.
         /// </summary>
         /// <param name="existsConstraint">The <see cref="WebHookReceiverExistsConstraint"/>.</param>
         /// <param name="eventMapperConstraint">The <see cref="WebHookEventMapperConstraint"/>.</param>
-        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
         public WebHookRoutingProvider(
             WebHookReceiverExistsConstraint existsConstraint,
-            WebHookEventMapperConstraint eventMapperConstraint,
-            ILoggerFactory loggerFactory)
+            WebHookEventMapperConstraint eventMapperConstraint)
         {
             _existsConstraint = existsConstraint;
             _eventMapperConstraint = eventMapperConstraint;
-            _loggerFactory = loggerFactory;
         }
 
         /// <summary>
