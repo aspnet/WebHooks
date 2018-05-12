@@ -1,10 +1,8 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +23,12 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// </summary>
     public class WebHookVerifyCodeFilter : WebHookSecurityFilter, IResourceFilter
     {
-        private readonly IReadOnlyList<IWebHookVerifyCodeMetadata> _codeVerifierMetadata;
+        private readonly WebHookMetadataProvider _metadataProvider;
+        private readonly IWebHookVerifyCodeMetadata _verifyCodeMetadata;
 
         /// <summary>
-        /// Instantiates a new <see cref="WebHookVerifyCodeFilter"/> instance.
+        /// Instantiates a new <see cref="WebHookVerifyCodeFilter"/> instance to verify the given
+        /// <paramref name="verifyCodeMetadata"/>.
         /// </summary>
         /// <param name="configuration">
         /// The <see cref="IConfiguration"/> used to initialize <see cref="WebHookSecurityFilter.Configuration"/>.
@@ -40,15 +40,53 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// <param name="loggerFactory">
         /// The <see cref="ILoggerFactory"/> used to initialize <see cref="WebHookSecurityFilter.Logger"/>.
         /// </param>
-        /// <param name="metadata">The collection of <see cref="IWebHookMetadata"/> services.</param>
+        /// <param name="verifyCodeMetadata">The receiver's <see cref="IWebHookVerifyCodeMetadata"/>.</param>
         public WebHookVerifyCodeFilter(
             IConfiguration configuration,
             IHostingEnvironment hostingEnvironment,
             ILoggerFactory loggerFactory,
-            IEnumerable<IWebHookMetadata> metadata)
+            IWebHookVerifyCodeMetadata verifyCodeMetadata)
             : base(configuration, hostingEnvironment, loggerFactory)
         {
-            _codeVerifierMetadata = metadata.OfType<IWebHookVerifyCodeMetadata>().ToArray();
+            if (verifyCodeMetadata == null)
+            {
+                throw new ArgumentNullException(nameof(verifyCodeMetadata));
+            }
+
+            _verifyCodeMetadata = verifyCodeMetadata;
+        }
+
+        /// <summary>
+        /// Instantiates a new <see cref="WebHookVerifyCodeFilter"/> instance to verify the receiver's
+        /// <see cref="IWebHookVerifyCodeMetadata"/>. That metadata is found in <paramref name="metadataProvider"/>.
+        /// </summary>
+        /// <param name="configuration">
+        /// The <see cref="IConfiguration"/> used to initialize <see cref="WebHookSecurityFilter.Configuration"/>.
+        /// </param>
+        /// <param name="hostingEnvironment">
+        /// The <see cref="IHostingEnvironment" /> used to initialize
+        /// <see cref="WebHookSecurityFilter.HostingEnvironment"/>.
+        /// </param>
+        /// <param name="loggerFactory">
+        /// The <see cref="ILoggerFactory"/> used to initialize <see cref="WebHookSecurityFilter.Logger"/>.
+        /// </param>
+        /// <param name="metadataProvider">
+        /// The <see cref="WebHookMetadataProvider"/> service. Searched for applicable metadata per-request.
+        /// </param>
+        /// <remarks>This overload is intended for use with <see cref="GeneralWebHookAttribute"/>.</remarks>
+        public WebHookVerifyCodeFilter(
+            IConfiguration configuration,
+            IHostingEnvironment hostingEnvironment,
+            ILoggerFactory loggerFactory,
+            WebHookMetadataProvider metadataProvider)
+            : base(configuration, hostingEnvironment, loggerFactory)
+        {
+            if (metadataProvider == null)
+            {
+                throw new ArgumentNullException(nameof(metadataProvider));
+            }
+
+            _metadataProvider = metadataProvider;
         }
 
         /// <inheritdoc />
@@ -60,14 +98,25 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
 
             var routeData = context.RouteData;
-            if (routeData.TryGetWebHookReceiverName(out var receiverName) &&
-                _codeVerifierMetadata.Any(metadata => metadata.IsApplicable(receiverName)))
+            var verifyCodeMetadata = _verifyCodeMetadata;
+            if (verifyCodeMetadata == null)
             {
-                var result = EnsureValidCode(context.HttpContext.Request, routeData, receiverName);
-                if (result != null)
+                if (!routeData.TryGetWebHookReceiverName(out var requestReceiverName))
                 {
-                    context.Result = result;
+                    return;
                 }
+
+                verifyCodeMetadata = _metadataProvider.GetVerifyCodeMetadata(requestReceiverName);
+                if (verifyCodeMetadata == null)
+                {
+                    return;
+                }
+            }
+
+            var result = EnsureValidCode(context.HttpContext.Request, routeData, verifyCodeMetadata.ReceiverName);
+            if (result != null)
+            {
+                context.Result = result;
             }
         }
 
@@ -121,12 +170,12 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             var code = request.Query[WebHookConstants.CodeQueryParameterName];
             if (StringValues.IsNullOrEmpty(code))
             {
-                Logger.LogError(
+                Logger.LogWarning(
                     400,
-                    "A '{ReceiverName}' WebHook verification request must contain a '{ParameterName}' query " +
+                    "A '{ReceiverName}' WebHook verification request must contain a " +
+                    $"'{WebHookConstants.CodeQueryParameterName}' query " +
                     "parameter.",
-                    receiverName,
-                    WebHookConstants.CodeQueryParameterName);
+                    receiverName);
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -138,11 +187,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return noCode;
             }
 
-            var secretKey = GetSecretKey(
-                receiverName,
-                routeData,
-                WebHookConstants.CodeParameterMinLength,
-                WebHookConstants.CodeParameterMaxLength);
+            var secretKey = GetSecretKey(receiverName, routeData, WebHookConstants.CodeParameterMinLength);
             if (secretKey == null)
             {
                 return new NotFoundResult();
@@ -150,11 +195,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
             if (!SecretEqual(code, secretKey))
             {
-                Logger.LogError(
+                Logger.LogWarning(
                     401,
-                    "The '{ParameterName}' query parameter provided in the HTTP request did not match the " +
-                    "expected value.",
-                    WebHookConstants.CodeQueryParameterName);
+                    $"The '{WebHookConstants.CodeQueryParameterName}' query parameter provided in the HTTP request " +
+                    "did not match the expected value.");
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,

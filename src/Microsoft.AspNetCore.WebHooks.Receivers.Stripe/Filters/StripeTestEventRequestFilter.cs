@@ -1,10 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -16,7 +15,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// <c>true</c>.
     /// </summary>
     /// <remarks>Somewhat similar to the <see cref="WebHookPingRequestFilter"/>.</remarks>
-    public class StripeTestEventRequestFilter : IResourceFilter, IWebHookReceiver
+    public class StripeTestEventRequestFilter : IResourceFilter, IWebHookReceiver, IOrderedFilter
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
@@ -43,6 +42,9 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         public static int Order => WebHookPingRequestFilter.Order;
 
         /// <inheritdoc />
+        int IOrderedFilter.Order => Order;
+
+        /// <inheritdoc />
         public bool IsApplicable(string receiverName)
         {
             if (receiverName == null)
@@ -61,20 +63,14 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var routeData = context.RouteData;
-            if (!routeData.TryGetWebHookReceiverName(out var receiverName) || !IsApplicable(receiverName))
-            {
-                return;
-            }
-
-            var notificationId = (string)routeData.Values[StripeConstants.NotificationIdKeyName];
+            var notificationId = (string)context.RouteData.Values[StripeConstants.NotificationIdKeyName];
             if (IsTestEvent(notificationId))
             {
                 // Log about and optionally short-circuit this test event.
                 var passThroughString = _configuration[StripeConstants.PassThroughTestEventsConfigurationKey];
                 if (bool.TryParse(passThroughString, out var passThrough) && passThrough)
                 {
-                    _logger.LogInformation(0, "Received a Stripe Test Event.");
+                    _logger.LogDebug(0, "Received a Stripe Test Event.");
                 }
                 else
                 {

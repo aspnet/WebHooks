@@ -1,7 +1,10 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.WebHooks.Filters;
 using Microsoft.AspNetCore.WebHooks.Metadata;
 using Microsoft.AspNetCore.WebHooks.Properties;
 
@@ -9,10 +12,10 @@ namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
     /// <para>
-    /// An <see cref="Attribute"/> indicating the associated action is a GitHub WebHook endpoint. Specifies whether
-    /// the action should <see cref="AcceptFormData"/>, optional <see cref="EventName"/>, and optional
-    /// <see cref="WebHookAttribute.Id"/>. Also adds a <see cref="Filters.WebHookReceiverExistsFilter"/> for the
-    /// action.
+    /// An <see cref="Attribute"/> indicating the associated action is a GitHub WebHook endpoint. Specifies the
+    /// optional <see cref="EventName"/> and <see cref="WebHookAttribute.Id"/>. Also adds a
+    /// <see cref="WebHookReceiverExistsFilter"/> and a <see cref="ModelStateInvalidFilter"/> (unless
+    /// <see cref="ApiBehaviorOptions.SuppressModelStateInvalidFilter"/> is <see langword="true"/>) for the action.
     /// </para>
     /// <para>
     /// The signature of the action should be:
@@ -20,8 +23,7 @@ namespace Microsoft.AspNetCore.WebHooks
     /// Task{IActionResult} ActionName(string id, string @event, TData data)
     /// </code>
     /// or include the subset of parameters required. <c>TData</c> must be compatible with expected requests e.g.
-    /// <see cref="Newtonsoft.Json.Linq.JObject"/> or <see cref="Http.IFormCollection"/> (if
-    /// <see cref="AcceptFormData"/> is <see langword="true"/>).
+    /// <see cref="Newtonsoft.Json.Linq.JObject"/>.
     /// </para>
     /// <para>
     /// An example GitHub WebHook URI is '<c>https://{host}/api/webhooks/incoming/github/{id}</c>'. See
@@ -40,24 +42,18 @@ namespace Microsoft.AspNetCore.WebHooks
     /// <see cref="EventName"/> in a WebHook application.
     /// </para>
     /// </remarks>
-    public class GitHubWebHookAttribute : WebHookAttribute, IWebHookBodyTypeMetadata, IWebHookEventSelectorMetadata
+    public class GitHubWebHookAttribute : WebHookAttribute, IWebHookEventSelectorMetadata
     {
         private string _eventName;
 
         /// <summary>
-        /// Instantiates a new <see cref="GitHubWebHookAttribute"/> indicating the associated action is a GitHub
-        /// WebHook endpoint.
+        /// Instantiates a new <see cref="GitHubWebHookAttribute"/> instance indicating the associated action is a
+        /// GitHub WebHook endpoint.
         /// </summary>
         public GitHubWebHookAttribute()
             : base(GitHubConstants.ReceiverName)
         {
         }
-
-        /// <summary>
-        /// Gets or sets an indication this action expects HTML form URL-encoded data.
-        /// </summary>
-        /// <value>Defaults to <see langword="false"/>, indicating this action expects JSON data.</value>
-        public bool AcceptFormData { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the event the associated controller action accepts.
@@ -79,10 +75,5 @@ namespace Microsoft.AspNetCore.WebHooks
                 _eventName = value;
             }
         }
-
-        /// <inheritdoc />
-        WebHookBodyType IWebHookBodyTypeMetadata.BodyType => AcceptFormData ?
-            WebHookBodyType.Form :
-            WebHookBodyType.Json;
     }
 }

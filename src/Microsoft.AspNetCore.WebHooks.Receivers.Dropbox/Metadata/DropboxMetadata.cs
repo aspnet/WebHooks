@@ -1,5 +1,7 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+using Microsoft.AspNetCore.WebHooks.Filters;
 
 namespace Microsoft.AspNetCore.WebHooks.Metadata
 {
@@ -8,22 +10,26 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     /// </summary>
     public class DropboxMetadata :
         WebHookMetadata,
-        IWebHookBodyTypeMetadataService,
         IWebHookEventMetadata,
+        IWebHookFilterMetadata,
         IWebHookGetHeadRequestMetadata
     {
+        private readonly DropboxVerifySignatureFilter _verifySignatureFilter;
+
         /// <summary>
         /// Instantiates a new <see cref="DropboxMetadata"/> instance.
         /// </summary>
-        public DropboxMetadata()
+        /// <param name="verifySignatureFilter">The <see cref="DropboxVerifySignatureFilter"/>.</param>
+        public DropboxMetadata(DropboxVerifySignatureFilter verifySignatureFilter)
             : base(DropboxConstants.ReceiverName)
         {
+            _verifySignatureFilter = verifySignatureFilter;
         }
 
         // IWebHookBodyTypeMetadataService...
 
         /// <inheritdoc />
-        public WebHookBodyType BodyType => WebHookBodyType.Json;
+        public override WebHookBodyType BodyType => WebHookBodyType.Json;
 
         // IWebHookEventMetadata...
 
@@ -47,7 +53,12 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         /// <inheritdoc />
         public int SecretKeyMinLength => DropboxConstants.SecretKeyMinLength;
 
+        // IWebHookFilterMetadata...
+
         /// <inheritdoc />
-        public int SecretKeyMaxLength => DropboxConstants.SecretKeyMaxLength;
+        public void AddFilters(WebHookFilterMetadataContext context)
+        {
+            context.Results.Add(_verifySignatureFilter);
+        }
     }
 }

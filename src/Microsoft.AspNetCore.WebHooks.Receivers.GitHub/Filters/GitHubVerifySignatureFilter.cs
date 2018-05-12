@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.AspNetCore.WebHooks.Utilities;
 using Microsoft.Extensions.Configuration;
@@ -63,11 +62,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(next));
             }
 
-            var routeData = context.RouteData;
             var request = context.HttpContext.Request;
-            if (routeData.TryGetWebHookReceiverName(out var receiverName) &&
-                IsApplicable(receiverName) &&
-                HttpMethods.IsPost(request.Method))
+            if (HttpMethods.IsPost(request.Method))
             {
                 // 1. Confirm a secure connection.
                 var errorResult = EnsureSecureConnection(ReceiverName, context.HttpContext.Request);
@@ -95,12 +91,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                         GitHubConstants.SignatureHeaderKey,
                         StringComparison.OrdinalIgnoreCase))
                 {
-                    Logger.LogError(
-                        1,
-                        "Invalid '{HeaderName}' header value. Expecting a value of '{Key}={Value}'.",
-                        GitHubConstants.SignatureHeaderName,
-                        GitHubConstants.SignatureHeaderKey,
-                        "<value>");
+                    Logger.LogWarning(
+                        0,
+                        $"Invalid '{GitHubConstants.SignatureHeaderName}' header value. Expecting a value of " +
+                        $"'{GitHubConstants.SignatureHeaderKey}=<value>'.");
 
                     var message = string.Format(
                         CultureInfo.CurrentCulture,
@@ -125,11 +119,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 }
 
                 // 3. Get the configured secret key.
-                var secretKey = GetSecretKey(
-                    ReceiverName,
-                    routeData,
-                    GitHubConstants.SecretKeyMinLength,
-                    GitHubConstants.SecretKeyMaxLength);
+                var secretKey = GetSecretKey(ReceiverName, context.RouteData, GitHubConstants.SecretKeyMinLength);
                 if (secretKey == null)
                 {
                     context.Result = new NotFoundResult();

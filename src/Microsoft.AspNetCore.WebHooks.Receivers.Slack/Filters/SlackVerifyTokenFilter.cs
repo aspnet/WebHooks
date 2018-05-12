@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -75,24 +75,16 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(next));
             }
 
-            // 1. Confirm this filter applies.
-            var routeData = context.RouteData;
-            if (!routeData.TryGetWebHookReceiverName(out var receiverName) || !IsApplicable(receiverName))
-            {
-                await next();
-                return;
-            }
-
-            // 2. Confirm we were reached using HTTPS.
+            // 1. Confirm we were reached using HTTPS.
             var request = context.HttpContext.Request;
-            var errorResult = EnsureSecureConnection(receiverName, request);
+            var errorResult = EnsureSecureConnection(ReceiverName, request);
             if (errorResult != null)
             {
                 context.Result = errorResult;
                 return;
             }
 
-            // 3. Get IFormCollection from the request body.
+            // 2. Get IFormCollection from the request body.
             var data = await _requestReader.ReadAsFormDataAsync(context);
             if (data == null)
             {
@@ -102,14 +94,14 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return;
             }
 
-            // 4. Ensure the token exists and matches the expected value.
+            // 3. Ensure the token exists and matches the expected value.
             string token = data[SlackConstants.TokenRequestFieldName];
             if (string.IsNullOrEmpty(token))
             {
-                Logger.LogError(
+                Logger.LogWarning(
                     0,
-                    "The HTTP request body did not contain a required '{PropertyName}' property.",
-                    SlackConstants.TokenRequestFieldName);
+                    $"The HTTP request body did not contain a required '{SlackConstants.TokenRequestFieldName}' " +
+                    "property.");
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -120,18 +112,14 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return;
             }
 
-            var secretKey = GetSecretKey(
-                ReceiverName,
-                routeData,
-                SlackConstants.SecretKeyMinLength,
-                SlackConstants.SecretKeyMaxLength);
-
+            var routeData = context.RouteData;
+            var secretKey = GetSecretKey(ReceiverName, routeData, SlackConstants.SecretKeyMinLength);
             if (!SecretEqual(token, secretKey))
             {
-                Logger.LogError(
+                Logger.LogWarning(
                     1,
-                    "The '{PropertyName}' value provided in the HTTP request body did not match the expected value.",
-                    SlackConstants.TokenRequestFieldName);
+                    $"The '{SlackConstants.TokenRequestFieldName}' value provided in the HTTP request body did not " +
+                    "match the expected value.");
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -142,7 +130,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return;
             }
 
-            // 5. Get the event name and subtext.
+            // 4. Get the event name and subtext.
             string eventName = data[SlackConstants.TriggerRequestFieldName];
             if (eventName != null)
             {
@@ -163,13 +151,11 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
             if (string.IsNullOrEmpty(eventName))
             {
-                Logger.LogError(
+                Logger.LogWarning(
                     2,
-                    "The HTTP request body did not contain a required '{PropertyName1}', '{PropertyName2}', or " +
-                    "'{PropertyName3}' property.",
-                    SlackConstants.TriggerRequestFieldName,
-                    SlackConstants.CommandRequestFieldName,
-                    SlackConstants.TextRequestFieldName);
+                    $"The HTTP request body did not contain a required '{SlackConstants.TriggerRequestFieldName}', " +
+                    $"'{SlackConstants.CommandRequestFieldName}', or '{SlackConstants.TextRequestFieldName}' " +
+                    "property.");
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -182,7 +168,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return;
             }
 
-            // 6. Success. Provide event name for model binding.
+            // 5. Success. Provide event name for model binding.
             routeData.Values[WebHookConstants.EventKeyName] = eventName;
 
             await next();

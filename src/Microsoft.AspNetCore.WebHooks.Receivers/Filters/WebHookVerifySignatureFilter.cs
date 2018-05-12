@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
     /// <summary>
     /// Base class for <see cref="IWebHookReceiver"/> and <see cref="Mvc.Filters.IResourceFilter"/> or
     /// <see cref="Mvc.Filters.IAsyncResourceFilter"/> implementations that verify request body content e.g. filters
-    /// that verify signatures of request body content. Subclasses should have an
+    /// that verify signatures of request body content. Subclasses by default have an
     /// <see cref="Mvc.Filters.IOrderedFilter.Order"/> equal to <see cref="WebHookSecurityFilter.Order"/>.
     /// </summary>
     public abstract class WebHookVerifySignatureFilter : WebHookSecurityFilter, IWebHookReceiver
@@ -82,7 +82,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
             catch (FormatException exception)
             {
-                Logger.LogError(
+                Logger.LogWarning(
                     400,
                     exception,
                     "The '{HeaderName}' header value is invalid. The '{ReceiverName}' receiver requires a valid " +
@@ -120,7 +120,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
                 if (input != content.Length)
                 {
-                    Logger.LogError(
+                    Logger.LogWarning(
                         401,
                         "The '{HeaderName}' header value is invalid. The '{ReceiverName}' receiver requires a valid " +
                         "hex-encoded string.",
@@ -136,7 +136,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             {
                 // FormatException is most likely. ToByte throws an ArgumentException when e.g. content contains a
                 // minus sign ('-').
-                Logger.LogError(
+                Logger.LogWarning(
                     402,
                     exception,
                     "The '{HeaderName}' header value is invalid. The '{ReceiverName}' receiver requires a valid " +
@@ -205,10 +205,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             if (!request.Headers.TryGetValue(headerName, out var headers) || headers.Count != 1)
             {
                 var headersCount = headers.Count;
-                Logger.LogInformation(
+                Logger.LogWarning(
                     403,
                     "Expecting exactly one '{HeaderName}' header field in the WebHook request but found " +
-                    "{HeaderCount}. Please ensure the request contains exactly one '{HeaderName}' header field.",
+                    "{HeaderCount}. Ensure the request contains exactly one '{HeaderName}' header field.",
                     headerName,
                     headersCount,
                     headerName);
@@ -296,7 +296,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
             if (secret.Length == 0)
             {
-                throw new ArgumentException(Resources.General_ArgumentCannotBeNullOrEmpty);
+                throw new ArgumentException(Resources.General_ArgumentCannotBeNullOrEmpty, nameof(secret));
             }
 
             await WebHookHttpRequestUtilities.PrepareRequestBody(request);
@@ -419,7 +419,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
             if (secret.Length == 0)
             {
-                throw new ArgumentException(Resources.General_ArgumentCannotBeNullOrEmpty);
+                throw new ArgumentException(Resources.General_ArgumentCannotBeNullOrEmpty, nameof(secret));
             }
 
             await WebHookHttpRequestUtilities.PrepareRequestBody(request);
@@ -541,7 +541,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(signatureHeaderName));
             }
 
-            Logger.LogError(
+            Logger.LogWarning(
                 404,
                 "The WebHook signature provided by the '{HeaderName}' header field does not match the value " +
                 "expected by the '{ReceiverName}' receiver. WebHook request is invalid.",

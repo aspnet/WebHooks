@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -81,24 +81,16 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 throw new ArgumentNullException(nameof(next));
             }
 
-            // 1. Confirm this filter applies.
-            var routeData = context.RouteData;
-            if (!routeData.TryGetWebHookReceiverName(out var receiverName) || !IsApplicable(receiverName))
-            {
-                await next();
-                return;
-            }
-
-            // 2. Confirm we were reached using HTTPS.
+            // 1. Confirm we were reached using HTTPS.
             var request = context.HttpContext.Request;
-            var errorResult = EnsureSecureConnection(receiverName, request);
+            var errorResult = EnsureSecureConnection(ReceiverName, request);
             if (errorResult != null)
             {
                 context.Result = errorResult;
                 return;
             }
 
-            // 3. Get XElement from the request body.
+            // 2. Get XElement from the request body.
             var data = await _requestReader.ReadBodyAsync<XElement>(context);
             if (data == null)
             {
@@ -117,14 +109,14 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return;
             }
 
-            // 4. Ensure the organization ID exists and matches the expected value.
+            // 3. Ensure the organization ID exists and matches the expected value.
             var organizationIds = ObjectPathUtilities.GetStringValues(data, SalesforceConstants.OrganizationIdPath);
             if (StringValues.IsNullOrEmpty(organizationIds))
             {
-                Logger.LogError(
+                Logger.LogWarning(
                     0,
-                    "The HTTP request body did not contain a required '{XPath}' element.",
-                    SalesforceConstants.OrganizationIdPath);
+                    $"The HTTP request body did not contain a required '{SalesforceConstants.OrganizationIdPath}' " +
+                    "element.");
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -135,20 +127,17 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return;
             }
 
-            var secret = GetSecretKey(
-                ReceiverName,
-                routeData,
-                SalesforceConstants.SecretKeyMinLength,
-                SalesforceConstants.SecretKeyMaxLength);
+            var routeData = context.RouteData;
+            var secret = GetSecretKey(ReceiverName, routeData, SalesforceConstants.SecretKeyMinLength);
 
             var organizationId = GetShortOrganizationId(organizationIds[0]);
             var secretKey = GetShortOrganizationId(secret);
             if (!SecretEqual(organizationId, secretKey))
             {
-                Logger.LogError(
+                Logger.LogWarning(
                     1,
-                    "The '{XPath}' value provided in the HTTP request body did not match the expected value.",
-                    SalesforceConstants.OrganizationIdPath);
+                    $"The '{SalesforceConstants.OrganizationIdPath}' value provided in the HTTP request body did " +
+                    "not match the expected value.");
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -159,14 +148,14 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return;
             }
 
-            // 5. Get the event name.
+            // 4. Get the event name.
             var eventNames = ObjectPathUtilities.GetStringValues(data, SalesforceConstants.EventNamePath);
             if (StringValues.IsNullOrEmpty(eventNames))
             {
-                Logger.LogError(
+                Logger.LogWarning(
                     2,
-                    "The HTTP request body did not contain a required '{XPath}' element.",
-                    SalesforceConstants.EventNamePath);
+                    $"The HTTP request body did not contain a required '{SalesforceConstants.EventNamePath}' " +
+                    "element.");
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -177,7 +166,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 return;
             }
 
-            // 6. Success. Provide event name for model binding.
+            // 5. Success. Provide event name for model binding.
             routeData.SetWebHookEventNames(eventNames);
 
             await next();

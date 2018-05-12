@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.WebHooks.Routing;
@@ -17,13 +17,6 @@ namespace Microsoft.AspNetCore.WebHooks
         /// </summary>
         /// <seealso cref="Metadata.IWebHookVerifyCodeMetadata"/>
         public static int CodeParameterMinLength => 32;
-
-        /// <summary>
-        /// Gets the maximum length of the <see cref="CodeQueryParameterName"/> query parameter value and secret key
-        /// for receivers using such a query parameter.
-        /// </summary>
-        /// <seealso cref="Metadata.IWebHookVerifyCodeMetadata"/>
-        public static int CodeParameterMaxLength => 128;
 
         /// <summary>
         /// Gets the name of a query parameter containing the secret key used to verify some WebHook receivers'
@@ -101,9 +94,9 @@ namespace Microsoft.AspNetCore.WebHooks
 
         /// <summary>
         /// Gets the name of the <see cref="AspNetCore.Routing.RouteValueDictionary"/> entry containing an indication
-        /// the <see cref="WebHookReceiverExistsConstraint"/> successfully confirmed the request matched a configured
+        /// the <see cref="WebHookReceiverNameConstraint"/> successfully confirmed the request matched a configured
         /// receiver.
         /// </summary>
-        public static string ReceiverExistsKeyName => nameof(WebHookReceiverExistsConstraint);
+        public static string ReceiverExistsKeyName => nameof(WebHookReceiverNameConstraint);
     }
 }

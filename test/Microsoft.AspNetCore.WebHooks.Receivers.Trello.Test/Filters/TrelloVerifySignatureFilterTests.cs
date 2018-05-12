@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -109,7 +109,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         {
             // Arrange
             var expectedMessage = $"Expecting exactly one '{TrelloConstants.SignatureHeaderName}' header field in " +
-                "the WebHook request but found 0. Please ensure the request contains exactly one " +
+                "the WebHook request but found 0. Ensure the request contains exactly one " +
                 $"'{TrelloConstants.SignatureHeaderName}' header field.";
             var filter = GetFilter(TestSecret);
             var context = GetContext(TestContent);
@@ -128,7 +128,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         {
             // Arrange
             var expectedMessage = $"Expecting exactly one '{TrelloConstants.SignatureHeaderName}' header field in " +
-                "the WebHook request but found 2. Please ensure the request contains exactly one " +
+                "the WebHook request but found 2. Ensure the request contains exactly one " +
                 $"'{TrelloConstants.SignatureHeaderName}' header field.";
             var filter = GetFilter(TestSecret);
             var context = GetContext(TestContent);
@@ -153,7 +153,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         {
             // Arrange
             var expectedMessage = $"The '{TrelloConstants.SignatureHeaderName}' header value is invalid. The " +
-                "'trello' receiver requires a valid Base64-encoded string.";
+                "'trello' WebHook receiver requires a valid Base64-encoded string.";
             var filter = GetFilter(TestSecret);
             var context = GetContext(TestContent);
             context.HttpContext.Request.Headers.Add(TrelloConstants.SignatureHeaderName, header);
@@ -219,7 +219,6 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             Assert.Null(context.Result);
             Assert.Equal(1, nextCount);
         }
-
 
         [Fact]
         public async Task OnResourceExecutionAsync_Succeeds_IfPostIsNotJson()

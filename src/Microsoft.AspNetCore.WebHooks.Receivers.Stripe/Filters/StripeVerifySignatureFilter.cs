@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.AspNetCore.WebHooks.Utilities;
 using Microsoft.Extensions.Configuration;
@@ -65,11 +64,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             }
 
             // 1. Confirm this filter applies.
-            var routeData = context.RouteData;
             var request = context.HttpContext.Request;
-            if (!routeData.TryGetWebHookReceiverName(out var receiverName) ||
-                !IsApplicable(receiverName) ||
-                !HttpMethods.IsPost(request.Method))
+            if (!HttpMethods.IsPost(request.Method))
             {
                 await next();
                 return;
@@ -102,11 +98,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             var signatures = GetSignatures(header);
 
             // 4. Get the configured secret key.
-            var secretKey = GetSecretKey(
-                ReceiverName,
-                routeData,
-                StripeConstants.SecretKeyMinLength,
-                StripeConstants.SecretKeyMaxLength);
+            var secretKey = GetSecretKey(ReceiverName, context.RouteData, StripeConstants.SecretKeyMinLength);
             if (secretKey == null)
             {
                 context.Result = new NotFoundResult();
@@ -197,10 +189,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 if (keyValuePair.Count != 2)
                 {
                     // Header is not formatted correctly.
-                    Logger.LogError(
-                        2,
-                        "The '{HeaderName}' header value is invalid. '{InvalidPair}' should be a 'key=value' pair.",
-                        StripeConstants.SignatureHeaderName,
+                    Logger.LogWarning(
+                        0,
+                        $"The '{StripeConstants.SignatureHeaderName}' header value is invalid. '{{InvalidPair}}' " +
+                        "should be a 'key=value' pair.",
                         pair);
 
                     var message = string.Format(
@@ -228,20 +220,18 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
 
             if (!hasSignature)
             {
-                Logger.LogError(
-                    3,
-                    "The '{HeaderName}' header value is invalid. Does not contain a timestamp ('{Key}') value.",
-                    StripeConstants.SignatureHeaderName,
-                    StripeConstants.SignatureKey);
+                Logger.LogWarning(
+                    1,
+                    $"The '{StripeConstants.SignatureHeaderName}' header value is invalid. Does not contain a " +
+                    $"timestamp ('{StripeConstants.SignatureKey}') value.");
             }
 
             if (!hasTimestamp)
             {
-                Logger.LogError(
-                    4,
-                    "The '{HeaderName}' header value is invalid. Does not contain a signature ('{Key}') value.",
-                    StripeConstants.SignatureHeaderName,
-                    StripeConstants.TimestampKey);
+                Logger.LogWarning(
+                    2,
+                    $"The '{StripeConstants.SignatureHeaderName}' header value is invalid. Does not contain a " +
+                    $"signature ('{StripeConstants.TimestampKey}') value.");
             }
 
             if (!hasSignature || !hasTimestamp)

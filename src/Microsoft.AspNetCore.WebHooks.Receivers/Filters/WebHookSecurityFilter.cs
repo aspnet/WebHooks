@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebHooks.Properties;
 using Microsoft.Extensions.Configuration;
@@ -15,12 +16,12 @@ using Microsoft.Extensions.Logging;
 namespace Microsoft.AspNetCore.WebHooks.Filters
 {
     /// <summary>
-    /// Base class for <see cref="Mvc.Filters.IResourceFilter"/> or <see cref="Mvc.Filters.IAsyncResourceFilter"/>
-    /// implementations that for example verify request signatures or <c>code</c> query parameters. Subclasses may
-    /// also implement <see cref="IWebHookReceiver"/>. Subclasses should have an
-    /// <see cref="Mvc.Filters.IOrderedFilter.Order"/> equal to <see cref="Order"/>.
+    /// Base class for <see cref="IResourceFilter"/> or <see cref="IAsyncResourceFilter"/> implementations that for
+    /// example verify request signatures or <c>code</c> query parameters. Subclasses may also implement
+    /// <see cref="IWebHookReceiver"/>. Subclasses by default have an <see cref="IOrderedFilter.Order"/> equal to
+    /// <see cref="Order"/>.
     /// </summary>
-    public abstract class WebHookSecurityFilter
+    public abstract class WebHookSecurityFilter : IOrderedFilter
     {
         /// <summary>
         /// Instantiates a new <see cref="WebHookSecurityFilter"/> instance.
@@ -58,9 +59,12 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         }
 
         /// <summary>
-        /// Gets the <see cref="Mvc.Filters.IOrderedFilter.Order"/> recommended for all
-        /// <see cref="WebHookSecurityFilter"/> instances. The recommended filter sequence is
+        /// Gets the <see cref="IOrderedFilter.Order"/> recommended for all <see cref="WebHookSecurityFilter"/>
+        /// instances. The recommended filter sequence is
         /// <list type="number">
+        /// <item>
+        /// Confirm WebHooks configuration is set up correctly (in <see cref="WebHookReceiverExistsFilter"/>).
+        /// </item>
         /// <item>
         /// Confirm signature or <c>code</c> query parameter e.g. in <see cref="WebHookVerifyCodeFilter"/> or other
         /// <see cref="WebHookSecurityFilter"/> subclass.
@@ -76,8 +80,8 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// <item>Confirm it's a POST request (in <see cref="WebHookVerifyMethodFilter"/>).</item>
         /// <item>Confirm body type (in <see cref="WebHookVerifyBodyTypeFilter"/>).</item>
         /// <item>
-        /// Map event name(s), if not done in <see cref="Routing.WebHookEventMapperConstraint"/> for this receiver (in
-        /// <see cref="WebHookEventMapperFilter"/>).
+        /// Map event name(s), if not done in <see cref="Routing.WebHookEventNameMapperConstraint"/> for this receiver
+        /// (in <see cref="WebHookEventNameMapperFilter"/>).
         /// </item>
         /// <item>
         /// Short-circuit ping requests, if not done in <see cref="WebHookGetHeadRequestFilter"/> for this receiver (in
@@ -85,7 +89,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// </item>
         /// </list>
         /// </summary>
-        public static int Order => -500;
+        public static int Order => WebHookReceiverExistsFilter.Order + 10;
+
+        /// <inheritdoc />
+        int IOrderedFilter.Order => Order;
 
         /// <summary>
         /// Gets the <see cref="IConfiguration"/> for the application.
@@ -140,13 +147,11 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             // Require HTTPS.
             if (!request.IsHttps)
             {
-                Logger.LogError(
+                Logger.LogWarning(
                     500,
-                    "The '{ReceiverName}' WebHook receiver requires {UpperSchemeName} in order to be secure. " +
-                    "Please register a WebHook URI of type '{SchemeName}'.",
-                    receiverName,
-                    Uri.UriSchemeHttps.ToUpper(),
-                    Uri.UriSchemeHttps);
+                    "The '{ReceiverName}' WebHook receiver requires SSL/TLS in order to be secure. Register a " +
+                    $"WebHook URI of type '{Uri.UriSchemeHttps}'.",
+                    receiverName);
 
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -177,15 +182,10 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
         /// <see cref="WebHookSecurityFilter"/> subclass to support multiple senders with individual configurations.
         /// </param>
         /// <param name="minLength">The minimum length of the key value.</param>
-        /// <param name="maxLength">The maximum length of the key value.</param>
         /// <returns>
         /// The configured WebHook secret key. <see langword="null"/> if the configuration value does not exist.
         /// </returns>
-        protected virtual string GetSecretKey(
-            string sectionKey,
-            RouteData routeData,
-            int minLength,
-            int maxLength)
+        protected virtual string GetSecretKey(string sectionKey, RouteData routeData, int minLength)
         {
             if (sectionKey == null)
             {
@@ -200,6 +200,7 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             var secrets = GetSecretKeys(sectionKey, routeData);
             if (!secrets.Exists())
             {
+                // Have already logged about this case.
                 return null;
             }
 
@@ -207,29 +208,23 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
             if (secret == null)
             {
                 // Strange case: User incorrectly configured this id with sub-keys.
+                Logger.LogError(
+                    501,
+                    "Found a corrupted configuration for the '{ReceiverName}' WebHook receiver.",
+                    sectionKey);
                 return null;
             }
 
-            if (secret.Length < minLength || secret.Length > maxLength)
+            if (secret.Length < minLength)
             {
                 // Secrete key found but it does not meet the length requirements.
                 routeData.TryGetWebHookReceiverId(out var id);
-                Logger.LogCritical(
-                    501,
-                    "Could not find a valid configuration for the '{ReceiverName}' WebHook receiver, instance " +
-                    "'{Id}'. The value must be between {MinLength} and {MaxLength} characters long.",
-                    sectionKey,
-                    id,
-                    minLength,
-                    maxLength);
-
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.Security_BadSecret,
                     sectionKey,
                     id,
-                    minLength,
-                    maxLength);
+                    minLength);
                 throw new InvalidOperationException(message);
             }
 
@@ -274,19 +269,13 @@ namespace Microsoft.AspNetCore.WebHooks.Filters
                 if (!HasSecretKeys(Configuration, sectionKey))
                 {
                     // No secret key configuration for this receiver at all.
-                    Logger.LogCritical(
-                        502,
-                        "Could not find a valid configuration for the '{ReceiverName}' WebHook receiver.",
-                        sectionKey);
-
                     var message = string.Format(CultureInfo.CurrentCulture, Resources.Security_NoSecrets, sectionKey);
                     throw new InvalidOperationException(message);
                 }
 
-                // ID was not configured or the key length is invalid. Caller should treat null return value with a
-                // Not Found response.
-                Logger.LogError(
-                    503,
+                // ID was not configured. Caller should treat null return value with a Not Found response.
+                Logger.LogWarning(
+                    502,
                     "Could not find a valid configuration for the '{ReceiverName}' WebHook receiver, instance '{Id}'.",
                     sectionKey,
                     id);

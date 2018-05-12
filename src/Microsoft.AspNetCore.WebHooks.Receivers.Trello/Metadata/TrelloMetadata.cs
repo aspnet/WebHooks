@@ -1,5 +1,7 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+using Microsoft.AspNetCore.WebHooks.Filters;
 
 namespace Microsoft.AspNetCore.WebHooks.Metadata
 {
@@ -8,22 +10,26 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     /// </summary>
     public class TrelloMetadata :
         WebHookMetadata,
-        IWebHookBodyTypeMetadataService,
         IWebHookEventMetadata,
+        IWebHookFilterMetadata,
         IWebHookGetHeadRequestMetadata
     {
+        private readonly TrelloVerifySignatureFilter _verifySignatureFilter;
+
         /// <summary>
         /// Instantiates a new <see cref="TrelloMetadata"/> instance.
         /// </summary>
-        public TrelloMetadata()
+        /// <param name="verifySignatureFilter">The <see cref="TrelloVerifySignatureFilter"/>.</param>
+        public TrelloMetadata(TrelloVerifySignatureFilter verifySignatureFilter)
             : base(TrelloConstants.ReceiverName)
         {
+            _verifySignatureFilter = verifySignatureFilter;
         }
 
         // IWebHookBodyTypeMetadataService...
 
         /// <inheritdoc />
-        public WebHookBodyType BodyType => WebHookBodyType.Json;
+        public override WebHookBodyType BodyType => WebHookBodyType.Json;
 
         // IWebHookEventMetadata...
 
@@ -47,7 +53,12 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         /// <inheritdoc />
         public int SecretKeyMinLength => TrelloConstants.SecretKeyMinLength;
 
+        // IWebHookFilterMetadata...
+
         /// <inheritdoc />
-        public int SecretKeyMaxLength => TrelloConstants.SecretKeyMaxLength;
+        public void AddFilters(WebHookFilterMetadataContext context)
+        {
+            context.Results.Add(_verifySignatureFilter);
+        }
     }
 }

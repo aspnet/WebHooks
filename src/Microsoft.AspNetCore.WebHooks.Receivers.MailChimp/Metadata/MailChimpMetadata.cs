@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 namespace Microsoft.AspNetCore.WebHooks.Metadata
@@ -8,7 +8,6 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     /// </summary>
     public class MailChimpMetadata :
         WebHookMetadata,
-        IWebHookBodyTypeMetadataService,
         IWebHookEventFromBodyMetadata,
         IWebHookGetHeadRequestMetadata,
         IWebHookVerifyCodeMetadata
@@ -24,7 +23,7 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         // IWebHookBodyTypeMetadataService...
 
         /// <inheritdoc />
-        public WebHookBodyType BodyType => WebHookBodyType.Form;
+        public override WebHookBodyType BodyType => WebHookBodyType.Form;
 
         // IWebHookEventFromBodyMetadata...
 
@@ -40,13 +39,9 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         public bool AllowHeadRequests => false;
 
         /// <inheritdoc />
-        /// <inheritdoc />
         public string ChallengeQueryParameterName => null;
 
         /// <inheritdoc />
         public int SecretKeyMinLength => WebHookConstants.CodeParameterMinLength;
-
-        /// <inheritdoc />
-        public int SecretKeyMaxLength => WebHookConstants.CodeParameterMaxLength;
     }
 }

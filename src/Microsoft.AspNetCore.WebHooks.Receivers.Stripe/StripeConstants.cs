@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using Microsoft.Extensions.Configuration;
@@ -15,7 +15,6 @@ namespace Microsoft.AspNetCore.WebHooks
         /// timestamp.
         /// </summary>
         public static string CreatedPropertyName => "created";
-
 
         /// <summary>
         /// Gets the name of the JSON property in a Stripe WebHook request body containing the
@@ -83,11 +82,6 @@ namespace Microsoft.AspNetCore.WebHooks
         /// Gets the minimum length of the secret key configured for this receiver.
         /// </summary>
         public static int SecretKeyMinLength => 16;
-
-        /// <summary>
-        /// Gets the maximum length of the secret key configured for this receiver.
-        /// </summary>
-        public static int SecretKeyMaxLength => 128;
 
         /// <summary>
         /// Gets the name of the HTTP header that contains the timestamp and signature of the request. See

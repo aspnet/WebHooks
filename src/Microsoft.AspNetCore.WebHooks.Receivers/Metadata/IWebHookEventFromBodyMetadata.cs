@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 namespace Microsoft.AspNetCore.WebHooks.Metadata
@@ -8,11 +8,10 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
     /// Metadata describing the source within the request body of a WebHook <see cref="string"/> or <c>string[]</c>
     /// action parameter named action parameter named <c>action</c>, <c>@event</c>, <c>eventNames</c>, or similar.
     /// Implemented in a <see cref="IWebHookMetadata"/> service for receivers that place event names in the body and
-    /// do not special-case event name mapping. Receivers using this metadata must also provide an
-    /// <see cref="IWebHookBodyTypeMetadataService"/> service.
+    /// do not special-case event name mapping.
     /// </para>
     /// <para>
-    /// <see cref="Filters.WebHookEventMapperFilter"/> maps event names based on this metadata.
+    /// <see cref="Filters.WebHookEventNameMapperFilter"/> maps event names based on this metadata.
     /// </para>
     /// </summary>
     /// <remarks>
@@ -26,15 +25,15 @@ namespace Microsoft.AspNetCore.WebHooks.Metadata
         /// </summary>
         /// <value>
         /// If <see langword="true"/>, requests lacking event names are allowed. Otherwise,
-        /// <see cref="Filters.WebHookEventMapperFilter"/> short-circuits the request, responding with a 400 "Bad
+        /// <see cref="Filters.WebHookEventNameMapperFilter"/> short-circuits the request, responding with a 400 "Bad
         /// Request" status code.
         /// </value>
         bool AllowMissing { get; }
 
         /// <summary>
         /// Gets the <see cref="Http.IFormCollection"/> property name, JSON path, or XPath used to read event names
-        /// from the request body. Interpretation depends on the <see cref="IWebHookBodyTypeMetadata.BodyType"/> of
-        /// the receiver.
+        /// from the request body. Interpretation depends on the <see cref="IWebHookBodyTypeMetadataService.BodyType"/>
+        /// of the receiver.
         /// </summary>
         /// <value>Should not return an empty string or <see langword="null"/>.</value>
         string BodyPropertyPath { get; }
