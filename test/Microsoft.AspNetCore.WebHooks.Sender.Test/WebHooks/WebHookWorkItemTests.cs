@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.WebHooks.Sender.Test;
 using Xunit;
 
@@ -11,15 +12,15 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
     {
         private readonly WebHookWorkItem _workItem;
         private readonly WebHook _webHook;
-        private readonly NotificationDictionary _notification;
-        private readonly IEnumerable<NotificationDictionary> _notifications;
+        private readonly Notification _notification;
+        private readonly IEnumerable<Notification> _notifications;
 
         public WebHookWorkItemTests()
         {
-            _notification = new NotificationDictionary("action", data: null);
-            _notifications = new List<NotificationDictionary> { _notification };
+            _notification = new Notification("action", payload: null);
+            _notifications = new List<Notification> { _notification };
             _webHook = new WebHook();
-            _workItem = new WebHookWorkItem(_webHook, _notifications);
+            _workItem = new WebHookWorkItem(_webHook, _notifications.First());
         }
 
         [Fact]
@@ -44,7 +45,7 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
         [Fact]
         public void Notifications_Initializes()
         {
-            Assert.Equal(_notifications, _workItem.Notifications);
+            Assert.Equal(_notifications.First(), _workItem.Notification);
         }
     }
 }

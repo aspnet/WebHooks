@@ -8,8 +8,10 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebHooks.Sender.Test.Mocks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -21,6 +23,7 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
         private readonly ExecutionDataflowBlockOptions _options;
         private readonly HttpMessageHandlerMock _handlerMock;
         private readonly Mock<ILogger<DataflowWebHookSender>> _loggerMock;
+        private IOptions<MvcJsonOptions> _mvcJsonOptions;
 
         private DataflowWebHookSender _sender;
 
@@ -30,6 +33,7 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
             _httpClient = new HttpClient(_handlerMock);
             _options = new ExecutionDataflowBlockOptions();
             _loggerMock = new Mock<ILogger<DataflowWebHookSender>>();
+            _mvcJsonOptions = Options.Create(new MvcJsonOptions());
         }
 
         public enum SendResult
@@ -94,7 +98,7 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
             var done = new ManualResetEvent(initialState: false);
             WebHookWorkItem final = null;
             var actualRetries = 0;
-            _sender = new TestDataflowWebHookSender(_loggerMock.Object, delays, _options, _httpClient,
+            _sender = new TestDataflowWebHookSender(_loggerMock.Object, delays, _options, _httpClient, _mvcJsonOptions,
             onWebHookRetry: item =>
             {
                 actualRetries++;
@@ -118,9 +122,9 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
                 done.Set();
             });
             _handlerMock.Handler = handler;
-            var notification = new NotificationDictionary("a1", data: null);
+            var notification = new Notification("a1", null);
             var webHook = WebHookManagerTests.CreateWebHook();
-            var workItem = new WebHookWorkItem(webHook, new[] { notification })
+            var workItem = new WebHookWorkItem(webHook, notification)
             {
                 Id = "1234567890",
             };
@@ -140,7 +144,8 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
         public void Dispose_Succeeds()
         {
             // Arrange
-            var s = new DataflowWebHookSender(_loggerMock.Object);
+            IOptions<MvcJsonOptions> options = Options.Create(new MvcJsonOptions());
+            var s = new DataflowWebHookSender(_loggerMock.Object, options);
 
             // Act
             s.Dispose();
@@ -200,11 +205,12 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
                 IEnumerable<TimeSpan> retryDelays,
                 ExecutionDataflowBlockOptions options,
                 HttpClient httpClient,
+                IOptions<MvcJsonOptions> mvcJsonOptions,
                 Action<WebHookWorkItem> onWebHookRetry,
                 Action<WebHookWorkItem> onWebHookSuccess,
                 Action<WebHookWorkItem> onWebHookGone,
                 Action<WebHookWorkItem> onWebHookFailure)
-                : base(logger, retryDelays, options, httpClient)
+                : base(logger, retryDelays, options, httpClient, mvcJsonOptions: mvcJsonOptions)
             {
                 _onRetry = onWebHookRetry;
                 _onSuccess = onWebHookSuccess;

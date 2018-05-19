@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.WebHooks
 {
     /// <summary>
     /// Provides an abstraction for launching WebHooks based on events happening in the system. When 
-    /// the <see cref="NotifyAsync(string, IEnumerable{NotificationDictionary}, Func{WebHook, string, bool})"/> method is called, 
+    /// the <see cref="NotifyAsync(string, IEnumerable{Notification}, Func{WebHook, string, bool})"/> method is called, 
     /// all registered WebHooks with matching filters will launch indicating to the recipient of the WebHook that an event happened.
     /// </summary>
     public interface IWebHookManager
@@ -33,7 +33,7 @@ namespace Microsoft.AspNetCore.WebHooks
         /// predicate is passed the <see cref="WebHook"/> and the user who registered it. If the predicate returns <c>true</c> then
         /// the <see cref="WebHook"/> is included; otherwise it is not.</param>
         /// <returns>The number of <see cref="WebHook"/> instances that were selected and subsequently notified about the actions.</returns>
-        Task<int> NotifyAsync(string user, IEnumerable<NotificationDictionary> notifications, Func<WebHook, string, bool> predicate);
+        Task<int> NotifyAsync(string user, IEnumerable<Notification> notifications, Func<WebHook, string, bool> predicate);
 
         /// <summary>
         /// Submits a notification to all users with subscriptions that match the given <paramref name="predicate"/>. For active 
@@ -45,6 +45,6 @@ namespace Microsoft.AspNetCore.WebHooks
         /// predicate is passed the <see cref="WebHook"/> and the user who registered it. If the predicate returns <c>true</c> then
         /// the <see cref="WebHook"/> is included; otherwise it is not.</param>
         /// <returns>The number of <see cref="WebHook"/> instances that were selected and subsequently notified about the actions.</returns>
-        Task<int> NotifyAllAsync(IEnumerable<NotificationDictionary> notifications, Func<WebHook, string, bool> predicate);
+        Task<int> NotifyAllAsync(IEnumerable<Notification> notifications, Func<WebHook, string, bool> predicate);
     }
 }

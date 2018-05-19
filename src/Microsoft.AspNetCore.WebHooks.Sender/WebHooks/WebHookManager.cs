@@ -81,7 +81,7 @@ namespace Microsoft.AspNetCore.WebHooks
         }
 
         /// <inheritdoc />
-        public async Task<int> NotifyAsync(string user, IEnumerable<NotificationDictionary> notifications, Func<WebHook, string, bool> predicate)
+        public async Task<int> NotifyAsync(string user, IEnumerable<Notification> notifications, Func<WebHook, string, bool> predicate)
         {
             if (user == null)
             {
@@ -93,8 +93,8 @@ namespace Microsoft.AspNetCore.WebHooks
             }
 
             // Get all actions in this batch
-            ICollection<NotificationDictionary> nots = notifications.ToArray();
-            var actions = nots.Select(n => n.Action).ToArray();
+            ICollection<Notification> nots = notifications.ToArray();
+            var actions = nots.Select(n => n.Action).ToArray();  
 
             // Find all active WebHooks that matches at least one of the actions
             var webHooks = await _webHookStore.QueryWebHooksAsync(user, actions, predicate);
@@ -108,7 +108,7 @@ namespace Microsoft.AspNetCore.WebHooks
         }
 
         /// <inheritdoc />
-        public async Task<int> NotifyAllAsync(IEnumerable<NotificationDictionary> notifications, Func<WebHook, string, bool> predicate)
+        public async Task<int> NotifyAllAsync(IEnumerable<Notification> notifications, Func<WebHook, string, bool> predicate)
         {
             if (notifications == null)
             {
@@ -116,7 +116,7 @@ namespace Microsoft.AspNetCore.WebHooks
             }
 
             // Get all actions in this batch
-            ICollection<NotificationDictionary> nots = notifications.ToArray();
+            ICollection<Notification> nots = notifications.ToArray();
             var actions = nots.Select(n => n.Action).ToArray();
 
             // Find all active WebHooks that matches at least one of the actions
@@ -137,12 +137,18 @@ namespace Microsoft.AspNetCore.WebHooks
             GC.SuppressFinalize(this);
         }
 
-        internal static IEnumerable<WebHookWorkItem> GetWorkItems(ICollection<WebHook> webHooks, ICollection<NotificationDictionary> notifications)
+        /// <summary>
+        /// TBD
+        /// </summary>
+        /// <param name="webHooks"></param>
+        /// <param name="notifications"></param>
+        /// <returns></returns>
+        public static IEnumerable<WebHookWorkItem> GetWorkItems(ICollection<WebHook> webHooks, ICollection<Notification> notifications)
         {
             var workItems = new List<WebHookWorkItem>();
             foreach (var webHook in webHooks)
             {
-                ICollection<NotificationDictionary> webHookNotifications;
+                ICollection<Notification> webHookNotifications;
 
                 // Pick the notifications that apply for this particular WebHook. If we only got one notification
                 // then we know that it applies to all WebHooks. Otherwise each notification may apply only to a subset.
@@ -159,7 +165,7 @@ namespace Microsoft.AspNetCore.WebHooks
                     }
                 }
 
-                var workItem = new WebHookWorkItem(webHook, webHookNotifications);
+                var workItem = new WebHookWorkItem(webHook, webHookNotifications.First());
                 workItems.Add(workItem);
             }
             return workItems;

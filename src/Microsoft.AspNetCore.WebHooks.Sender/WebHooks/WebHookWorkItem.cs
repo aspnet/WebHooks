@@ -12,25 +12,24 @@ namespace Microsoft.AspNetCore.WebHooks
     public class WebHookWorkItem
     {
         private string _id;
-        private readonly IEnumerable<NotificationDictionary> _notifications;
         private IDictionary<string, object> _properties;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebHookWorkItem"/> with the given <paramref name="notifications"/>.
+        /// Initializes a new instance of the <see cref="WebHookWorkItem"/> with the given <paramref name="notification"/>.
         /// </summary>
-        public WebHookWorkItem(WebHook webHook, IEnumerable<NotificationDictionary> notifications)
+        public WebHookWorkItem(WebHook webHook, Notification notification)
         {
             if (webHook == null)
             {
                 throw new ArgumentNullException(nameof(webHook));
             }
-            if (notifications == null)
+            if (notification == null)
             {
-                throw new ArgumentNullException(nameof(notifications));
+                throw new ArgumentNullException(nameof(notification));
             }
 
             WebHook = webHook;
-            _notifications = notifications;
+            Notification = notification;
         }
 
         /// <summary>
@@ -38,18 +37,8 @@ namespace Microsoft.AspNetCore.WebHooks
         /// </summary>
         public string Id
         {
-            get
-            {
-                if (_id == null)
-                {
-                    _id = Guid.NewGuid().ToString("N");
-                }
-                return _id;
-            }
-            set
-            {
-                _id = value;
-            }
+            get => _id ?? (_id = Guid.NewGuid().ToString("N"));
+            set => _id = value;
         }
 
         /// <summary>
@@ -63,15 +52,9 @@ namespace Microsoft.AspNetCore.WebHooks
         public int Offset { get; set; }
 
         /// <summary>
-        /// Gets the set of <see cref="NotificationDictionary"/> that caused the WebHook to be fired.
+        /// Gets the set of <see cref="WebHooks.Notification"/> that caused the WebHook to be fired.
         /// </summary>
-        public IEnumerable<NotificationDictionary> Notifications
-        {
-            get
-            {
-                return _notifications;
-            }
-        }
+        public Notification Notification { get; }
 
         /// <summary>
         /// Gets the set of additional properties associated with this <see cref="WebHookWorkItem"/> instance.

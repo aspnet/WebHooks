@@ -77,11 +77,11 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
             }
         }
 
-        public static TheoryData<IEnumerable<WebHook>, NotificationDictionary> FilterSingleNotificationData
+        public static TheoryData<IEnumerable<WebHook>, Notification> FilterSingleNotificationData
         {
             get
             {
-                return new TheoryData<IEnumerable<WebHook>, NotificationDictionary>
+                return new TheoryData<IEnumerable<WebHook>, Notification>
                 {
                     { new[] { CreateWebHook("_") }, CreateNotification("a") },
                     { new[] { CreateWebHook("a") }, CreateNotification("a") },
@@ -95,13 +95,13 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
             }
         }
 
-        public static TheoryData<IEnumerable<WebHook>, IEnumerable<NotificationDictionary>, int> FilterMultipleNotificationData
+        public static TheoryData<IEnumerable<WebHook>, IEnumerable<Notification>, int> FilterMultipleNotificationData
         {
             get
             {
-                return new TheoryData<IEnumerable<WebHook>, IEnumerable<NotificationDictionary>, int>
+                return new TheoryData<IEnumerable<WebHook>, IEnumerable<Notification>, int>
                 {
-                    { new WebHook[0], new NotificationDictionary[0], 0 },
+                    { new WebHook[0], new Notification[0], 0 },
 
                     { new[] { CreateWebHook("_") }, new[] { CreateNotification("a"), CreateNotification("b"), CreateNotification("c") }, 0 },
                     { new[] { CreateWebHook("a") }, new[] { CreateNotification("a"), CreateNotification("b"), CreateNotification("c") }, 1 },
@@ -262,7 +262,8 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
             _handlerMock.Handler = (req, counter) =>
             {
                 var query = QueryHelpers.ParseQuery(req.RequestUri.Query);
-                _response.Content = new StringContent(query.GetValueOrDefault("echo"));
+                query.TryGetValue("echo", out var echo);
+                _response.Content = new StringContent(echo);
                 return Task.FromResult(_response);
             };
             WebHook webHook = CreateWebHook();
@@ -273,7 +274,7 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
 
         [Theory]
         [MemberData(nameof(FilterSingleNotificationData))]
-        public void GetWorkItems_FilterSingleNotification(IEnumerable<WebHook> webHooks, NotificationDictionary notification)
+        public void GetWorkItems_FilterSingleNotification(IEnumerable<WebHook> webHooks, Notification notification)
         {
             // Act
             IEnumerable<WebHookWorkItem> actual = WebHookManager.GetWorkItems(webHooks.ToArray(), new[] { notification });
@@ -282,13 +283,13 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
             Assert.Equal(webHooks.Count(), actual.Count());
             foreach (WebHookWorkItem workItem in actual)
             {
-                Assert.Same(workItem.Notifications.Single(), notification);
+                Assert.Same(workItem.Notification, notification);
             }
         }
 
         [Theory]
         [MemberData(nameof(FilterMultipleNotificationData))]
-        public void GetWorkItems_FilterMultipleNotifications(IEnumerable<WebHook> webHooks, IEnumerable<NotificationDictionary> notifications, int expected)
+        public void GetWorkItems_FilterMultipleNotifications(IEnumerable<WebHook> webHooks, IEnumerable<Notification> notifications, int expected)
         {
             // Act
             IEnumerable<WebHookWorkItem> actual = WebHookManager.GetWorkItems(webHooks.ToArray(), notifications.ToArray());
@@ -297,10 +298,12 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
             Assert.Equal(expected, actual.Count());
             foreach (WebHookWorkItem workItem in actual)
             {
-                foreach (NotificationDictionary notification in workItem.Notifications)
-                {
-                    Assert.True(workItem.WebHook.MatchesAction(notification.Action));
-                }
+                Assert.True(workItem.WebHook.MatchesAction(workItem.Notification.Action));
+
+                //foreach (Notification notification in workItem.Notification)
+                //{
+                //    Assert.True(workItem.WebHook.MatchesAction(notification.Action));
+                //}
             }
         }
 
@@ -347,9 +350,9 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
             return hook;
         }
 
-        private static NotificationDictionary CreateNotification(string action)
+        private static Notification CreateNotification(string action)
         {
-            return new NotificationDictionary(action, data: null);
+            return new Notification(action, null);
         }
     }
 }

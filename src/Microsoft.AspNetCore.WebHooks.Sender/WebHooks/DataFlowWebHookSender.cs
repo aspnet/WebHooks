@@ -9,7 +9,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.AspNetCore.WebHooks
 {
@@ -33,8 +35,9 @@ namespace Microsoft.AspNetCore.WebHooks
         /// Initializes a new instance of the <see cref="DataflowWebHookSender"/> class with a default retry policy.
         /// </summary>
         /// <param name="logger">The current <see cref="ILogger"/>.</param>
-        public DataflowWebHookSender(ILogger<DataflowWebHookSender> logger)
-            : this(logger, retryDelays: null, options: null, httpClient: null)
+        /// <param name="mvcJsonOptions">TBD</param>
+        public DataflowWebHookSender(ILogger<DataflowWebHookSender> logger, IOptions<MvcJsonOptions> mvcJsonOptions)
+            : this(logger, retryDelays: null, options: null, httpClient: null, mvcJsonOptions: mvcJsonOptions)
         {
         }
 
@@ -52,8 +55,9 @@ namespace Microsoft.AspNetCore.WebHooks
         /// is empty then no retries are attempted.</param>
         /// <param name="options">An <see cref="ExecutionDataflowBlockOptions"/> used to control the <see cref="ActionBlock{T}"/> instances.
         /// The default setting uses a maximum of 8 concurrent transmitters for each try or retry.</param>
-        internal DataflowWebHookSender(ILogger logger, IEnumerable<TimeSpan> retryDelays, ExecutionDataflowBlockOptions options)
-            : this(logger, retryDelays, options, httpClient: null)
+        /// <param name="mvcJsonOptions">TBD</param>
+        internal DataflowWebHookSender(ILogger logger, IEnumerable<TimeSpan> retryDelays, ExecutionDataflowBlockOptions options, IOptions<MvcJsonOptions> mvcJsonOptions)
+            : this(logger, retryDelays, options, httpClient: null, mvcJsonOptions: mvcJsonOptions)
         {
         }
 
@@ -61,12 +65,13 @@ namespace Microsoft.AspNetCore.WebHooks
         /// Initialize a new instance of the <see cref="DataflowWebHookSender"/> with the given retry policy, <paramref name="options"/>,
         /// and <paramref name="httpClient"/>. This constructor is intended for unit testing purposes.
         /// </summary>
-        internal DataflowWebHookSender(
+        public DataflowWebHookSender(
             ILogger logger,
             IEnumerable<TimeSpan> retryDelays,
             ExecutionDataflowBlockOptions options,
-            HttpClient httpClient)
-            : base(logger)
+            HttpClient httpClient,
+            IOptions<MvcJsonOptions> mvcJsonOptions)
+            : base(logger, mvcJsonOptions)
         {
             retryDelays = retryDelays ?? DefaultRetries;
 

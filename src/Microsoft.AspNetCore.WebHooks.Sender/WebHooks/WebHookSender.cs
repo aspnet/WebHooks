@@ -9,8 +9,11 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebHooks.Sender;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.WebHooks
@@ -25,25 +28,26 @@ namespace Microsoft.AspNetCore.WebHooks
         internal const string SignatureHeaderValueTemplate = SignatureHeaderKey + "={0}";
         internal const string SignatureHeaderName = "ms-signature";
 
-        private const string BodyIdKey = "Id";
-        private const string BodyAttemptKey = "Attempt";
-        private const string BodyPropertiesKey = "Properties";
-        private const string BodyNotificationsKey = "Notifications";
+        private const string HeaderIdKey = "Id";
+        private const string HeaderAttemptKey = "Attempt";
+        private const string HeaderNotificationKey = "Notification";
 
         private readonly ILogger _logger;
+        private readonly IOptions<MvcJsonOptions> _options;
 
         private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebHookSender"/> class.
         /// </summary>
-        protected WebHookSender(ILogger logger)
+        protected WebHookSender(ILogger logger, IOptions<MvcJsonOptions> options)
         {
             if (logger == null)
             {
                 throw new ArgumentNullException(nameof(logger));
             }
             _logger = logger;
+            _options = options;
         }
 
         /// <summary>
@@ -102,6 +106,8 @@ namespace Microsoft.AspNetCore.WebHooks
             var body = CreateWebHookRequestBody(workItem);
             SignWebHookRequest(workItem, request, body);
 
+            AddWebHookMetadata(workItem, request);
+
             // Add extra request or entity headers
             foreach (var kvp in hook.Headers)
             {
@@ -130,24 +136,7 @@ namespace Microsoft.AspNetCore.WebHooks
                 throw new ArgumentNullException(nameof(workItem));
             }
 
-            var body = new Dictionary<string, object>
-            {
-                // Set properties from work item
-                [BodyIdKey] = workItem.Id,
-                [BodyAttemptKey] = workItem.Offset + 1
-            };
-
-            // Set properties from WebHook
-            var properties = workItem.WebHook.Properties;
-            if (properties != null)
-            {
-                body[BodyPropertiesKey] = new Dictionary<string, object>(properties);
-            }
-
-            // Set notifications
-            body[BodyNotificationsKey] = workItem.Notifications;
-
-            return JObject.FromObject(body);
+            return JObject.FromObject(workItem.Notification, JsonSerializer.Create(_options.Value.SerializerSettings));
         }
 
         /// <summary>
@@ -165,7 +154,7 @@ namespace Microsoft.AspNetCore.WebHooks
             }
             if (workItem.WebHook == null)
             {
-                var message = string.Format("Invalid '{0}' instance: '{1}' cannot be null.", this.GetType().Name, "WebHook");
+                var message = $"Invalid '{GetType().Name}' instance: '{"WebHook"}' cannot be null.";
                 throw new ArgumentException(message, "workItem");
             }
             if (request == null)
@@ -188,6 +177,13 @@ namespace Microsoft.AspNetCore.WebHooks
                 var headerValue = string.Format(CultureInfo.InvariantCulture, SignatureHeaderValueTemplate, EncodingUtilities.ToHex(sha256));
                 request.Headers.Add(SignatureHeaderName, headerValue);
             }
+        }
+
+        private void AddWebHookMetadata(WebHookWorkItem workItem, HttpRequestMessage request)
+        {
+            request.Headers.Add(HeaderIdKey, workItem.Id);
+            request.Headers.Add(HeaderAttemptKey, (workItem.Offset + 1).ToString());
+            request.Headers.Add(HeaderNotificationKey, workItem.Notification.Action);
         }
     }
 }

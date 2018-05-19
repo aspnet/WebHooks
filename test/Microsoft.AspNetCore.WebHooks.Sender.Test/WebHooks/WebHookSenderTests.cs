@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -16,16 +18,19 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
     public class WebHookSenderTests : IDisposable
     {
         private const string TestUser = "TestUser";
-        private const string SerializedWebHook = "{\r\n  \"Id\": \"1234567890\",\r\n  \"Attempt\": 1,\r\n  \"Properties\": {\r\n    \"p1\": \"pv1\"\r\n  },\r\n  \"Notifications\": [\r\n    {\r\n      \"Action\": \"a1\",\r\n      \"d1\": \"dv1\"\r\n    },\r\n    {\r\n      \"Action\": \"a1\",\r\n      \"d2\": \"http://localhost\"\r\n    }\r\n  ]\r\n}";
-        private const string WebHookSignature = "sha256=DCDEB62502988CDEDE464AF6A97566D61288C446CFC46F74F341E11173FF30A1";
+        private const string SerializedWebHook = "{\r\n  \"action\": \"a1\",\r\n  \"payload\": {\r\n    \"d1\": \"dv1\"\r\n  }\r\n}";
+        private const string WebHookSignature = "sha256=FBC65280D091B8F140D74D45745AE96B89CEFDB071D40DC5F1828A77F1DBCD6F";
 
         private readonly Mock<ILogger> _loggerMock;
+        private readonly IOptions<MvcJsonOptions> _mvcJsonOptions;
 
         private WebHookSenderMock _sender;
+        
 
         public WebHookSenderTests()
         {
             _loggerMock = new Mock<ILogger>();
+            _mvcJsonOptions = Options.Create(new MvcJsonOptions());
         }
 
         [Fact]
@@ -34,7 +39,7 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
             // Arrange
             WebHookWorkItem workItem = CreateWorkItem();
             workItem.WebHook.Headers.Add("Content-Language", "da");
-            _sender = new WebHookSenderMock(_loggerMock.Object);
+            _sender = new WebHookSenderMock(_loggerMock.Object, _mvcJsonOptions);
 
             // Act
             HttpRequestMessage actual = _sender.CreateWebHookRequest(workItem);
@@ -59,7 +64,7 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
         {
             // Arrange
             WebHookWorkItem workItem = CreateWorkItem();
-            _sender = new WebHookSenderMock(_loggerMock.Object);
+            _sender = new WebHookSenderMock(_loggerMock.Object, _mvcJsonOptions);
 
             // Act
             JObject actual = _sender.CreateWebHookRequestBody(workItem);
@@ -73,7 +78,7 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
         {
             WebHookWorkItem workItem = CreateWorkItem();
             HttpRequestMessage request = new HttpRequestMessage();
-            _sender = new WebHookSenderMock(_loggerMock.Object);
+            _sender = new WebHookSenderMock(_loggerMock.Object, _mvcJsonOptions);
             JObject body = _sender.CreateWebHookRequestBody(workItem);
             workItem.WebHook = null;
 
@@ -90,7 +95,7 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
             // Arrange
             WebHookWorkItem workItem = CreateWorkItem();
             HttpRequestMessage request = new HttpRequestMessage();
-            _sender = new WebHookSenderMock(_loggerMock.Object);
+            _sender = new WebHookSenderMock(_loggerMock.Object, _mvcJsonOptions);
             JObject body = _sender.CreateWebHookRequestBody(workItem);
 
             // Act
@@ -111,7 +116,7 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
         public void Dispose_Succeeds()
         {
             // Arrange
-            WebHookSenderMock s = new WebHookSenderMock(_loggerMock.Object);
+            WebHookSenderMock s = new WebHookSenderMock(_loggerMock.Object, _mvcJsonOptions);
 
             // Act
             s.Dispose();
@@ -129,9 +134,9 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
         private static WebHookWorkItem CreateWorkItem()
         {
             WebHook webHook = WebHookManagerTests.CreateWebHook();
-            NotificationDictionary notification1 = new NotificationDictionary("a1", new { d1 = "dv1" });
-            NotificationDictionary notification2 = new NotificationDictionary("a1", new Dictionary<string, object> { { "d2", new Uri("http://localhost") } });
-            WebHookWorkItem workItem = new WebHookWorkItem(webHook, new[] { notification1, notification2 })
+            Notification notification = new Notification("a1", new { d1 = "dv1" });
+//            Notification notification2 = new Notification("a1", new Dictionary<string, object> { { "d2", new Uri("http://localhost") } });
+            WebHookWorkItem workItem = new WebHookWorkItem(webHook, notification )
             {
                 Id = "1234567890",
             };
@@ -140,8 +145,8 @@ namespace Microsoft.AspNetCore.WebHooks.WebHooks
 
         private class WebHookSenderMock : WebHookSender
         {
-            public WebHookSenderMock(ILogger logger)
-                : base(logger)
+            public WebHookSenderMock(ILogger logger, IOptions<MvcJsonOptions> options)
+                : base(logger, options)
             {
             }
 
