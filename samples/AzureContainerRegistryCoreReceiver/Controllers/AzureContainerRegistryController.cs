@@ -9,11 +9,6 @@ namespace AzureContainerRegistryCoreReceiver.Controllers
         [AzureContainerRegistryWebHook(Id = "It")]
         public IActionResult AzureContainerRegistryForIt(string @event, JObject data)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             // Get the registry
             var registry = data["request"]["host"].Value<string>();
 
@@ -29,11 +24,6 @@ namespace AzureContainerRegistryCoreReceiver.Controllers
         [AzureContainerRegistryWebHook]
         public IActionResult AzureContainerRegistry(string id, string @event, JObject data)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             // Get the registry
             var registry = data["request"]["host"].Value<string>();
 
